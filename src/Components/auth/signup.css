@@ -1,0 +1,282 @@
+body .signup-wrapper {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e2e8f0 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  position: relative;
+  animation: gradientShift 10s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.signup-wrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.signup-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23e2e8f0' fill-opacity='0.3' d='M0,160L48,176C96,192,192,224,288,208C384,192,480,128,576,112C672,96,768,112,864,128C960,144,1056,160,1152,160C1248,160,1344,144,1392,136L1440,128V320H1392C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320H0V160Z'%3E%3C/path%3E%3C/svg%3E");
+  background-size: cover;
+  animation: waveAnimation 12s linear infinite;
+  z-index: -1;
+}
+
+@keyframes waveAnimation {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(20px); }
+  100% { transform: translateY(0); }
+}
+
+.signup-container.upgraded-card {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  max-width: 900px;
+  background: rgba(255, 255, 255, 0.9); /* Slightly transparent for animation effect */
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  animation: fadeIn 0.5s ease-in-out;
+  z-index: 1;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.form-panel,
+.info-panel {
+  flex: 1;
+  padding: 40px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  max-height: 90vh;
+  transition: transform 0.3s ease;
+}
+
+.form-panel:hover,
+.info-panel:hover {
+  transform: translateY(-5px);
+}
+
+.logo-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.signup-logo {
+  max-width: 220px;
+  height: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+  border-radius: 10px;
+}
+
+.signup-logo:hover {
+  transform: scale(1.1);
+}
+
+.form-title,
+.info-title {
+  margin-bottom: 20px;
+  font-weight: 700;
+  color: #2d3748;
+  text-align: center;
+}
+
+.form-title {
+  font-size: 28px;
+  background: linear-gradient(90deg, #4a90e2, #50e3c2);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.form-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-wrapper form {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+  font-size: 14px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-field:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+  outline: none;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  background: linear-gradient(90deg, #4a90e2, #50e3c2);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(74, 144, 226, 0.4);
+}
+
+.submit-button:disabled {
+  background: #a0aec0;
+  cursor: not-allowed;
+}
+
+.toggle-text {
+  margin-top: 20px;
+  color: #4a90e2;
+  cursor: pointer;
+  font-weight: 500;
+  text-align: center;
+  transition: color 0.3s ease;
+}
+
+.toggle-text:hover {
+  color: #357abd;
+}
+
+.error-text {
+  color: #e53e3e;
+  text-align: center;
+  font-size: 14px;
+  margin-top: 10px;
+  animation: shake 0.5s;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+.info-panel {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.info-text {
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: #e2e8f0;
+}
+
+.toggle-button {
+  background: transparent;
+  border: 2px solid white;
+  padding: 10px 25px;
+  color: white;
+  font-weight: bold;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.toggle-button:hover {
+  background-color: white;
+  color: #764ba2;
+}
+
+.wave-divider {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23f5f7fa' fill-opacity='1' d='M0,96L48,112C96,128,192,160,288,176C384,192,480,192,576,186.7C672,181,768,171,864,176C960,181,1056,203,1152,213.3C1248,224,1344,224,1392,224L1440,224V320H1392C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320H0V96Z'%3E%3C/path%3E%3C/svg%3E");
+  background-size: cover;
+  z-index: 1;
+  animation: waveDividerMove 8s ease-in-out infinite;
+}
+
+@keyframes waveDividerMove {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  .signup-container.upgraded-card {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .form-panel,
+  .info-panel {
+    width: 100%;
+    max-height: none;
+    padding: 30px 20px;
+  }
+
+  .info-panel {
+    border-top: 1px solid #ddd;
+    padding: 20px;
+  }
+
+  .wave-divider {
+    display: none;
+  }
+
+  .form-title {
+    font-size: 22px;
+  }
+
+  .input-field {
+    font-size: 13px;
+  }
+
+  .submit-button {
+    font-size: 14px;
+  }
+}

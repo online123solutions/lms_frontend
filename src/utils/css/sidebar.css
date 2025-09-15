@@ -1,0 +1,271 @@
+/* Layout for the whole dashboard */
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+  background-color: #fafafa;
+  font-family: Arial, sans-serif;
+  position: relative;
+}
+
+/* Sidebar Styling */
+.sidebar {
+  width: 300px;
+  background-color: #393939;
+  color: #FFFFFF;
+  border-radius: 15px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  transition: width 0.4s ease-in-out;
+  position: relative;
+  z-index: 1;
+  margin: 10px;
+  height: 98vh;
+  padding-top: 50px;
+}
+
+.sidebar-logo {
+  display: block;
+  width: 100%;
+  height: 68px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.18));
+}
+
+.maindash {
+  display: flex;
+  gap: 20px;
+}
+
+/* Collapsed Sidebar */
+.sidebar.collapsed {
+  width: 80px;
+}
+
+/* Sidebar Profile Section */
+.sidebar-profile {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  width: 100%;
+  transition: all 0.4s ease;
+}
+
+.profile-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  transition: all 0.4s ease;
+}
+
+.sidebar.collapsed .profile-image {
+  width: 40px;
+  height: 40px;
+  transform: translateX(0px);
+}
+
+.profile-info {
+  opacity: 1;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  white-space: nowrap;
+}
+
+.sidebar.collapsed .profile-info {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+/* Sidebar Content Styling */
+.sidebar-content .sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  color: #FFFFFF;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease, transform 0.4s ease;
+  position: relative;
+  border: none;
+  padding-left: 30px;
+}
+
+.sidebar-content .sidebar-item:hover {
+  background-color: #0ba3e6;
+  transform: scale(1.05);
+}
+
+.sidebar-icon {
+  font-size: 1.2rem;
+  margin-right: 10px;
+  color: #FFFFFF;
+  transition: transform 0.4s ease, color 0.4s ease;
+}
+
+.sidebar.collapsed .sidebar-icon {
+  margin-right: 18px;
+  color: #FFFFFF;
+  transform: scale(0.9) translateX(5px);
+  transition: transform 0.4s ease;
+}
+
+.sidebar-text {
+  opacity: 1;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  white-space: nowrap;
+}
+
+.sidebar.collapsed .sidebar-text {
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* Bottom Section Styling */
+.sidebar-bottom-section {
+  margin-top: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-top: 10px;
+  padding-left: 30px;
+  padding-bottom: 20px;
+}
+
+.dropdown-menu {
+  position: absolute;
+  background-color: #393939;
+  border-radius: 5px;
+  padding: 5px 0;
+  z-index: 1000;
+  width: 200px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown-item {
+  padding: 5px 20px;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #0ba3e6;
+}
+
+/* Content Panel Styling */
+.content-panel {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: #ffffff;
+  margin: 10px;
+  border-radius: 25px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+  z-index: 2;
+  position: relative;
+  margin-left: -10px;
+  overflow: hidden;
+}
+
+/* Cards styling for grid layout */
+.subject-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  min-height: 60vh;
+}
+
+@media (max-width: 768px) {
+  .subject-cards-container {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 576px) {
+  .subject-cards-container {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 1024px) {
+  .subject-cards-container {
+    flex-direction: column;
+  }
+}
+
+.subject-cards-container > div {
+  flex: 1 1 250px;
+  max-width: 300px;
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Cards styling for grid layout */
+.quiz-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  flex-direction: row;
+}
+
+@media (max-width: 768px) {
+  .quiz-cards-container {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 576px) {
+  .quiz-cards-container {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 1024px) {
+  .quiz-cards-container {
+    flex-direction: column;
+  }
+}
+
+.quiz-cards-container > div {
+  width: calc(25% - 30px);
+  margin-bottom: 30px;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .mobile-sidebar-toggle {
+    display: block;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-sidebar-toggle {
+    display: none !important;
+  }
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 14px;
+  margin: 10px 12px 18px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}

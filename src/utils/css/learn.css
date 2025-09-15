@@ -1,0 +1,273 @@
+body {
+  background: #aeadae;
+}
+
+.learning-container {
+  width: 100%;
+  height: 100vh;
+}
+
+.navbar1 {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  /* background: linear-gradient(to left, #9aa7db, #354fb7); */
+  height: 80px;
+}
+
+.navbar1-text {
+  position: absolute;
+  left: 20px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.navbar-text {
+  position: absolute;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.circle-container {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+}
+
+.circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: black;
+  cursor: pointer;
+}
+
+.next-chapter-button {
+  position: absolute;
+  right: 20px;
+  padding: 10px 15px;
+  background-color: #393939;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.content-layout {
+  display: flex;
+  height: calc(97vh - 60px); /* Adjust based on navbar height */
+}
+
+.left-menu {
+  width: 20%;
+  /* background: #354fb7; */
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+  align-items: start;
+}
+
+.menu-button {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  background-color: #393939;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color:white
+}
+
+.menu-icon {
+  font-size: 20px;
+}
+
+.menu-text {
+  font-size: 18px;
+  display: inline;
+}
+
+
+@media (max-width: 768px) {
+  .menu-text {
+    display: none;
+  }
+
+  .menu-icon {
+    font-size: 24px;
+  }
+
+  .menu-button {
+    justify-content: center;
+  }
+}
+
+.content-display {
+  width: 80%;
+  padding: 20px;
+  box-sizing: border-box;
+  
+  /* background: linear-gradient(to left, #9aa7db, #354fb7); */
+}
+
+.section-content {
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.section-content iframe {
+  flex-grow: 1;
+  border: none;
+}
+
+.error-message {
+  color: red;
+}
+/* Add to your CSS file (learn.css or a relevant file) */
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it appears above other components */
+}
+
+.popup-container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  text-align: center;
+}
+
+.popup-container h2 {
+  margin: 0 0 10px;
+}
+
+.popup-container button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #393939;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.popup-container button:hover {
+  background-color: #218838;
+}
+
+/* Fix for mobile responsiveness (subject screen) */
+@media (max-width: 768px) {
+  .navbar1 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    height: auto;
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .navbar-text {
+    font-size: 1.2em;
+    font-weight: bold;
+    word-break: break-word;
+    width: 100%;
+    text-align: center;
+    color: white;
+    margin-top: 50px;
+  }
+
+  .circle-container {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 10px;
+    padding: 5px 10px;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .circle-container::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .circle-container::-webkit-scrollbar-thumb {
+    background-color: #aaa;
+    border-radius: 3px;
+  }
+
+  .circle {
+    min-width: 35px;
+    min-height: 35px;
+    flex-shrink: 0;
+    font-size: 14px;
+  }
+
+  .mark-completed-button {
+    width: 90%;
+    margin: 0 auto;
+  }
+  .content-layout {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .left-menu {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .menu-button {
+    flex: 1 1 30%;
+    min-width: 80px;
+    margin: 5px;
+    justify-content: center;
+  }
+
+  .menu-text {
+    display: none;
+  }
+
+  .menu-icon {
+    font-size: 22px;
+  }
+
+  .content-display {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .section-content iframe {
+    height: calc(100vh - 250px);
+  }
+}

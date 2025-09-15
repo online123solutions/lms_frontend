@@ -1,0 +1,147 @@
+/* Make full-height layout possible */
+html, body, #root {
+  height: 100%;
+}
+
+/* Main container: fills viewport, flex layout */
+.container1 {
+  display: flex;
+  gap: 10px;
+  padding: 20px;
+  height: 100vh;                /* full viewport height */
+  box-sizing: border-box;
+}
+
+/* Sidebar */
+.sidebar1 {
+  width: 250px;                 /* fixed width for stability */
+  background-color: #aeadae;    /* blue */
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebar1 h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.sidebar1 select {
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  margin-bottom: 12px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Right content column fills remaining space */
+.content1 {
+  flex: 1 1 auto;
+  min-width: 0;
+  background-color: #ffffff;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+
+  display: flex;
+  flex-direction: column;       /* vertical */
+  justify-content: flex-start;  /* no centering that would reduce usable area */
+  align-items: stretch;
+}
+
+/* Lesson content panel fills remaining height */
+.lesson-content1 {
+  flex: 1 1 auto;
+  min-height: 0;                /* critical for nested flex scrolling */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Title spacing */
+.lesson-title {
+  font-size: 20px;
+  margin: 0 0 6px 0;
+}
+
+/* Viewer wrapper grows and the frame fills it */
+.viewer-wrapper {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.viewer-frame {
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 8px;
+  background: #000;             /* helps hide white around PDF toolbar */
+}
+
+/* Footer row under viewer */
+.viewer-footer {
+  margin-top: 8px;
+}
+
+/* Empty placeholder */
+.empty-space1 {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  color: #777;
+  font-size: 16px;
+  font-style: italic;
+  background: #f9f9f9;
+}
+
+/* Buttons under sidebar */
+.lesson-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.lesson-buttons button {
+  border: none;
+  padding: 12px 15px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  width: 130px;
+  text-transform: uppercase;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+  background: #393939;
+  color: #fff;
+}
+
+.lesson-buttons button:hover {
+  background-color: #0ba3e6;
+  transform: scale(1.05);
+  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
+  font-weight: bolder;
+}
+
+/* Dev-only notice box */
+.dev-fallback {
+  padding: 12px;
+  background: #fff8e1;
+  border: 1px solid #f5d48b;
+  border-radius: 8px;
+}
+

@@ -1,0 +1,249 @@
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
+import { fetchTrainerDashboard } from "../../api/trainerAPIservice";
+import { logout } from "../../api/apiservice";
+import { Dropdown} from "react-bootstrap";
+// import "../../utils/css/Trainer CSS/TrainerDashboard.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import Loader from "../../UIcomponents/dashboard/loader";
+import TeacherDashboardContent from "./TrainerDashboardContent";
+import MacroPlanner from "./MacroPlanner";
+import MicroPlanner from "./MicroPlanner";
+import AssessmentReport from "./AssessmentReport";
+import Curriculum from "./Curriculum";
+import TrainerChat from "./TrainerChat";
+import TrainerNotification from "./TrainerNotification";
+import HamButton from "../../Components/Hamburger";
+import TrainingReport from "./TrainingReport";
+import logoS from "../../assets/logo4.png";
+
+const MENU = [
+  { label: "Dashboard", key: "dashboard", icon: "bi-house" },
+  { label: "Curriculum", key: "curriculum", icon: "bi-book" },
+  { label: "Macro Planner", key: "macroPlanner", icon: "bi-calendar" },
+  { label: "Micro Planner", key: "microPlanner", icon: "bi-calendar-check" },
+  { label: "Training Report", key: "report", icon: "bi-file-earmark-bar-graph" },
+  { label: "Assessment Report", key: "assessmentReport", icon: "bi-graph-up" },
+  { label: "Notifications", key: "notifications", icon: "bi-bell" },
+  { label: "Queries", key: "queries", icon: "bi-chat-left-text" },
+  { label: "SOP", key: "STEM-SOP", icon: "bi-file-earmark-text" },
+];
+
+const TeacherDashboard = () => {
+  const navigate = useNavigate();
+
+  const [data, setData] = useState(null);
+  const [activeContent, setActiveContent] = useState(
+    () => localStorage.getItem("activeContent") || "dashboard"
+  );
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showSettingsDropdown, setShowSettingsDropdown] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const username = localStorage.getItem("username") || "";
+  const isAuthenticated = localStorage.getItem("isAuthenticated");
+  const name = data?.profile?.name || (username ? username : "Trainer");
+  const initial = useMemo(() => (username ? username[0].toUpperCase() : "T"), [username]);
+  const handleDropdownToggle = () => setShowDropdown((s) => !s);
+
+  useEffect(() => {
+    localStorage.setItem("activeContent", activeContent);
+  }, [activeContent]);
+
+  useEffect(() => {
+    if (isAuthenticated !== "true") {
+      navigate("/login");
+      return;
+    }
+    const load = async () => {
+      try {
+        const result = await fetchTrainerDashboard(username);
+        if (result.success) setData(result.data);
+        else setError("An error occurred while fetching teacher dashboard data.");
+      } catch {
+        setError("An error occurred while fetching data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (username) load();
+  }, [username, isAuthenticated, navigate]);
+
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") setIsSidebarOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const handleLogout = useCallback(async () => {
+    const result = await logout();
+    if (result.success) {
+      localStorage.clear();
+      localStorage.setItem("activeContent", "dashboard");
+      navigate("/login");
+    } else {
+      setError("Logout failed.");
+    }
+  }, [navigate]);
+
+  const handleChangePassword = () => {
+    // Logic for changing password
+    console.log("Change Password clicked");
+    setShowSettingsDropdown(false);
+  };
+
+  const handleUpdateProfile = () => {
+    // Logic for updating profile
+    console.log("Update Profile clicked");
+    setShowSettingsDropdown(false);
+  };
+
+  const renderContent = () => {
+    switch (activeContent) {
+      case "dashboard": return <TeacherDashboardContent data={data} />;
+      case "macroPlanner": return <MacroPlanner />;
+      case "microPlanner": return <MicroPlanner />;
+      case "report": return <TrainingReport />;
+      case "assessmentReport": return <AssessmentReport />;
+      case "curriculum": return <Curriculum />;
+      case "queries": return <TrainerChat />;
+      case "notifications": return <TrainerNotification />;
+      case "STEM-SOP":
+        return (
+          <div style={{ padding: 20 }}>
+            <h2>STEM - SOP</h2>
+            <iframe
+              title="Innovation Calendar"
+              src="https://drive.google.com/file/d/1IjWgCYWxbfUKUuQ5j1k4e4xr6tH0cjoZ/preview"
+              width="100%"
+              height="900"
+              allow="autoplay"
+              frameBorder="0"
+            />
+          </div>
+        );
+      default:
+        return <div style={{ padding: 20 }}>Select an option</div>;
+    }
+  };
+
+  if (loading) return <Loader />;
+  if (error) return <div style={{ padding: 20 }}>{error}</div>;
+
+  return (
+    <div className="dashboard">
+      {/* Mobile hamburger */}
+      <div className="mobile-sidebar-toggle" aria-hidden={isSidebarOpen}>
+        <HamButton onClick={() => setIsSidebarOpen(true)} aria-label="Open sidebar" />
+      </div>
+
+      {/* Backdrop for mobile */}
+      <div
+        className={`mobile-backdrop ${isSidebarOpen ? "show" : ""}`}
+        onClick={() => setIsSidebarOpen(false)}
+        role="button"
+        aria-label="Close sidebar backdrop"
+        tabIndex={-1}
+      />
+
+      {/* Sidebar */}
+      <aside
+        className={`sidebar ${isCollapsed ? "collapsed" : ""} ${isSidebarOpen ? "open" : ""}`}
+        aria-label="Main navigation"
+      >
+        <div className="sidebar-content">
+          {/* Profile chip (kept). Welcome pill with name is removed */}
+          <div className="sidebar-header brand" title={name ? `Logged in as ${name}` : ""}>
+            <div className="profile-chip">
+              {!isCollapsed && (
+                <img src={logoS} alt="SO" className="sidebar-logo " />
+              )}
+            </div>
+          </div>
+
+          <div className="sidebar-sep" />
+
+          {MENU.map((item) => (
+            <div
+              key={item.key}
+              className={`sidebar-item ${activeContent === item.key ? "active" : ""}`}
+              onClick={() => {
+                setActiveContent(item.key);
+                localStorage.setItem("activeContent", item.key);
+                setIsSidebarOpen(false);
+              }}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  setActiveContent(item.key);
+                  localStorage.setItem("activeContent", item.key);
+                  setIsSidebarOpen(false);
+                }
+              }}
+              title={isCollapsed ? item.label : undefined}
+            >
+              <i className={`bi ${item.icon} sidebar-icon`} />
+              {!isCollapsed && <span className="sidebar-text">{item.label}</span>}
+              {activeContent === item.key && <span className="active-glow" aria-hidden="true" />}
+            </div>
+          ))}
+        </div>
+
+        {/* Settings and Logout at the bottom */}
+        <div className="sidebar-bottom-section">
+          <div className="sidebar-item" onClick={() => setShowSettingsDropdown(!showSettingsDropdown)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setShowSettingsDropdown(!showSettingsDropdown); }} title={isCollapsed ? "Settings" : undefined}>
+            <i className="bi bi-gear sidebar-icon" />
+            {!isCollapsed && <span className="sidebar-text">Settings</span>}
+            {showSettingsDropdown && !isCollapsed && (
+              <Dropdown show={showDropdown} onToggle={handleDropdownToggle}>
+            <Dropdown.Toggle className="grey" id="dropdown-basic">
+              <i className="bi bi-gear"></i>
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item href="#/profile">Profile</Dropdown.Item>
+              <Dropdown.Item href="#/my-reflections">Change Password</Dropdown.Item>
+              <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+            )}
+          </div>
+
+          <div
+            className="sidebar-item"
+            onClick={handleLogout}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleLogout(); }}
+          >
+            <i className="bi bi-box-arrow-right sidebar-icon"></i>
+            {!isCollapsed && <span className="sidebar-text">Logout</span>}
+          </div>
+        </div>
+      </aside>
+
+      <main className="content-panel" style={{ marginLeft: 0, paddingLeft: 0 }}>
+        {renderContent()}
+      </main>
+    </div>
+  );
+};
+
+TeacherDashboard.propTypes = {
+  data: PropTypes.shape({
+    profile: PropTypes.shape({
+      user: PropTypes.shape({
+        username: PropTypes.string,
+        email: PropTypes.string,
+        role: PropTypes.string,
+        profile_pic: PropTypes.string,
+      }),
+    }),
+  }),
+};
+
+export default TeacherDashboard;

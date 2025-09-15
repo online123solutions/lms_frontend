@@ -1,0 +1,250 @@
+/* Global Styles */
+:root {
+  --bg-light: #f8faff;
+  --bg-card: #ffffff;
+  --color-text: #333333;
+  --color-secondary: #888888;
+  --color-accent: #4caf50;
+  --color-consultation: #ffb84c;
+  --color-target: #ed85ff;
+}
+
+/* Dashboard Container (unchanged) */
+.dashboard-container {
+  display: flex;
+  flex-direction: row;
+  height: 90vh;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    flex-direction: column;
+    height: auto;
+  }
+}
+
+/* Left Container (unchanged) */
+.left-container {
+  flex-basis: 100%;
+  background-color: var(--bg-card);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 20px;
+}
+
+@media (max-width: 768px) {
+  .left-container {
+    width: 100%;
+    padding: 15px;
+    margin-top: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .left-container {
+    padding: 10px;
+    margin-top: 10px;
+  }
+}
+
+/* Right Container (unchanged) */
+.right-container {
+  flex-basis: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: #f6f6fc;
+  border-radius: 25px;
+  margin-right: 20px;
+}
+
+@media (max-width: 768px) {
+  .right-container {
+    width: 100%;
+    padding: 15px;
+    border-radius: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .right-container {
+    padding: 10px;
+    border-radius: 10px;
+  }
+}
+
+/* ... (other existing styles remain unchanged) ... */
+
+/* Notifications Page Styles */
+.notif-container {
+  background-color: var(--bg-light);
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 90%; /* Increased to 90% of the parent container */
+  max-width: 1200px; /* Set a reasonable max-width for large screens */
+  margin: 20px auto; /* Centered with reduced margin if needed */
+}
+
+.notif-header {
+  margin-bottom: 20px;
+}
+
+.notif-header h2 {
+  color: var(--color-text);
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.notif-subtitle {
+  color: var(--color-secondary);
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.notif-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background-color: var(--bg-card);
+  padding: 10px 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.notif-tabs {
+  display: flex;
+  gap: 10px;
+}
+
+.notif-tab {
+  background: none;
+  border: none;
+  padding: 8px 15px;
+  font-size: 14px;
+  color: var(--color-secondary);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.notif-tab.active {
+  background-color: var(--color-accent);
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.notif-tab:hover:not(.active) {
+  background-color: #f0f0f0;
+}
+
+.notif-toolbar-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.notif-btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.notif-btn.ghost {
+  background-color: transparent;
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+}
+
+.notif-btn.ghost:hover {
+  background-color: var(--color-accent);
+  color: #ffffff;
+}
+
+.notif-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.notif-skel-card {
+  height: 80px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+/* Assuming NotificationList component uses similar styling */
+.notification-item {
+  background-color: var(--bg-card);
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.notification-item strong {
+  color: var(--color-text);
+  font-size: 16px;
+}
+
+.notification-item span {
+  color: var(--color-secondary);
+  font-size: 12px;
+}
+
+.notification-item button {
+  padding: 5px 10px;
+  background-color: var(--color-accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: all 0.3s ease;
+}
+
+.notification-item button:hover {
+  background-color: #45a049;
+}
+
+@media (max-width: 480px) {
+  .notif-container {
+    padding: 15px;
+    margin: 10px;
+    width: 95%; /* Slightly wider on mobile */
+  }
+
+  .notif-toolbar {
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .notif-tabs {
+    width: 100%;
+    justify-content: space-around;
+  }
+
+  .notif-tab {
+    flex: 1;
+    text-align: center;
+  }
+}

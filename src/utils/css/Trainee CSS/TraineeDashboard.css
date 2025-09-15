@@ -1,0 +1,174 @@
+/* Main container */
+.trainee-dashboard-container {
+  padding: 30px;
+  background-color: #f8f9fc;
+  font-family: 'Nunito', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Header section */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.welcome-message {
+  font-size: 2.5em;
+  color: #4c6f8c;
+  font-weight: bold;
+  padding: 10px 0;
+  flex-grow: 1;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.settings-dropdown {
+  background-color: #4c6f8c;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.settings-dropdown .dropdown-toggle {
+  background-color: #4c6f8c;
+  color: white;
+  border: none;
+  font-weight: bold;
+}
+
+.settings-dropdown .dropdown-menu {
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.settings-dropdown .dropdown-item {
+  font-size: 1em;
+  padding: 10px 15px;
+  color: #4c6f8c;
+}
+
+.settings-dropdown .dropdown-item:hover {
+  background-color: #d6e4f1;
+}
+
+/* Notifications Section */
+.notifications-section {
+  background: linear-gradient(90deg, rgba(74, 144, 226, 0.2), rgba(133, 185, 255, 0.3));
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-size: 1.1em;
+}
+
+.notification-card {
+  background-color: #4C6F8C;
+  color: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-size: 1.1em;
+}
+
+.notification-card button {
+  background-color: #3b5998;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Cards Layout */
+.cards-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+/* Cards Styling */
+.card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.card h3 {
+  font-size: 1.5em;
+  color: #4C6F8C;
+  margin-bottom: 20px;
+}
+
+/* Chart Container */
+.chart-container {
+  margin-top: 30px;
+  height: 300px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Month Selector */
+.month-selector {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.month-selector button {
+  background-color: #4C6F8C;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Dropdown Menu for Login Activity */
+.login-dropdown {
+  margin-top: 20px;
+  font-size: 1.2em;
+}
+
+.login-dropdown .dropdown-toggle {
+  background-color: #4C6F8C;
+  color: white;
+  border: none;
+}
+
+.login-dropdown .dropdown-menu {
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.login-dropdown .dropdown-item {
+  font-size: 1em;
+  padding: 10px 15px;
+  color: #4c6f8c;
+}
+
+.login-dropdown .dropdown-item:hover {
+  background-color: #d6e4f1;
+}
+
+/* Grid Layout */
+.grid-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease-in-out;
+}

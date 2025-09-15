@@ -1,0 +1,145 @@
+.macro-planner {
+  padding: 15px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background-color: #393939;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.table>thead{
+  background-color: #0ba3e6 !important; /* Increased specificity and added !important */
+  color: white;
+}
+
+.Searchbar {
+  width: 50% !important;
+}
+
+.macro-planner-table {
+  width: 100%;
+  background-color: rgb(255, 255, 255);
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.macro-planner-table th,
+.macro-planner-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.macro-planner-table thead .table-custom {
+  background-color: #0ba3e6 !important; /* Increased specificity and added !important */
+  color: white;
+}
+
+.macro-planner-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.macro-planner-table tr:hover {
+  background-color: #ddd;
+}
+
+/* Ensure rounded corners work with table-responsive */
+.macro-planner-table tr:first-child th:first-child {
+  border-top-left-radius: 15px;
+}
+
+.macro-planner-table tr:first-child th:last-child {
+  border-top-right-radius: 15px;
+}
+
+.macro-planner-table tr:last-child td:first-child {
+  border-bottom-left-radius: 15px;
+}
+
+.macro-planner-table tr:last-child td:last-child {
+  border-bottom-right-radius: 15px;
+}
+
+/* Primary Button */
+.btn-primary {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border: none;
+  color: white;
+  font-weight: bold;
+  padding: 10px 15px;
+  border-radius: 6px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.15s ease-in-out, background 1s ease-in-out !important;
+  display: inline-block;
+  will-change: transform;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #0056b3, #003f7f);
+  transform: scale(1.05) !important;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* Secondary Button */
+.btn-secondary {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border: none;
+  color: white;
+  font-weight: bold;
+  padding: 10px 15px;
+  border-radius: 6px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.15s ease-in-out, background 1s ease-in-out !important;
+  display: inline-block;
+  will-change: transform;
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #0056b3, #003f7f);
+  transform: scale(1.05) !important;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* Override Bootstrap table styles if necessary */
+.table-responsive {
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+/* Table styles preserved (unchanged) */
+.macro-planner-table {
+  width: 100%;
+  background-color: #fff;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.macro-planner-table th, .macro-planner-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+.macro-planner-table th {
+  background-color: #0ba3e6 !important;
+  color: white;
+}
+.macro-planner-table tr:nth-child(even) { background-color: #f9f9f9; }
+.macro-planner-table tr:hover { background-color: #ddd; }
+.macro-planner-table tr:first-child th:first-child { border-top-left-radius: 8px; }
+.macro-planner-table tr:first-child th:last-child { border-top-right-radius: 8px; }
+.macro-planner-table tr:last-child td:first-child { border-bottom-left-radius: 8px; }
+.macro-planner-table tr:last-child td:last-child { border-bottom-right-radius: 8px; }
+
+
+.macro-btn{
+  background-color: #0ba3e6;
+  color:white;
+}

@@ -1,0 +1,91 @@
+.micro-planner {
+  padding: 15px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background-color: #393939;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.micro-planner-table {
+  width: 100%;
+  background-color: rgb(255, 255, 255);
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.micro-planner-table th,
+.micro-planner-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.micro-planner-table thead.table-custom {
+  background-color: #0ba3e6 !important;
+  color: white !important;
+}
+
+.micro-planner-table thead.table-custom th {
+  background-color: #0ba3e6 !important;
+  color: white !important;
+}
+
+.micro-planner-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.micro-planner-table tr:hover {
+  background-color: #ddd;
+}
+
+/* Ensure rounded corners work with table-responsive */
+.micro-planner-table tr:first-child th:first-child {
+  border-top-left-radius: 15px;
+}
+
+.micro-planner-table tr:first-child th:last-child {
+  border-top-right-radius: 15px;
+}
+
+.micro-planner-table tr:last-child td:first-child {
+  border-bottom-left-radius: 15px;
+}
+
+.micro-planner-table tr:last-child td:last-child {
+  border-bottom-right-radius: 15px;
+}
+
+/* Button styles */
+.btn-outline-info {
+  border-color: #17a2b8;
+  color: #17a2b8;
+}
+
+.btn-outline-info:hover {
+  background-color: #17a2b8;
+  color: white;
+}
+
+/* Override Bootstrap table styles if necessary */
+.table-responsive {
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.micro-planner-table th {
+  background-color: #0ba3e6 !important;
+  color: white;
+}
+
+.micro-btn{
+  background-color: #0ba3e6;
+  color:white;
+}

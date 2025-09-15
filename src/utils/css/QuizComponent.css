@@ -1,0 +1,259 @@
+.quiz-container {
+    padding: 20px;
+    text-align: center;
+    background-image: url('https://example.com/kids-background.jpg'); /* Replace with an actual URL */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: #333;
+}
+
+.quiz-cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+}
+
+.quiz-card {
+    flex: 0 0 calc(33.333% - 20px); /* Ensure 3 cards per row with spacing */
+    box-sizing: border-box; /* Include padding and border in width */
+    width: 300px; /* Increased size */
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4); /* Gradient for a vibrant look */
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.quiz-card:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.quiz-card img {
+    width: 100%;
+    height: 180px; /* Increased height */
+    border-radius: 8px;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.quiz-card h3 {
+    font-size: 20px; /* Larger font size */
+    margin: 10px 0;
+    color: #fff;
+}
+
+.quiz-card p {
+    font-size: 16px; /* Larger font size */
+    color: #f5f5f5;
+}
+
+.quiz-details {
+    background: rgba(255, 255, 255, 0.9); /* Semi-transparent background */
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    max-width: 450px;
+    margin: auto;
+}
+
+.start-quiz-btn, .back-btn, .next-btn, .submit-btn {
+    margin-top: 15px;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.start-quiz-btn { background: #4CAF50; color: white; }
+.back-btn { background: #f44336; color: white; }
+.next-btn { background: #2196F3; color: white; }
+.submit-btn { background: #FF9800; color: white; }
+
+.quiz-content {
+    text-align: center;
+}
+
+.quiz-header {
+    font-size: 20px;
+    margin-bottom: 25px;
+    color: #fff;
+}
+
+.quiz-options button {
+    display: block;
+    width: 85%;
+    margin: 8px auto;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: #ddd;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.quiz-options button.selected {
+    background: #4CAF50;
+    color: white;
+}
+
+.quiz-details-centered {
+    text-align: center;
+    margin: 50px auto;
+    color: #000; /* Changed text color to black */
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.quiz-details-centered h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: #000; /* Changed text color to black */
+}
+
+.quiz-details-centered p {
+    margin: 10px 0;
+    color: #000; /* Changed text color to black */
+}
+
+.start-quiz-btn, .back-btn {
+    margin-top: 20px;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.start-quiz-btn {
+    background: #4CAF50;
+    color: white;
+}
+
+.back-btn {
+    background: #f44336;
+    color: white;
+}
+
+@keyframes pulse-slow {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+}
+
+@keyframes bounce-slow {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.animate-pulse-slow {
+    animation: pulse-slow 6s infinite;
+}
+
+.animate-bounce-slow {
+    animation: bounce-slow 4s infinite;
+}
+
+.countdown-timer {
+    text-align: center;
+    font-size: 36px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 50px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center the timer vertically and horizontally */
+    animation: countdownEffect 1s ease-in-out; /* Add animation for the countdown effect */
+}
+
+@keyframes countdownEffect {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5); /* Start small */
+        opacity: 0;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2); /* Grow slightly larger */
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1); /* Settle at normal size */
+        opacity: 1;
+    }
+}
+
+.question-navigation {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.question-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between; /* Align "Previous" to the left and "Next" to the right */
+    margin-top: 20px;
+    gap: 10px; /* Add spacing between buttons */
+}
+
+.prev-btn, .next-btn, .submit-btn {
+    padding: 12px 25px; /* Ensure consistent padding */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    width: 150px; /* Set fixed width for consistent size */
+    text-align: center; /* Ensure text alignment */
+}
+
+.prev-btn {
+    background: #007BFF; /* Primary color */
+    color: white;
+    visibility: visible; /* Ensure the button is visible */
+}
+
+.prev-btn.hidden {
+    visibility: hidden; /* Hide the "Previous" button for the first question */
+}
+
+.next-btn {
+    background: #007BFF; /* Primary color */
+    color: white;
+}
+
+.submit-btn {
+    background: #007BFF; /* Primary color */
+    color: white;
+}

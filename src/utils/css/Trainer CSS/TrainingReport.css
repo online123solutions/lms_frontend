@@ -1,0 +1,117 @@
+/* src/utils/css/Trainer CSS/TrainingReport.css */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
+
+.training-report-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  font-family: 'Lato', sans-serif;
+  background-color: white;
+  min-height: 100vh;
+}
+
+.report-card {
+  background: #FFFFFF;
+  border-radius: 15px;
+  padding: 25px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.report-card:hover {
+  transform: scale(1.02);
+}
+
+.report-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 25px;
+  background: #393939;
+  padding: 15px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.report-title .icon {
+  width: 1.2em;
+  height: 1.2em;
+  color: #fff; /* Ensures the SVG icon is white */
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: separate; /* Changed from collapse to separate for individual cell borders */
+  background: #FFFFFF;
+  border-radius: 15px;
+  overflow: hidden;
+  border: 2px solid #fafafa; /* Outer border */
+  border-spacing: 0; /* Removes default spacing between cells */
+}
+
+.report-table th,
+.report-table td {
+  padding: 15px 20px;
+  text-align: left;
+  border: 1px solid #E2E8F0; /* Added borders to all sides of each cell */
+}
+
+.report-table th {
+  background-color: #1E90FF;
+  color: #FFFFFF;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.report-table tr {
+  transition: background-color 0.3s ease;
+  font-size: 16px;
+}
+
+.report-table tr:hover {
+  background-color: #F9FAFB;
+}
+
+.report-table td {
+  font-size: 16px;
+  color: black;
+}
+
+.lesson-list {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.lesson-list li {
+  margin: 5px 0;
+  color: black;
+}
+
+.no-data {
+  text-align: center;
+  color: #A0AEC0;
+  font-size: 16px;
+  padding: 20px;
+}
+
+.loader,
+.error {
+  text-align: center;
+  font-size: 18px;
+  color: #718096;
+  padding: 20px;
+}
+
+.error {
+  color: #E53E3E;
+}
