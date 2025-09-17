@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { getQueries, createQuery, respondToQuery } from "../../api/traineeAPIservice";
 // TIP: consider renaming the folder to remove the space: TraineeCSS/chat.css
 import "../../utils/css/Trainee CSS/chat.css";
+import "../../index.css"
 
 const DEPARTMENTS = ["IT", "Development", "HR", "Operations", "Sales", "Marketing", "Finance", "Support"];
 const CATEGORIES = ["general", "training", "assessment", "technical"];

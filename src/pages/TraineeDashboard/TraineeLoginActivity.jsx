@@ -10,6 +10,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import "../../index.css"
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
@@ -121,8 +122,8 @@ const TraineeLoginActivity = ({ setActiveContent }) => {
         {
           label: "Login Count",
           data,
-          backgroundColor: "rgba(75, 192, 192, 0.6)",
-          borderColor: "rgba(75, 192, 192, 1)",
+          backgroundColor: "#b497d6",
+          borderColor: "#b497d6",
           borderWidth: 1,
         },
       ],

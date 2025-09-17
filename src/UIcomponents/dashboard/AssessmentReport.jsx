@@ -11,6 +11,7 @@ import {
 import { useState, useEffect } from "react";
 import { fetchTraineeDashboard } from "../../api/traineeAPIservice";
 import { Dropdown } from "react-bootstrap";
+import "../../index.css"
 
 ChartJS.register(
   BarElement,
@@ -102,18 +103,18 @@ const AssessmentReport = () => {
       {
         label: "Trainee Marks",
         data: traineeMarks,
-        backgroundColor: "rgba(75, 192, 192, 0.8)",
+        backgroundColor: "#b497d6",
       },
-      {
-        label: "Average Marks",
-        data: averageMarks,
-        backgroundColor: "rgba(153, 102, 255, 0.8)",
-      },
-      {
-        label: "Highest Marks",
-        data: highestMarks,
-        backgroundColor: "rgba(255, 159, 64, 0.8)",
-      },
+      // {
+      //   label: "Average Marks",
+      //   data: averageMarks,
+      //   backgroundColor: "rgba(153, 102, 255, 0.8)",
+      // },
+      // {
+      //   label: "Highest Marks",
+      //   data: highestMarks,
+      //   backgroundColor: "rgba(255, 159, 64, 0.8)",
+      // },
     ],
   };
 
@@ -210,7 +211,7 @@ const AssessmentReport = () => {
             </h5>
             <br />
             <p>
-              <strong style={{ color: "#1976d2", fontSize: "1.1em" }}>
+              <strong style={{ color: "#0ba3e6", fontSize: "1.1em" }}>
                 🎯 Your Score: {examMarks?.trainee_score || "N/A"}%
               </strong>
             </p>
