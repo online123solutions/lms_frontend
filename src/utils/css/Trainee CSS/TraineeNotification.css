@@ -135,13 +135,13 @@
 }
 
 .notif-tab.active {
-  background-color: var(--color-accent);
+  background-color: #0ba3e6;
   color: #ffffff;
   font-weight: 500;
 }
 
 .notif-tab:hover:not(.active) {
-  background-color: #f0f0f0;
+  background-color: #0ba3e6;
 }
 
 .notif-toolbar-actions {
@@ -160,12 +160,12 @@
 
 .notif-btn.ghost {
   background-color: transparent;
-  color: var(--color-accent);
+  color: #0ba3e6;
   border: 1px solid var(--color-accent);
 }
 
 .notif-btn.ghost:hover {
-  background-color: var(--color-accent);
+  background-color: #0ba3e6;
   color: #ffffff;
 }
 
