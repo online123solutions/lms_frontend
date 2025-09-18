@@ -5,7 +5,8 @@ import "./signup.css";
 import ParticleBackground from "../ParticleBackground"; // Assuming this is a custom or library component
 import { AuthContext } from "../../App";
 
-import logo from "../../assets/logo.png"; // Adjust the path based on your structure
+import logo from "../../assets/logo4.png"; // Adjust the path based on your structure
+import logo1 from "../../assets/logo1.png"; // Adjust the path based on your structure
 
 const Signup = () => {
   const { setIsAuthenticated, setRole, setIsSuperUser } = useContext(AuthContext);
@@ -105,7 +106,7 @@ const Signup = () => {
       {/* Debug log for ParticleBackground */}
       {typeof ParticleBackground === "function" ? (
         <ParticleBackground
-          particleColor="#4a90e2"
+          particleColor="#0ba3e6"
           particleSpeed={0.5}
           style={{ position: "absolute", zIndex: 0, width: "100%", height: "100%" }}
         />
@@ -119,7 +120,7 @@ const Signup = () => {
           <div className="form-panel">
             <div className="logo-container">
               {logo ? (
-                <img src={logo} alt="Company Logo" className="signup-logo" onError={(e) => console.log("Image load error:", e)} />
+                <img src={logo1} alt="Company Logo" className="signup-logo" onError={(e) => console.log("Image load error:", e)} />
               ) : (
                 <img src="/assets/logo.jpg" alt="Company Logo" className="signup-logo" onError={(e) => console.log("Image load error:", e)} />
               )}
