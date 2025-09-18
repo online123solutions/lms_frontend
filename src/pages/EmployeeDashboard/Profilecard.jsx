@@ -74,11 +74,11 @@ const ProfileCard = ({ username }) => {
         className="background-pic"
         alt="Background"
       />
-      {/* <img
+      <img
         src={data?.profile?.profile_pic || "https://via.placeholder.com/80"}
         alt="Profile"
         className="profile-pic"
-      /> */}
+      />
       <h4>{data?.profile?.name || "Employee"}</h4>
       <p className="location">Department - {data?.profile?.department || "-"}</p>
       <p className="location">Designation - {data?.profile?.designation || "-"}</p>
@@ -396,7 +396,7 @@ const UpdatesCard = ({ data }) => {
       <h3 style={{ color: "#333", marginBottom: "15px" }}>Latest Updates</h3>
       <ul style={{ listStyle: "none", padding: 0 }}>
         {updates.map((update, index) => (
-          <li key={index} style={{ marginBottom: "15px", color: "#666" }}>
+          <li key={index} style={{ marginBottom: "15px", color: "black" }}>
             <strong>{update.type}:</strong> {update.message} <br />
             <span style={{ fontSize: "12px", color: "#6b7280" }}>
               Ends on: {formatDate(update.endDate)}

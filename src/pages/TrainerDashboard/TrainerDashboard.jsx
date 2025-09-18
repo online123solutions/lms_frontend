@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { fetchTrainerDashboard } from "../../api/trainerAPIservice";
 import { logout } from "../../api/apiservice";
-import { Dropdown} from "react-bootstrap";
+import { Dropdown } from "react-bootstrap";
 // import "../../utils/css/Trainer CSS/TrainerDashboard.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Loader from "../../UIcomponents/dashboard/loader";
@@ -41,14 +41,12 @@ const TeacherDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showSettingsDropdown, setShowSettingsDropdown] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
   const username = localStorage.getItem("username") || "";
   const isAuthenticated = localStorage.getItem("isAuthenticated");
   const name = data?.profile?.name || (username ? username : "Trainer");
   const initial = useMemo(() => (username ? username[0].toUpperCase() : "T"), [username]);
-  const handleDropdownToggle = () => setShowDropdown((s) => !s);
 
   useEffect(() => {
     localStorage.setItem("activeContent", activeContent);
@@ -93,13 +91,13 @@ const TeacherDashboard = () => {
   const handleChangePassword = () => {
     // Logic for changing password
     console.log("Change Password clicked");
-    setShowSettingsDropdown(false);
+    setShowDropdown(false);
   };
 
   const handleUpdateProfile = () => {
     // Logic for updating profile
     console.log("Update Profile clicked");
-    setShowSettingsDropdown(false);
+    setShowDropdown(false);
   };
 
   const renderContent = () => {
@@ -196,21 +194,22 @@ const TeacherDashboard = () => {
 
         {/* Settings and Logout at the bottom */}
         <div className="sidebar-bottom-section">
-          <div className="sidebar-item" onClick={() => setShowSettingsDropdown(!showSettingsDropdown)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setShowSettingsDropdown(!showSettingsDropdown); }} title={isCollapsed ? "Settings" : undefined}>
-            <i className="bi bi-gear sidebar-icon" />
+          <div className="sidebar-item" onClick={() => setShowDropdown(!showDropdown)}>
+            <i className="bi bi-gear sidebar-icon"></i>
             {!isCollapsed && <span className="sidebar-text">Settings</span>}
-            {showSettingsDropdown && !isCollapsed && (
-              <Dropdown show={showDropdown} onToggle={handleDropdownToggle}>
-            <Dropdown.Toggle className="grey" id="dropdown-basic">
-              <i className="bi bi-gear"></i>
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              <Dropdown.Item href="#/profile">Profile</Dropdown.Item>
-              <Dropdown.Item href="#/my-reflections">Change Password</Dropdown.Item>
-              <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-            )}
+            <Dropdown show={showDropdown} onToggle={() => setShowDropdown(!showDropdown)} className="settings-dropdown">
+              <Dropdown.Menu align="end" className="bg-gray-800 text-white rounded-lg shadow-lg">
+                <Dropdown.Item as={Link} to="#/profile" className="hover:bg-gray-700 py-2 px-4">
+                  Profile
+                </Dropdown.Item>
+                <Dropdown.Item as={Link} to="#/my-reflections" className="hover:bg-gray-700 py-2 px-4" onClick={handleChangePassword}>
+                  Change Password
+                </Dropdown.Item>
+                {/* <Dropdown.Item onClick={handleLogout} className="hover:bg-gray-700 py-2 px-4">
+                  Logout
+                </Dropdown.Item> */}
+              </Dropdown.Menu>
+            </Dropdown>
           </div>
 
           <div

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { fetchAdminDashboard } from '../../api/adminAPIservice';
 import { logout } from '../../api/apiservice';
@@ -13,6 +13,7 @@ import MacroPlanner from './MacroPlanner';
 import MicroPlanner from './MicroPlanner';
 import TrainingReport from './TrainingReport';
 import AdminAssessmentReports from './AssessmentReport';
+import { Dropdown } from 'react-bootstrap';
 
 const MENU = [
   { label: 'Dashboard', key: 'dashboard', icon: 'bi-house' },
@@ -37,6 +38,7 @@ const AdminDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const isAuthenticated = localStorage.getItem('isAuthenticated');
   const name = data?.profile?.name || (username ? username : 'Admin');
@@ -159,7 +161,24 @@ const AdminDashboard = () => {
             </div>
           ))}
         </div>
-        <div className="logout-section">
+        <div className="sidebar-bottom-section">
+          <div className="sidebar-item" onClick={() => setShowDropdown(!showDropdown)}>
+            <i className="bi bi-gear sidebar-icon"></i>
+            {!isCollapsed && <span className="sidebar-text">Settings</span>}
+            <Dropdown show={showDropdown} onToggle={() => setShowDropdown(!showDropdown)} className="settings-dropdown">
+              <Dropdown.Menu align="end" className="bg-gray-800 text-white rounded-lg shadow-lg">
+                <Dropdown.Item as={Link} to="#/profile" className="hover:bg-gray-700 py-2 px-4">
+                  Profile
+                </Dropdown.Item>
+                <Dropdown.Item as={Link} to="#/my-reflections" className="hover:bg-gray-700 py-2 px-4">
+                  Change Password
+                </Dropdown.Item>
+                {/* <Dropdown.Item onClick={handleLogout} className="hover:bg-gray-700 py-2 px-4">
+                  Logout
+                </Dropdown.Item> */}
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
           <div
             className="sidebar-item"
             onClick={handleLogout}

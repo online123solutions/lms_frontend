@@ -11,6 +11,7 @@ import {
 import { useState, useEffect } from "react";
 import { fetchEmployeeDashboard } from "../../api/employeeAPIservice";
 import { Dropdown } from "react-bootstrap";
+import "../../index.css";
 
 ChartJS.register(
   BarElement,
@@ -102,18 +103,18 @@ const AssessmentReport = () => {
       {
         label: "Employee Marks",
         data: employeeMarks,
-        backgroundColor: "rgba(75, 192, 192, 0.8)",
+        backgroundColor: "#b497d6",
       },
-      {
-        label: "Average Marks",
-        data: averageMarks,
-        backgroundColor: "rgba(153, 102, 255, 0.8)",
-      },
-      {
-        label: "Highest Marks",
-        data: highestMarks,
-        backgroundColor: "rgba(255, 159, 64, 0.8)",
-      },
+      // {
+      //   label: "Average Marks",
+      //   data: averageMarks,
+      //   backgroundColor: "rgba(153, 102, 255, 0.8)",
+      // },
+      // {
+      //   label: "Highest Marks",
+      //   data: highestMarks,
+      //   backgroundColor: "rgba(255, 159, 64, 0.8)",
+      // },
     ],
   };
 

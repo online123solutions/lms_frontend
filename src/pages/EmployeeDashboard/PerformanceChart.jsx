@@ -67,9 +67,9 @@ const PerformanceChart = () => {
   const chartData = {
     labels: chartLabels,
     datasets: [
-      { label: "Student Marks", data: studentMarks, backgroundColor: "rgba(75, 192, 192, 0.8)" },
-      { label: "Average Marks", data: averageMarks, backgroundColor: "rgba(153, 102, 255, 0.8)" },
-      { label: "Highest Marks", data: highestMarks, backgroundColor: "rgba(255, 159, 64, 0.8)" },
+      { label: "Student Marks", data: studentMarks, backgroundColor: "#b497d6" },
+      // { label: "Average Marks", data: averageMarks, backgroundColor: "rgba(153, 102, 255, 0.8)" },
+      // { label: "Highest Marks", data: highestMarks, backgroundColor: "rgba(255, 159, 64, 0.8)" },
     ],
   };
 

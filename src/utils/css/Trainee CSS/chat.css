@@ -228,3 +228,131 @@
 .qc-top-actions .btn-outline:hover{
   background: rgba(255,255,255,0.16);
 }
+
+.query-options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  text-align: center;
+}
+
+.query-options {
+  display: flex;
+  flex-direction: column;
+  height: 70vh; /* Use viewport height to center vertically */
+  padding: 20px;
+  text-align: center;
+}
+
+.options-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px; /* Space between buttons */
+}
+
+.btn-option {
+  margin: 10px 0;
+  padding: 10px 20px;
+  font-size: 18px;
+  background-color: #0ba3e6;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 180px; /* Fixed width for uniformity */
+}
+
+.btn-option:hover {
+  background-color: #393939;
+}
+
+.selected-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  text-align: center;
+}
+
+.btn-back {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #393939;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-back:hover {
+  background-color: #393939;
+}
+
+.loading-state {
+  padding: 10px;
+  text-align: center;
+  color: #666;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
+
+.query-chat-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.query-list {
+  flex: 1;
+  max-width: 300px;
+  overflow-y: auto;
+}
+
+.chat-main {
+  flex: 2;
+  padding: 10px;
+}
+
+.feedback-section {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.feedback-form .form-group {
+  margin-bottom: 15px;
+}
+
+.feedback-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.feedback-form input[type="number"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.feedback-form .actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.success-message {
+  color: #28a745;
+  background-color: #d4edda;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  text-align: center;
+}

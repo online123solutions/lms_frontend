@@ -436,7 +436,7 @@ const UpdatesCard = ({ data }) => {
       <h3 style={{ color:"#333", marginBottom:"12px" }}>Latest Updates</h3>
       <ul>
         {updates.map((update, index) => (
-          <li key={index} style={{ color:"#666" }}>
+          <li key={index} style={{ color:"black" }}>
             <strong style={{ fontSize:"18px"}}>{update.type}:</strong> {update.message} <br />
             <span style={{ fontSize:"14px", color:"#6b7280" }}>
               Ends on: {formatDate(update.endDate)}

@@ -121,8 +121,8 @@ const EmployeeLoginActivity = ({ setActiveContent }) => {
         {
           label: "Login Count",
           data,
-          backgroundColor: "rgba(75, 192, 192, 0.6)",
-          borderColor: "rgba(75, 192, 192, 1)",
+          backgroundColor: "#b497d6",
+          borderColor: "#b497d6",
           borderWidth: 1,
         },
       ],

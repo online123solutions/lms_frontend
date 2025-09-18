@@ -17,7 +17,7 @@ import MacroPlanner from "./MacroPlanner";
 import MicroPlanner from "./MicroPlanner";
 import TraineeNotificationPage from "./TraineeNotification";
 import logoSO from "../../assets/logo4.png"; 
-import { Dropdown} from "react-bootstrap";
+import { Dropdown } from "react-bootstrap";
 
 const TraineeDashboard = () => {
   const [data, setData] = useState(null);
@@ -27,9 +27,7 @@ const TraineeDashboard = () => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0); 
-  const [showSettingsDropdown, setShowSettingsDropdown] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const handleDropdownToggle = () => setShowDropdown((s) => !s);
 
   const username = localStorage.getItem("username") || "";
   const isAuthenticated = localStorage.getItem("isAuthenticated");
@@ -223,8 +221,8 @@ const TraineeDashboard = () => {
               const labelMap = {
                 dashboard: "Dashboard",
                 subjects: "Subjects",
-                macroplanner: "Macro Planner",
-                microplanner: "Micro Planner",
+                macroplanner: "Road map",
+                microplanner: "Planner",
                 quizzes: "Assessments",
                 assessment: "Assessment Report",
                 notifications: "Notifications",
@@ -262,43 +260,36 @@ const TraineeDashboard = () => {
             })}
           </div>
 
-          {/* Settings and Logout at the bottom */}
-        <div className="sidebar-bottom-section">
-          <div className="sidebar-item" onClick={() => setShowSettingsDropdown(!showSettingsDropdown)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") setShowSettingsDropdown(!showSettingsDropdown); }} title={isCollapsed ? "Settings" : undefined}>
-            <i className="bi bi-gear sidebar-icon" />
-            {!isCollapsed && <span className="sidebar-text">Settings</span>}
-            {showSettingsDropdown && !isCollapsed && (
-              <Dropdown show={showDropdown} onToggle={handleDropdownToggle}>
-            <Dropdown.Toggle className="grey" id="dropdown-basic">
-              <i className="bi bi-gear"></i>
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              <Dropdown.Item href="#/profile">Profile</Dropdown.Item>
-              <Dropdown.Item href="#/my-reflections">Change Password</Dropdown.Item>
-              <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-            )}
-          </div>
+          <div className="sidebar-bottom-section">
+            <div className="sidebar-item" onClick={() => setShowDropdown(!showDropdown)}>
+              <i className="bi bi-gear sidebar-icon"></i>
+              {!isCollapsed && <span className="sidebar-text">Settings</span>}
+              <Dropdown show={showDropdown} onToggle={() => setShowDropdown(!showDropdown)} className="settings-dropdown">
+                <Dropdown.Menu align="end" className="bg-gray-800 text-white rounded-lg shadow-lg">
+                  <Dropdown.Item as={Link} to="#/profile" className="hover:bg-gray-700 py-2 px-4">
+                    Profile
+                  </Dropdown.Item>
+                  <Dropdown.Item as={Link} to="#/my-reflections" className="hover:bg-gray-700 py-2 px-4">
+                    Change Password
+                  </Dropdown.Item>
+                  {/* <Dropdown.Item onClick={handleLogout} className="hover:bg-gray-700 py-2 px-4">
+                    Logout
+                  </Dropdown.Item> */}
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
 
-          <div
-            className="sidebar-item"
-            onClick={handleLogout}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleLogout(); }}
-          >
-            <i className="bi bi-box-arrow-right sidebar-icon"></i>
-            {!isCollapsed && <span className="sidebar-text">Logout</span>}
-          </div>
-        </div>
-
-          {/* <div className="logout-section">
-            <div className="sidebar-item" onClick={handleLogout}>
+            <div
+              className="sidebar-item"
+              onClick={handleLogout}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleLogout(); }}
+            >
               <i className="bi bi-box-arrow-right sidebar-icon"></i>
               {!isCollapsed && <span className="sidebar-text">Logout</span>}
             </div>
-          </div> */}
+          </div>
         </div>
 
         <div

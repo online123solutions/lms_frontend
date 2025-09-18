@@ -1,8 +1,8 @@
-import { useEffect, useState ,useCallback} from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import Card from "../../UIcomponents/dashboard/card";
-import { fetchEmployeeDashboard,mediaUrl,fetchEmployeeNotifications } from "../../api/employeeAPIservice";
+import { fetchEmployeeDashboard, mediaUrl, fetchEmployeeNotifications } from "../../api/employeeAPIservice";
 import { logout } from "../../api/apiservice";
 import "../../utils/css/sidebar.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -17,6 +17,7 @@ import MacroPlanner from "./MacroPlanner";
 import MicroPlanner from "./MicroPlanner";
 import EmployeeNotificationsPage from "./EmployeeNotification";
 import logoSO from "../../assets/logo4.png"; 
+import { Dropdown } from "react-bootstrap";
 
 const EmployeeDashboard = () => {
   const [data, setData] = useState(null);
@@ -26,6 +27,7 @@ const EmployeeDashboard = () => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0); 
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const username = localStorage.getItem("username") || "";
   const isAuthenticated = localStorage.getItem("isAuthenticated");
@@ -218,12 +220,12 @@ const EmployeeDashboard = () => {
               const labelMap = {
                 dashboard: "Dashboard",
                 subjects: "Subjects",
-                macroplanner: "Macro Planner",
-                microplanner: "Micro Planner",
+                macroplanner: "Road Map",
+                microplanner: "Planner",
                 quizzes: "Assessments",
                 assessment: "Assessment Report",
                 notifications: "Notifications",
-                queries: "Trainee Queries",
+                queries: "Queries",
                 loginActivity: "Login Activity",
               };
               const iconMap = {
@@ -256,8 +258,32 @@ const EmployeeDashboard = () => {
             })}
           </div>
 
-          <div className="logout-section">
-            <div className="sidebar-item" onClick={handleLogout}>
+          <div className="sidebar-bottom-section">
+            <div className="sidebar-item" onClick={() => setShowDropdown(!showDropdown)}>
+              <i className="bi bi-gear sidebar-icon"></i>
+              {!isCollapsed && <span className="sidebar-text">Settings</span>}
+              <Dropdown show={showDropdown} onToggle={() => setShowDropdown(!showDropdown)} className="settings-dropdown">
+                <Dropdown.Menu align="end" className="bg-gray-800 text-white rounded-lg shadow-lg">
+                  <Dropdown.Item as={Link} to="#/profile" className="hover:bg-gray-700 py-2 px-4">
+                    Profile
+                  </Dropdown.Item>
+                  <Dropdown.Item as={Link} to="#/my-reflections" className="hover:bg-gray-700 py-2 px-4">
+                    Change Password
+                  </Dropdown.Item>
+                  {/* <Dropdown.Item onClick={handleLogout} className="hover:bg-gray-700 py-2 px-4">
+                    Logout
+                  </Dropdown.Item> */}
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+
+            <div
+              className="sidebar-item"
+              onClick={handleLogout}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleLogout(); }}
+            >
               <i className="bi bi-box-arrow-right sidebar-icon"></i>
               {!isCollapsed && <span className="sidebar-text">Logout</span>}
             </div>
