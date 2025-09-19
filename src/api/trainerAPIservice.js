@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ok, fail } from "./apiHelpers";
 
-const BASE_URL = "http://localhost:8000/trainer";
+const BASE_URL = "https://steel.study/trainer";
 
 export const apiClient = axios.create({
   baseURL: BASE_URL,
