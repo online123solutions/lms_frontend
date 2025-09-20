@@ -10,29 +10,30 @@ import "../../index.css"
 
 const MicroPlanner = () => {
   const [planners, setPlanners] = useState([]);
-  const [months, setMonths] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [currentPlanner, setCurrentPlanner] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dayModulePairs, setDayModulePairs] = useState([{ day: "", module: "" }]);
 
+  // NEW: filter by week instead of month
+  const [selectedWeek, setSelectedWeek] = useState("");
+
   const monthOptions = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January","February","March","April","May","June",
+    "July","August","September","October","November","December"
   ];
 
   const weekOptions = ["Week 1", "Week 2", "Week 3", "Week 4"];
 
   const departmentOptions = [
-    "HR", "IT", "Finance", "Marketing", "Sales",
-    "Operations", "Support", "Training", "Development", "Design"
+    "HR","IT","Finance","Marketing","Sales",
+    "Operations","Support","Training","Development","Design"
   ];
 
   const modeOptions = ["Theoretical", "Practical"];
   const dayOptions = [
-    "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+    "Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"
   ];
 
   useEffect(() => {
@@ -41,8 +42,6 @@ const MicroPlanner = () => {
         const result = await fetchMicroPlanner();
         if (result.success) {
           setPlanners(result.data);
-          const uniqueMonths = [...new Set(result.data.map((p) => p.month))];
-          setMonths(uniqueMonths);
         } else {
           setError("Failed to fetch microplanner data.");
         }
@@ -80,9 +79,7 @@ const MicroPlanner = () => {
     setDayModulePairs([{ day: "", module: "" }]);
   };
 
-  const addPair = () => {
-    setDayModulePairs([...dayModulePairs, { day: "", module: "" }]);
-  };
+  const addPair = () => setDayModulePairs([...dayModulePairs, { day: "", module: "" }]);
 
   const removePair = (index) => {
     const updatedPairs = dayModulePairs.filter((_, i) => i !== index);
@@ -119,17 +116,13 @@ const MicroPlanner = () => {
       mode: form.elements.mode.value,
     };
 
-    let result = currentPlanner
+    const result = currentPlanner
       ? await updateMicroPlanner(newPlanner)
       : await addMicroPlanner(newPlanner);
 
     if (result.success) {
       const updatedData = await fetchMicroPlanner();
-      if (updatedData.success) {
-        setPlanners(updatedData.data);
-        const uniqueMonths = [...new Set(updatedData.data.map((p) => p.month))];
-        setMonths(uniqueMonths);
-      }
+      if (updatedData.success) setPlanners(updatedData.data);
       handleCloseModal();
     } else {
       console.error("Failed to save microplanner:", result.error);
@@ -138,8 +131,9 @@ const MicroPlanner = () => {
     setLoading(false);
   };
 
+  // UPDATED: filter by selectedWeek
   const filteredPlanners = planners.filter((p) =>
-    selectedMonth ? p.month === selectedMonth : true
+    selectedWeek ? p.week === selectedWeek : true
   );
 
   return (
@@ -148,18 +142,21 @@ const MicroPlanner = () => {
         <h2 className="fw-bold text-white">
           <i className="bi bi-calendar-check" style={{ color: "#FFFFFF" }}></i> Planner
         </h2>
+
+        {/* UPDATED: Week filter dropdown */}
         <Form.Select
           className="w-auto border-success shadow-sm"
-          onChange={(e) => setSelectedMonth(e.target.value)}
-          value={selectedMonth}
+          onChange={(e) => setSelectedWeek(e.target.value)}
+          value={selectedWeek}
         >
-          <option value="">All Months</option>
-          {monthOptions.map((month) => (
-            <option key={month} value={month}>
-              {month}
+          <option value="">All Weeks</option>
+          {weekOptions.map((week) => (
+            <option key={week} value={week}>
+              {week}
             </option>
           ))}
         </Form.Select>
+
         <Button
           variant="info micro-btn"
           onClick={() => handleShowModal()}
@@ -194,7 +191,9 @@ const MicroPlanner = () => {
                 filteredPlanners.map((planner) => {
                   const days = planner.days ? planner.days.split(",").map((d) => d.trim()) : [];
                   const modules = Array.isArray(planner.name_of_topic) ? planner.name_of_topic : [];
-                  const dayModuleList = days.map((day, index) => `${day}: ${modules[index] || "N/A"}`).join(", ");
+                  const dayModuleList = days
+                    .map((day, index) => `${day}: ${modules[index] || "N/A"}`)
+                    .join(", ");
                   return (
                     <tr key={planner.id}>
                       <td>{planner.month}</td>
@@ -218,7 +217,7 @@ const MicroPlanner = () => {
               ) : (
                 <tr>
                   <td colSpan="7" className="text-center text-muted">
-                    No Microplanner found for selected month.
+                    No Microplanner found for selected week.
                   </td>
                 </tr>
               )}
@@ -322,7 +321,10 @@ const MicroPlanner = () => {
                 required
               >
                 <option value="">Select Department</option>
-                {departmentOptions.map((dept) => (
+                {[
+                  "HR","IT","Finance","Marketing","Sales",
+                  "Operations","Support","Training","Development","Design"
+                ].map((dept) => (
                   <option key={dept} value={dept}>{dept}</option>
                 ))}
               </Form.Select>
@@ -347,7 +349,7 @@ const MicroPlanner = () => {
                 required
               >
                 <option value="">Select Mode</option>
-                {modeOptions.map((mode) => (
+                {["Theoretical","Practical"].map((mode) => (
                   <option key={mode} value={mode}>{mode}</option>
                 ))}
               </Form.Select>
