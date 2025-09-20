@@ -148,7 +148,7 @@ export const saveQuizResult = async (id, payload) => {
 };
 
 export const trainerClient = axios.create({
-  baseURL: "http://lms.steel.study/trainer",
+  baseURL: "https://lms.steel.study/trainer",
   headers: { "Content-Type": "application/json", Accept: "application/json" },
 });
 
