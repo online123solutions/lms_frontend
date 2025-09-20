@@ -95,7 +95,7 @@ const QuizComponent = ({ setActiveContent }) => {
       const token = localStorage.getItem("authToken");
 
       const response = await axios.post(
-        `http://127.0.0.1:8000/quiz/${quizId}/save/`,
+        `https://lms.steel.study/quiz/${quizId}/save/`,
         answersMap,
         {
           headers: {
