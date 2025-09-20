@@ -92,7 +92,7 @@ const styles = {
     gap: "16px",
   },
   button: {
-    backgroundColor: "#7E57C2",
+    backgroundColor: "#393939",
     color: "white",
     padding: "12px 24px",
     border: "none",
@@ -101,7 +101,7 @@ const styles = {
     fontSize: "16px",
   },
   reportButton: {
-    backgroundColor: "#FF9800",
+    backgroundColor: "#f78da7",
     color: "white",
     padding: "12px 24px",
     border: "none",
