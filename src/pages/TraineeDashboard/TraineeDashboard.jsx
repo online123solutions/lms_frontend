@@ -268,7 +268,7 @@ const TraineeDashboard = () => {
               const labelMap = {
                 dashboard: "Dashboard",
                 subjects: "Subjects",
-                macroplanner: "Road map",
+                macroplanner: "Road Map",
                 microplanner: "Planner",
                 quizzes: "Assessments",
                 assessment: "Assessment Report",

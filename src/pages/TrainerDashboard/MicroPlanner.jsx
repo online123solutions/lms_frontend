@@ -146,7 +146,7 @@ const MicroPlanner = () => {
     <div className="macro-planner container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-4 header">
         <h2 className="fw-bold text-white">
-          <i className="bi bi-calendar-check" style={{ color: "#FFFFFF" }}></i> Micro Planner
+          <i className="bi bi-calendar-check" style={{ color: "#FFFFFF" }}></i> Planner
         </h2>
         <Form.Select
           className="w-auto border-success shadow-sm"
@@ -165,7 +165,7 @@ const MicroPlanner = () => {
           onClick={() => handleShowModal()}
           className="shadow-sm"
         >
-          <i className="bi bi-plus-circle me-2"></i>Add MicroPlanner
+          <i className="bi bi-plus-circle me-2"></i>Add Planner
         </Button>
       </div>
 

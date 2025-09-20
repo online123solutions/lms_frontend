@@ -107,7 +107,7 @@ const MacroPlanner = () => {
   return (
     <div className="macro-planner container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="fw-bold text-primary">📅 Macro Planner</h2>
+        <h2 className="fw-bold text-primary">📅 Road Map</h2>
         <Form.Select
           className="w-auto border-primary shadow-sm"
           onChange={(e) => setSelectedWeek(e.target.value)}
@@ -125,7 +125,7 @@ const MacroPlanner = () => {
           onClick={() => handleShowModal()}
           className="shadow-sm"
         >
-          <i className="bi bi-plus-circle me-2"></i>Add MacroPlanner
+          <i className="bi bi-plus-circle me-2"></i>Add Road Map
         </Button>
       </div>
 

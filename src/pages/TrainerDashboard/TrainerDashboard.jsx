@@ -21,8 +21,8 @@ import logoS from "../../assets/logo4.png";
 const MENU = [
   { label: "Dashboard", key: "dashboard", icon: "bi-house" },
   { label: "Curriculum", key: "curriculum", icon: "bi-book" },
-  { label: "Macro Planner", key: "macroPlanner", icon: "bi-calendar" },
-  { label: "Micro Planner", key: "microPlanner", icon: "bi-calendar-check" },
+  { label: "Road Map", key: "macroPlanner", icon: "bi-calendar" },
+  { label: "Planner", key: "microPlanner", icon: "bi-calendar-check" },
   { label: "Training Report", key: "report", icon: "bi-file-earmark-bar-graph" },
   { label: "Assessment Report", key: "assessmentReport", icon: "bi-graph-up" },
   { label: "Notifications", key: "notifications", icon: "bi-bell" },
