@@ -51,7 +51,7 @@ const styles = {
     padding: "16px",
     borderRadius: "50%",
     fontSize: "32px",
-    color: "#7E57C2",
+    color: "#0ba3e6",
   },
   star: {
     position: "absolute",

@@ -20,7 +20,7 @@ const QuestionCard = ({ question, options, questionNumber, timeLeft, onOptionSel
       {/* Header */}
       <div
         style={{
-          backgroundColor: "#8b5cf6",
+          backgroundColor: "#393939",
           color: "white",
           fontSize: "18px",
           fontWeight: "bold",
@@ -64,13 +64,13 @@ const QuestionCard = ({ question, options, questionNumber, timeLeft, onOptionSel
               height: "34px",
               minWidth: "34px",
               borderRadius: "50%",
-              backgroundColor: selectedOption === index ? "#7c3aed" : "#e9d5ff",
+              backgroundColor: selectedOption === index ? "#393939" : "#e9d5ff",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
               fontSize: "14px",
               fontWeight: "bold",
-              color: selectedOption === index ? "white" : "#7c3aed",
+              color: selectedOption === index ? "white" : "#393939",
             }}
           >
             {String.fromCharCode(65 + index)}

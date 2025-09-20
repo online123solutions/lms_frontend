@@ -21,7 +21,7 @@ const QuizCard = ({ quiz, onClick, noOfQuestions, timeLimit }) => {
       {/* Header */}
       <div
         style={{
-          backgroundColor: "#8b5cf6",
+          backgroundColor: "#0ba3e6",
           color: "white",
           fontSize: "18px",
           fontWeight: "bold",
@@ -69,14 +69,14 @@ const QuizCard = ({ quiz, onClick, noOfQuestions, timeLimit }) => {
       </div>
 
       {/* Quiz Time */}
-      <div style={{ color: "#8b5cf6", fontSize: "14px", fontWeight: "bold", display: "flex", alignItems: "center", justifyContent: "center", gap: "5px", marginBottom: "12px" }}>
+      <div style={{ color: "#0ba3e6", fontSize: "14px", fontWeight: "bold", display: "flex", alignItems: "center", justifyContent: "center", gap: "5px", marginBottom: "12px" }}>
         ⏳ Quiz Time: {timeLimit} minutes
       </div>
 
       {/* Button */}
       <button
         style={{
-          backgroundColor: "#8b5cf6",
+          backgroundColor: "#0ba3e6",
           color: "white",
           border: "none",
           padding: "12px",
