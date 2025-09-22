@@ -254,7 +254,7 @@ const TeacherDashboard = () => {
                 <Dropdown.Item as={Link} to="#/profile" className="hover:bg-gray-700 py-2 px-4">
                   Profile
                 </Dropdown.Item>
-                <Dropdown.Item as={Link} to="#/my-reflections" className="hover:bg-gray-700 py-2 px-4" onClick={() => setShowResetRequestModal(true)}>
+                <Dropdown.Item className="hover:bg-gray-700 py-2 px-4" onClick={() => setShowResetRequestModal(true)}>
                   Change Password
                 </Dropdown.Item>
                 {/* <Dropdown.Item onClick={handleLogout} className="hover:bg-gray-700 py-2 px-4">
