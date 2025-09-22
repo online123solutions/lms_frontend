@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate ,Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { fetchTrainerDashboard } from "../../api/trainerAPIservice";
-import { logout } from "../../api/apiservice";
+import { logout,requestPasswordReset, confirmPasswordReset } from "../../api/apiservice";
 import { Dropdown } from "react-bootstrap";
 // import "../../utils/css/Trainer CSS/TrainerDashboard.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -48,6 +48,17 @@ const TeacherDashboard = () => {
   const name = data?.profile?.name || (username ? username : "Trainer");
   const initial = useMemo(() => (username ? username[0].toUpperCase() : "T"), [username]);
 
+  // Password Reset States
+    const [showResetRequestModal, setShowResetRequestModal] = useState(false);
+    const [resetEmail, setResetEmail] = useState("");
+    const [resetRequestMessage, setResetRequestMessage] = useState("");
+    const [showResetConfirmModal, setShowResetConfirmModal] = useState(false);
+    const [uidb64, setUidb64] = useState("");
+    const [token, setToken] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [resetConfirmMessage, setResetConfirmMessage] = useState("");
+
   useEffect(() => {
     localStorage.setItem("activeContent", activeContent);
   }, [activeContent]);
@@ -88,11 +99,40 @@ const TeacherDashboard = () => {
     }
   }, [navigate]);
 
-  const handleChangePassword = () => {
-    // Logic for changing password
-    console.log("Change Password clicked");
-    setShowDropdown(false);
-  };
+  const handleResetRequest = async (e) => {
+      e.preventDefault();
+      try {
+        const result = await requestPasswordReset({ email: resetEmail });
+        if (result.success) {
+          setResetRequestMessage("Password reset email sent successfully. Check your inbox.");
+        } else {
+          setResetRequestMessage(`Error: ${result.error || "Failed to send reset email."}`);
+        }
+      } catch (e) {
+        setResetRequestMessage(`Error: ${e.message || "Failed to send reset email."}`);
+      }
+    };
+  
+    const handleResetConfirm = async (e) => {
+      e.preventDefault();
+      if (newPassword !== confirmPassword) {
+        setResetConfirmMessage("Passwords do not match.");
+        return;
+      }
+      try {
+        const result = await confirmPasswordReset({ uidb64, token, new_password: newPassword });
+        if (result.success) {
+          setResetConfirmMessage("Password reset successfully. You can now log in.");
+          setTimeout(() => {
+            window.location.href = "/login";
+          }, 2000);
+        } else {
+          setResetConfirmMessage(`Error: ${result.error || "Failed to reset password."}`);
+        }
+      } catch (e) {
+        setResetConfirmMessage(`Error: ${e.message || "Failed to reset password."}`);
+      }
+    };
 
   const handleUpdateProfile = () => {
     // Logic for updating profile
@@ -202,7 +242,7 @@ const TeacherDashboard = () => {
                 <Dropdown.Item as={Link} to="#/profile" className="hover:bg-gray-700 py-2 px-4">
                   Profile
                 </Dropdown.Item>
-                <Dropdown.Item as={Link} to="#/my-reflections" className="hover:bg-gray-700 py-2 px-4" onClick={handleChangePassword}>
+                <Dropdown.Item as={Link} to="#/my-reflections" className="hover:bg-gray-700 py-2 px-4" onClick={() => setShowResetRequestModal(true)}>
                   Change Password
                 </Dropdown.Item>
                 {/* <Dropdown.Item onClick={handleLogout} className="hover:bg-gray-700 py-2 px-4">
