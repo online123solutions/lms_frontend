@@ -103,9 +103,9 @@ const TeacherDashboardContent = () => {
             (data.active_users || []).map((user) => ({
               id: user.id,
               username: user.username,
-              full_name: user.profile?.full_name || user.full_name || "",
+              full_name: user.profile?.name || user.full_name || "",
               email: user.email,
-              profile_type: user.profile?.profile_type || user.profile_type || "Unknown",
+              profile_type: user.profile?.profile_type || user.role || "Unknown",
               department: user.profile?.department || user.department || "",
             }))
           );
