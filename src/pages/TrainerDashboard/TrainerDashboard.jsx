@@ -3,7 +3,7 @@ import { useNavigate ,Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { fetchTrainerDashboard } from "../../api/trainerAPIservice";
 import { logout,requestPasswordReset, confirmPasswordReset } from "../../api/apiservice";
-import { Dropdown } from "react-bootstrap";
+import { Dropdown,Button, Modal, Form  } from "react-bootstrap";
 // import "../../utils/css/Trainer CSS/TrainerDashboard.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Loader from "../../UIcomponents/dashboard/loader";
@@ -133,6 +133,18 @@ const TeacherDashboard = () => {
         setResetConfirmMessage(`Error: ${e.message || "Failed to reset password."}`);
       }
     };
+
+    // URL Parameter Handling for Confirmation
+      useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const uid = urlParams.get("uidb64");
+        const tok = urlParams.get("token");
+        if (uid && tok) {
+          setUidb64(uid);
+          setToken(tok);
+          setShowResetConfirmModal(true);
+        }
+      }, []);
 
   const handleUpdateProfile = () => {
     // Logic for updating profile
@@ -264,6 +276,72 @@ const TeacherDashboard = () => {
           </div>
         </div>
       </aside>
+
+      {/* Password Reset Request Modal */}
+        <Modal show={showResetRequestModal} onHide={() => setShowResetRequestModal(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Request Password Reset</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form onSubmit={handleResetRequest}>
+              <Form.Group controlId="resetEmail">
+                <Form.Label>Email Address</Form.Label>
+                <Form.Control
+                  type="email"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                />
+              </Form.Group>
+              <Button variant="primary" type="submit" className="mt-3">
+                Send Reset Email
+              </Button>
+            </Form>
+            {resetRequestMessage && <p className={resetRequestMessage.includes("Error") ? "text-danger" : "text-success"}>{resetRequestMessage}</p>}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowResetRequestModal(false)}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+
+        {/* Password Reset Confirmation Modal */}
+        <Modal show={showResetConfirmModal} onHide={() => setShowResetConfirmModal(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Reset Your Password</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form onSubmit={handleResetConfirm}>
+              <Form.Group controlId="newPassword">
+                <Form.Label>New Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter new password"
+                  required
+                />
+              </Form.Group>
+              <Form.Group controlId="confirmPassword" className="mt-3">
+                <Form.Label>Confirm Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm new password"
+                  required
+                />
+              </Form.Group>
+              <Button variant="primary" type="submit" className="mt-3">
+                Reset Password
+              </Button>
+            </Form>
+            {resetConfirmMessage && <p className={resetConfirmMessage.includes("Error") ? "text-danger" : "text-success"}>{resetConfirmMessage}</p>}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowResetConfirmModal(false)}>Close</Button>
+          </Modal.Footer>
+        </Modal>
 
       <main className="content-panel" style={{ marginLeft: 0, paddingLeft: 0 }}>
         {renderContent()}
