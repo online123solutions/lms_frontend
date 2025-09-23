@@ -280,7 +280,7 @@ const Learning = () => {
             { label: "Video", icon: faVideo, value: "video" },
             { label: "Simulator", icon: faLaptopCode, value: "simulator" },
             { label: "Quiz", icon: faQuestionCircle, value: "quiz" },
-            { label: "Hint", icon: faQuestion, value: "hint" },
+            // { label: "Hint", icon: faQuestion, value: "hint" },
           ].map(({ label, icon, value }) => (
             <button
               key={value}
