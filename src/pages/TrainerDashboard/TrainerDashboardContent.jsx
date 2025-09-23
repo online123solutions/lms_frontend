@@ -20,7 +20,7 @@ import {
 } from "../../api/trainerAPIservice";
 import { logout } from "../../api/apiservice";
 import logoSO from "../../assets/logo1.png";
-import "../../index.css"
+import "../../index.css";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -36,18 +36,48 @@ const normalizeRows = (payload) => {
   return [];
 };
 
-const MEDIA_BASE =
-  process.env.REACT_APP_MEDIA_BASE || // e.g. "http://localhost:8000"
-  process.env.REACT_APP_API_BASE   || // if you already set this
-  ""; // last resort: empty (no prefix)
+// ---- profile picture URL (no envs, no base) --------------------
+const isAbsolute = (url) => /^https?:\/\//i.test(url || "");
 
-const toAbsoluteMediaUrl = (url) => {
+const normalizeMediaPath = (url) => {
   if (!url) return "";
-  if (/^https?:\/\//i.test(url)) return url;        // already absolute
-  if (url.startsWith("/")) return `${MEDIA_BASE}${url}`; // "/media/.."
-  return `${MEDIA_BASE}/${url}`;                    // "media/..", "default_profile.jpg"
+  if (isAbsolute(url)) return url;
+  // "/media/..." | "media/..." | "default_profile.jpg"
+  if (url.startsWith("/media/")) return url;
+  if (url.startsWith("media/")) return `/${url}`;
+  return `/media/${url}`;
 };
 
+/**
+ * Build candidate URLs to try, in order:
+ * 1) the raw relative "/media/..." (works if your web server proxies /media)
+ * 2) absolute on current origin (https://your-frontend/media/...)
+ * 3) if running on port 3000, try backend on port 8000 (http://host:8000/media/...)
+ */
+const buildMediaCandidates = (rawUrl) => {
+  const norm = normalizeMediaPath(rawUrl);
+  if (!norm) return [];
+
+  // If API already returned absolute, just use it
+  if (isAbsolute(norm)) return [norm];
+
+  const { protocol, hostname, port } = window.location;
+  const currentOrigin = `${protocol}//${hostname}${port ? `:${port}` : ""}`;
+
+  const list = [];
+  // 1) raw relative (useful if nginx serves /media on same domain)
+  list.push(norm);
+  // 2) absolute to current origin
+  list.push(`${currentOrigin}${norm}`);
+  // 3) dev helper: if React runs on 3000, try backend on 8000
+  if (port === "3000") {
+    const altOrigin = `${protocol}//${hostname}:8000`;
+    list.push(`${altOrigin}${norm}`);
+  }
+  return list;
+};
+
+// ---- small modal for courses ----
 const CourseModal = ({ show, handleClose, courses }) => (
   <Modal show={show} onHide={handleClose}>
     <Modal.Header closeButton>
@@ -73,7 +103,6 @@ const CourseModal = ({ show, handleClose, courses }) => (
 );
 
 const TeacherDashboardContent = () => {
-  const [showDropdown, setShowDropdown] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState("");
   const [availableMonths, setAvailableMonths] = useState([]);
   const [lmsEngagementData, setLmsEngagementData] = useState([]);
@@ -85,7 +114,13 @@ const TeacherDashboardContent = () => {
   const [courseCount, setCourseCount] = useState(0);
   const [courses, setCourses] = useState([]);
   const [teacherName, setTeacherName] = useState("");
-  const [profilePic, setProfilePic] = useState(""); // <-- NEW: store profile pic URL
+
+  // Profile pic handling (no env)
+  const [profilePicRaw, setProfilePicRaw] = useState("");
+  const [profilePicCandidates, setProfilePicCandidates] = useState([]);
+  const [profilePicIndex, setProfilePicIndex] = useState(0);
+  const profilePic = profilePicCandidates[profilePicIndex] || "";
+
   const [recentActivityData, setRecentActivityData] = useState({
     recent_logins: [],
     recent_homework_submissions: [],
@@ -105,30 +140,37 @@ const TeacherDashboardContent = () => {
         const result = await fetchTrainerDashboard(username);
         if (result.success) {
           const data = result.data;
+
           setTraineeCount(data.trainee_count ?? 0);
           setActiveLearnerCount(data.active_count ?? 0);
           setCourseCount(data.course_count ?? 0);
-          setTeacherName(data.profile?.profile?.name || data.profile?.profile?.full_name || "");
+
+          // Backend you showed is: data.profile.name / data.profile.profile_picture
+          setTeacherName(
+            data.profile?.profile?.name ||
+            data.profile?.name ||
+            data.profile?.profile?.full_name ||
+            ""
+          );
           setCourses(data.courses || []);
-          // Capture profile_pic from common shapes
-          setProfilePic(
-            toAbsoluteMediaUrl(
-              data.profile?.profile?.profile_picture ||
-              data.profile?.profile_picture ||
-              data.profile_picture ||
-              ""
-            )
-          );
-          setActiveLearners(
-            (data.active_users || []).map((user) => ({
-              id: user.id,
-              username: user.username,
-              full_name: user.profile?.name || user.full_name || "",
-              email: user.email,
-              profile_type: user.profile?.profile_type || user.profile_type || "Unknown",
-              department: user.profile?.department || user.department || "",
-            }))
-          );
+
+          // Store raw URL, then compute candidates below
+          const rawPic =
+            data.profile?.profile?.profile_picture ||
+            data.profile?.profile_picture ||
+            data.profile_picture ||
+            "";
+          setProfilePicRaw(rawPic);
+
+          // Active users
+          setActiveLearners((data.active_users || []).map((user) => ({
+            id: user.id,
+            username: user.username,
+            full_name: user.full_name || user.profile?.name || "",
+            email: user.email,
+            profile_type: user.profile_type || user.profile?.profile_type || "Unknown",
+            department: user.department || user.profile?.department || "",
+          })));
         } else {
           console.error("fetchTrainerDashboard error:", result.error);
         }
@@ -138,6 +180,13 @@ const TeacherDashboardContent = () => {
     };
     if (username) loadDashboard();
   }, [username]);
+
+  // Build candidate URLs for the image whenever raw path changes
+  useEffect(() => {
+    const candidates = buildMediaCandidates(profilePicRaw);
+    setProfilePicCandidates(candidates);
+    setProfilePicIndex(0);
+  }, [profilePicRaw]);
 
   // LMS Engagement
   useEffect(() => {
@@ -168,8 +217,7 @@ const TeacherDashboardContent = () => {
       if (!selectedMonth) return;
       const res = await fetchLMSEngagement({ month: selectedMonth });
       if (res.success) {
-        const rows = normalizeRows(res.data);
-        setLmsEngagementData(rows);
+        setLmsEngagementData(normalizeRows(res.data));
       } else {
         console.error("fetchLMSEngagement(month) error:", res.error);
         setLmsEngagementData([]);
@@ -195,9 +243,6 @@ const TeacherDashboardContent = () => {
     loadRecent();
   }, []);
 
-  // Handlers
-  const handleDropdownToggle = () => setShowDropdown((s) => !s);
-  const handleMonthChange = (month) => setSelectedMonth(month);
   const handleActiveLearnersClick = () => setShowActiveLearnersPage(true);
   const handleBackToDashboard = () => setShowActiveLearnersPage(false);
 
@@ -323,13 +368,26 @@ const TeacherDashboardContent = () => {
     return initials;
   };
 
+  // Image error fallback: try next candidate
+  const handleImgError = () => {
+    if (profilePicIndex + 1 < profilePicCandidates.length) {
+      setProfilePicIndex(profilePicIndex + 1);
+    } else {
+      // Exhausted all candidates -> show initials
+      if (profilePic) {
+        // prevent infinite loop
+        setProfilePicIndex(profilePicCandidates.length); 
+      }
+    }
+  };
+
   return (
     <div className="teacher-dashboard-content1">
       <div className="top-bar1">
         <div className="top-bar-left1">
           {[
-            { number: activeLearnerCount, text: "Active Learners", className: "purple", onClick: handleActiveLearnersClick },
-            { number: courseCount, text: "Courses", className: "pink" },
+            { number: activeLearnerCount, text: "Active Learners", className: "purple", onClick: () => setShowActiveLearnersPage(true) },
+            { number: courseCount, text: "Courses", className: "pink", onClick: () => setShowModal(true) },
             { number: traineeCount, text: "Total Trainees", className: "cyan" },
           ].map((item, index) => (
             <div
@@ -348,12 +406,7 @@ const TeacherDashboardContent = () => {
           <img
             src={logoSO}
             alt="Trainer Logo"
-            style={{
-              height: "60px",
-              width: "auto",
-              objectFit: "contain",
-              borderRadius: "8px",
-            }}
+            style={{ height: "60px", width: "auto", objectFit: "contain", borderRadius: "8px" }}
           />
         </div>
 
@@ -363,24 +416,20 @@ const TeacherDashboardContent = () => {
               <img
                 src={profilePic}
                 alt="Profile"
-                style={{
-                  width: "80px",
-                  height: "80px",
-                  objectFit: "cover",
-                  borderRadius: "10px",
-                }}
+                onError={handleImgError}
+                style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 10 }}
               />
             ) : (
               <div
                 style={{
-                  width: "80px",
-                  height: "80px",
+                  width: 80,
+                  height: 80,
                   backgroundColor: "#aeadae",
-                  borderRadius: "10px",
+                  borderRadius: 10,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: "18px",
+                  fontSize: 18,
                   fontWeight: "bold",
                   color: "#fff",
                 }}
@@ -416,18 +465,14 @@ const TeacherDashboardContent = () => {
       </Modal>
 
       {/* Course Modal */}
-      <CourseModal
-        show={showModal}
-        handleClose={() => setShowModal(false)}
-        courses={courses}
-      />
+      <CourseModal show={showModal} handleClose={() => setShowModal(false)} courses={courses} />
 
       {/* Main cards / chart */}
       {showActiveLearnersPage ? (
         <div className="active-learners-page">
           <div className="active-learners-header">
             <h3>Active Learners</h3>
-            <Button variant="secondary" onClick={handleBackToDashboard} style={{ marginBottom: "20px" }}>
+            <Button variant="secondary" onClick={handleBackToDashboard} style={{ marginBottom: 20 }}>
               Back
             </Button>
           </div>
@@ -446,7 +491,7 @@ const TeacherDashboardContent = () => {
                 {activeLearners.map((learner) => (
                   <tr key={learner.id}>
                     <td>{learner.username}</td>
-                    <td>{learner.full_name}</td> {/* <-- fixed */}
+                    <td>{learner.full_name}</td>
                     <td>{learner.email}</td>
                     <td>{learner.profile_type}</td>
                     <td>{learner.department}</td>
@@ -466,7 +511,7 @@ const TeacherDashboardContent = () => {
               <div className="overview-row1">
                 {[
                   { number: courseCount, text: "Courses", className: "pink", onClick: () => setShowModal(true) },
-                  { number: activeLearnerCount, text: "Active Learners", className: "purple", onClick: handleActiveLearnersClick },
+                  { number: activeLearnerCount, text: "Active Learners", className: "purple", onClick: () => setShowActiveLearnersPage(true) },
                 ].map((item, idx) => (
                   <div
                     key={idx}
