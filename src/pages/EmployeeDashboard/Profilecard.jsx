@@ -10,6 +10,7 @@ import Social from "../../UIcomponents/dashboard/Social";
 import PerformanceChart from "./PerformanceChart";
 import BarGraph from "./BarGraph";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import { mediaUrl } from "../../api/traineeAPIservice";
 
 // small helpers
 const formatDate = (iso) => {
@@ -67,18 +68,24 @@ const ProfileCard = ({ username }) => {
   if (loading) return <p>Loading...</p>;
   if (error) return <div>{error}</div>;
 
+  const profilePicRaw =
+      data?.profile?.profile_picture ||
+      data?.profile_picture ||
+      data?.profile?.profile_pic ||
+      data?.profile?.user?.profile_picture ||
+      "";
+  
+    const profilePic = mediaUrl(profilePicRaw) || "https://via.placeholder.com/80";
+  
+
   return (
     <div className="profile-card">
       <img
-        src="https://images.unsplash.com/photo-1723384747376-90f201a3bd55?q=80&w=1971&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        src="https://images.unsplash.com/photo-1723384747376-90f201a3bd55?q=80&w=1971&auto=format&fit=crop"
         className="background-pic"
         alt="Background"
       />
-      <img
-        src={data?.profile?.profile_pic || "https://via.placeholder.com/80"}
-        alt="Profile"
-        className="profile-pic"
-      />
+      <img src={profilePic} alt="Profile" className="profile-pic" />
       <h4>{data?.profile?.name || "Employee"}</h4>
       <p className="location">Department - {data?.profile?.department || "-"}</p>
       <p className="location">Designation - {data?.profile?.designation || "-"}</p>

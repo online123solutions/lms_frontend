@@ -12,6 +12,14 @@ export const apiClient = axios.create({
   },
 });
 
+let CSRF_TOKEN = null;
+
+export async function initCsrf() {
+  const res = await apiClient.get("/account/csrf/"); // sets cookie + returns token
+  CSRF_TOKEN = res.data?.csrfToken || null;
+  return CSRF_TOKEN;
+}
+
 // Attach token to every request
 apiClient.interceptors.request.use(
   (config) => {
@@ -149,13 +157,11 @@ export const saveQuizResult = async (id, payload) => {
 
 export const requestPasswordReset = async (data) => {
   try {
+    if (!getCsrfToken()) await initCsrf();
     const response = await apiClient.post("/account/password-reset/", data, {
-      headers: {
-        "X-CSRFTOKEN": getCsrfToken(), // Ensure CSRF token is included
-      },
-      withCredentials: true, // Use withCredentials instead of credentials for Axios
+      headers: { "X-CSRFToken": getCsrfToken() }, // Django expects this header
     });
-    return response.data; // Return the raw response data as per your backend's format
+    return response.data;
   } catch (error) {
     return { success: false, error: handleError(error, "Failed to request password reset.") };
   }
@@ -163,17 +169,13 @@ export const requestPasswordReset = async (data) => {
 
 export const confirmPasswordReset = async (data) => {
   try {
+    if (!getCsrfToken()) await initCsrf();
     const response = await apiClient.post(
       `/account/password-reset-confirm/${data.uidb64}/${data.token}/`,
       { new_password: data.new_password },
-      {
-        headers: {
-          "X-CSRFTOKEN": getCsrfToken(), // Ensure CSRF token is included
-        },
-        withCredentials: true, // Use withCredentials instead of credentials for Axios
-      }
+      { headers: { "X-CSRFToken": getCsrfToken() } }
     );
-    return response.data; // Return the raw response data as per your backend's format
+    return response.data;
   } catch (error) {
     return { success: false, error: handleError(error, "Failed to confirm password reset.") };
   }

@@ -21,6 +21,7 @@ import {
 import { logout } from "../../api/apiservice";
 import logoSO from "../../assets/logo1.png";
 import "../../index.css";
+import { mediaUrl } from "../../api/traineeAPIservice";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -34,47 +35,6 @@ const normalizeRows = (payload) => {
   if (Array.isArray(payload?.results)) return payload.results;
   if (Array.isArray(payload?.data)) return payload.data;
   return [];
-};
-
-// ---- profile picture URL (no envs, no base) --------------------
-const isAbsolute = (url) => /^https?:\/\//i.test(url || "");
-
-const normalizeMediaPath = (url) => {
-  if (!url) return "";
-  if (isAbsolute(url)) return url;
-  // "/media/..." | "media/..." | "default_profile.jpg"
-  if (url.startsWith("/media/")) return url;
-  if (url.startsWith("media/")) return `/${url}`;
-  return `/media/${url}`;
-};
-
-/**
- * Build candidate URLs to try, in order:
- * 1) the raw relative "/media/..." (works if your web server proxies /media)
- * 2) absolute on current origin (https://your-frontend/media/...)
- * 3) if running on port 3000, try backend on port 8000 (http://host:8000/media/...)
- */
-const buildMediaCandidates = (rawUrl) => {
-  const norm = normalizeMediaPath(rawUrl);
-  if (!norm) return [];
-
-  // If API already returned absolute, just use it
-  if (isAbsolute(norm)) return [norm];
-
-  const { protocol, hostname, port } = window.location;
-  const currentOrigin = `${protocol}//${hostname}${port ? `:${port}` : ""}`;
-
-  const list = [];
-  // 1) raw relative (useful if nginx serves /media on same domain)
-  list.push(norm);
-  // 2) absolute to current origin
-  list.push(`${currentOrigin}${norm}`);
-  // 3) dev helper: if React runs on 3000, try backend on 8000
-  if (port === "3000") {
-    const altOrigin = `${protocol}//${hostname}:8000`;
-    list.push(`${altOrigin}${norm}`);
-  }
-  return list;
 };
 
 // ---- small modal for courses ----
@@ -114,12 +74,7 @@ const TeacherDashboardContent = () => {
   const [courseCount, setCourseCount] = useState(0);
   const [courses, setCourses] = useState([]);
   const [teacherName, setTeacherName] = useState("");
-
-  // Profile pic handling (no env)
-  const [profilePicRaw, setProfilePicRaw] = useState("");
-  const [profilePicCandidates, setProfilePicCandidates] = useState([]);
-  const [profilePicIndex, setProfilePicIndex] = useState(0);
-  const profilePic = profilePicCandidates[profilePicIndex] || "";
+  const [profilePic, setProfilePic] = useState(""); // final resolved URL via mediaUrl
 
   const [recentActivityData, setRecentActivityData] = useState({
     recent_logins: [],
@@ -145,32 +100,33 @@ const TeacherDashboardContent = () => {
           setActiveLearnerCount(data.active_count ?? 0);
           setCourseCount(data.course_count ?? 0);
 
-          // Backend you showed is: data.profile.name / data.profile.profile_picture
           setTeacherName(
             data.profile?.profile?.name ||
-            data.profile?.name ||
-            data.profile?.profile?.full_name ||
-            ""
+              data.profile?.name ||
+              data.profile?.profile?.full_name ||
+              ""
           );
           setCourses(data.courses || []);
 
-          // Store raw URL, then compute candidates below
+          // Resolve trainer profile picture -> mediaUrl
           const rawPic =
             data.profile?.profile?.profile_picture ||
             data.profile?.profile_picture ||
             data.profile_picture ||
             "";
-          setProfilePicRaw(rawPic);
+          setProfilePic(mediaUrl(rawPic) || "");
 
           // Active users
-          setActiveLearners((data.active_users || []).map((user) => ({
-            id: user.id,
-            username: user.username,
-            full_name: user.full_name || user.profile?.name || "",
-            email: user.email,
-            profile_type: user.profile_type || user.profile?.profile_type || "Unknown",
-            department: user.department || user.profile?.department || "",
-          })));
+          setActiveLearners(
+            (data.active_users || []).map((user) => ({
+              id: user.id,
+              username: user.username,
+              full_name: user.full_name || user.profile?.name || "",
+              email: user.email,
+              profile_type: user.profile_type || user.profile?.profile_type || "Unknown",
+              department: user.department || user.profile?.department || "",
+            }))
+          );
         } else {
           console.error("fetchTrainerDashboard error:", result.error);
         }
@@ -180,13 +136,6 @@ const TeacherDashboardContent = () => {
     };
     if (username) loadDashboard();
   }, [username]);
-
-  // Build candidate URLs for the image whenever raw path changes
-  useEffect(() => {
-    const candidates = buildMediaCandidates(profilePicRaw);
-    setProfilePicCandidates(candidates);
-    setProfilePicIndex(0);
-  }, [profilePicRaw]);
 
   // LMS Engagement
   useEffect(() => {
@@ -362,23 +311,8 @@ const TeacherDashboardContent = () => {
     if (!name) return "U";
     const names = name.trim().split(" ");
     let initials = names[0][0].toUpperCase();
-    if (names.length > 1) {
-      initials += names[names.length - 1][0].toUpperCase();
-    }
+    if (names.length > 1) initials += names[names.length - 1][0].toUpperCase();
     return initials;
-  };
-
-  // Image error fallback: try next candidate
-  const handleImgError = () => {
-    if (profilePicIndex + 1 < profilePicCandidates.length) {
-      setProfilePicIndex(profilePicIndex + 1);
-    } else {
-      // Exhausted all candidates -> show initials
-      if (profilePic) {
-        // prevent infinite loop
-        setProfilePicIndex(profilePicCandidates.length); 
-      }
-    }
   };
 
   return (
@@ -416,7 +350,7 @@ const TeacherDashboardContent = () => {
               <img
                 src={profilePic}
                 alt="Profile"
-                onError={handleImgError}
+                onError={() => setProfilePic("")} // if 404, show initials
                 style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 10 }}
               />
             ) : (

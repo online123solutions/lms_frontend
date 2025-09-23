@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import {
   fetchTraineeDashboard,
   fetchTraineeNotifications,
-  markNotificationRead,
+  markNotificationRead,mediaUrl
 } from "../../api/traineeAPIservice";
 import "../../UIcomponents/dashboard/profilecard.css";
 import Social from "../../UIcomponents/dashboard/Social";
@@ -158,6 +158,15 @@ const ProfileCard = ({ username }) => {
   if (loading) return <p>Loading...</p>;
   if (error) return <div>{error}</div>;
 
+  const profilePicRaw =
+    data?.profile?.profile_picture ||
+    data?.profile_picture ||
+    data?.profile?.profile_pic ||
+    data?.profile?.user?.profile_picture ||
+    "";
+
+  const profilePic = mediaUrl(profilePicRaw) || "https://via.placeholder.com/80";
+
   return (
     <div className="profile-card">
       <img
@@ -165,11 +174,7 @@ const ProfileCard = ({ username }) => {
         className="background-pic"
         alt="Background"
       />
-      <img
-        src={data?.profile?.profile_picture || "https://via.placeholder.com/80"}
-        alt="Profile"
-        className="profile-pic"
-      />
+      <img src={profilePic} alt="Profile" className="profile-pic" />
       <h4>{data?.profile?.name || "Trainee"}</h4>
       <p className="location">Department - {data?.profile?.department || "-"}</p>
       <p className="location">Designation - {data?.profile?.designation || "-"}</p>

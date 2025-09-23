@@ -17,7 +17,8 @@ import MacroPlanner from "./MacroPlanner";
 import MicroPlanner from "./MicroPlanner";
 import EmployeeNotificationsPage from "./EmployeeNotification";
 import logoSO from "../../assets/logo4.png"; 
-import { Dropdown } from "react-bootstrap";
+import { Dropdown,Form,Button,Modal } from "react-bootstrap";
+import { requestPasswordReset, confirmPasswordReset } from "../../api/apiservice";
 
 const EmployeeDashboard = () => {
   const [data, setData] = useState(null);
@@ -31,6 +32,16 @@ const EmployeeDashboard = () => {
 
   const username = localStorage.getItem("username") || "";
   const isAuthenticated = localStorage.getItem("isAuthenticated");
+
+  const [showResetRequestModal, setShowResetRequestModal] = useState(false);
+    const [resetEmail, setResetEmail] = useState("");
+    const [resetRequestMessage, setResetRequestMessage] = useState("");
+    const [showResetConfirmModal, setShowResetConfirmModal] = useState(false);
+    const [uidb64, setUidb64] = useState("");
+    const [token, setToken] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [resetConfirmMessage, setResetConfirmMessage] = useState("");
 
   const [activeContent, setActiveContent] = useState(() => {
     return localStorage.getItem("activeContent") || "dashboard";
@@ -87,6 +98,54 @@ const EmployeeDashboard = () => {
       setError("Logout failed.");
     }
   };
+
+  // Password Reset Handlers
+      const handleResetRequest = async (e) => {
+        e.preventDefault();
+        try {
+          const result = await requestPasswordReset({ email: resetEmail });
+          if (result.success) {
+            setResetRequestMessage("Password reset email sent successfully. Check your inbox.");
+          } else {
+            setResetRequestMessage(`Error: ${result.error || "Failed to send reset email."}`);
+          }
+        } catch (e) {
+          setResetRequestMessage(`Error: ${e.message || "Failed to send reset email."}`);
+        }
+      };
+    
+      const handleResetConfirm = async (e) => {
+        e.preventDefault();
+        if (newPassword !== confirmPassword) {
+          setResetConfirmMessage("Passwords do not match.");
+          return;
+        }
+        try {
+          const result = await confirmPasswordReset({ uidb64, token, new_password: newPassword });
+          if (result.success) {
+            setResetConfirmMessage("Password reset successfully. You can now log in.");
+            setTimeout(() => {
+              window.location.href = "/login";
+            }, 2000);
+          } else {
+            setResetConfirmMessage(`Error: ${result.error || "Failed to reset password."}`);
+          }
+        } catch (e) {
+          setResetConfirmMessage(`Error: ${e.message || "Failed to reset password."}`);
+        }
+      };
+  
+      useEffect(() => {
+          const urlParams = new URLSearchParams(window.location.search);
+          const uid = urlParams.get("uidb64");
+          const tok = urlParams.get("token");
+          if (uid && tok) {
+            setUidb64(uid);
+            setToken(tok);
+            setShowResetConfirmModal(true);
+          }
+        }, []);
+  
 
   const renderContent = () => {
     switch (activeContent) {
@@ -267,9 +326,7 @@ const EmployeeDashboard = () => {
                   <Dropdown.Item as={Link} to="#/profile" className="hover:bg-gray-700 py-2 px-4">
                     Profile
                   </Dropdown.Item>
-                  <Dropdown.Item as={Link} to="#/my-reflections" className="hover:bg-gray-700 py-2 px-4">
-                    Change Password
-                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => setShowResetRequestModal(true)}>Reset Password</Dropdown.Item>
                   {/* <Dropdown.Item onClick={handleLogout} className="hover:bg-gray-700 py-2 px-4">
                     Logout
                   </Dropdown.Item> */}
@@ -302,6 +359,72 @@ const EmployeeDashboard = () => {
         >
           {renderContent()}
         </div>
+
+        {/* Password Reset Request Modal */}
+        <Modal show={showResetRequestModal} onHide={() => setShowResetRequestModal(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Request Password Reset</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form onSubmit={handleResetRequest}>
+              <Form.Group controlId="resetEmail">
+                <Form.Label>Email Address</Form.Label>
+                <Form.Control
+                  type="email"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                />
+              </Form.Group>
+              <Button variant="primary" type="submit" className="mt-3">
+                Send Reset Email
+              </Button>
+            </Form>
+            {resetRequestMessage && <p className={resetRequestMessage.includes("Error") ? "text-danger" : "text-success"}>{resetRequestMessage}</p>}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowResetRequestModal(false)}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+
+        {/* Password Reset Confirmation Modal */}
+        <Modal show={showResetConfirmModal} onHide={() => setShowResetConfirmModal(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Reset Your Password</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form onSubmit={handleResetConfirm}>
+              <Form.Group controlId="newPassword">
+                <Form.Label>New Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter new password"
+                  required
+                />
+              </Form.Group>
+              <Form.Group controlId="confirmPassword" className="mt-3">
+                <Form.Label>Confirm Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm new password"
+                  required
+                />
+              </Form.Group>
+              <Button variant="primary" type="submit" className="mt-3">
+                Reset Password
+              </Button>
+            </Form>
+            {resetConfirmMessage && <p className={resetConfirmMessage.includes("Error") ? "text-danger" : "text-success"}>{resetConfirmMessage}</p>}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowResetConfirmModal(false)}>Close</Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     </>
   );
