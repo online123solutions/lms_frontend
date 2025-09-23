@@ -36,6 +36,18 @@ const normalizeRows = (payload) => {
   return [];
 };
 
+const MEDIA_BASE =
+  process.env.REACT_APP_MEDIA_BASE || // e.g. "http://localhost:8000"
+  process.env.REACT_APP_API_BASE   || // if you already set this
+  ""; // last resort: empty (no prefix)
+
+const toAbsoluteMediaUrl = (url) => {
+  if (!url) return "";
+  if (/^https?:\/\//i.test(url)) return url;        // already absolute
+  if (url.startsWith("/")) return `${MEDIA_BASE}${url}`; // "/media/.."
+  return `${MEDIA_BASE}/${url}`;                    // "media/..", "default_profile.jpg"
+};
+
 const CourseModal = ({ show, handleClose, courses }) => (
   <Modal show={show} onHide={handleClose}>
     <Modal.Header closeButton>
@@ -100,10 +112,12 @@ const TeacherDashboardContent = () => {
           setCourses(data.courses || []);
           // Capture profile_pic from common shapes
           setProfilePic(
-            data.profile?.profile?.profile_picture ||
-            data.profile?.profile_picture ||
-            data.profile_picture ||
-            ""
+            toAbsoluteMediaUrl(
+              data.profile?.profile?.profile_picture ||
+              data.profile?.profile_picture ||
+              data.profile_picture ||
+              ""
+            )
           );
           setActiveLearners(
             (data.active_users || []).map((user) => ({
