@@ -147,6 +147,38 @@ export const saveQuizResult = async (id, payload) => {
   }
 };
 
+export const requestPasswordReset = async (data) => {
+  try {
+    const response = await apiClient.post("/account/password-reset/", data, {
+      headers: {
+        "X-CSRFTOKEN": getCsrfToken(), // Ensure CSRF token is included
+      },
+      withCredentials: true, // Use withCredentials instead of credentials for Axios
+    });
+    return response.data; // Return the raw response data as per your backend's format
+  } catch (error) {
+    return { success: false, error: handleError(error, "Failed to request password reset.") };
+  }
+};
+
+export const confirmPasswordReset = async (data) => {
+  try {
+    const response = await apiClient.post(
+      `/account/password-reset-confirm/${data.uidb64}/${data.token}/`,
+      { new_password: data.new_password },
+      {
+        headers: {
+          "X-CSRFTOKEN": getCsrfToken(), // Ensure CSRF token is included
+        },
+        withCredentials: true, // Use withCredentials instead of credentials for Axios
+      }
+    );
+    return response.data; // Return the raw response data as per your backend's format
+  } catch (error) {
+    return { success: false, error: handleError(error, "Failed to confirm password reset.") };
+  }
+};
+
 export const trainerClient = axios.create({
   baseURL: "https://lms.steel.study/trainer",
   headers: { "Content-Type": "application/json", Accept: "application/json" },
@@ -200,38 +232,6 @@ export const markLessonCompleted = async (lessonSlug) => {
     return ok(res.data);
   } catch (error) {
     return fail(error, "Failed to mark lesson as completed.");
-  }
-};
-
-export const requestPasswordReset = async (data) => {
-  try {
-    const response = await apiClient.post("/account/password-reset/", data, {
-      headers: {
-        "X-CSRFTOKEN": getCsrfToken(), // Ensure CSRF token is included
-      },
-      withCredentials: true, // Use withCredentials instead of credentials for Axios
-    });
-    return response.data; // Return the raw response data as per your backend's format
-  } catch (error) {
-    return { success: false, error: handleError(error, "Failed to request password reset.") };
-  }
-};
-
-export const confirmPasswordReset = async (data) => {
-  try {
-    const response = await apiClient.post(
-      `/account/password-reset-confirm/${data.uidb64}/${data.token}/`,
-      { new_password: data.new_password },
-      {
-        headers: {
-          "X-CSRFTOKEN": getCsrfToken(), // Ensure CSRF token is included
-        },
-        withCredentials: true, // Use withCredentials instead of credentials for Axios
-      }
-    );
-    return response.data; // Return the raw response data as per your backend's format
-  } catch (error) {
-    return { success: false, error: handleError(error, "Failed to confirm password reset.") };
   }
 };
 

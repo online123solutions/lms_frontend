@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Dropdown, Button, Modal } from "react-bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../utils/css/Trainer CSS/TDContent.css";
@@ -73,6 +73,7 @@ const TeacherDashboardContent = () => {
   const [courseCount, setCourseCount] = useState(0);
   const [courses, setCourses] = useState([]);
   const [teacherName, setTeacherName] = useState("");
+  const [profilePic, setProfilePic] = useState(""); // <-- NEW: store profile pic URL
   const [recentActivityData, setRecentActivityData] = useState({
     recent_logins: [],
     recent_homework_submissions: [],
@@ -95,17 +96,22 @@ const TeacherDashboardContent = () => {
           setTraineeCount(data.trainee_count ?? 0);
           setActiveLearnerCount(data.active_count ?? 0);
           setCourseCount(data.course_count ?? 0);
-          // Updated to handle nested profile object
           setTeacherName(data.profile?.profile?.name || data.profile?.profile?.full_name || "");
           setCourses(data.courses || []);
-          // Updated to handle nested profile in active_users
+          // Capture profile_pic from common shapes
+          setProfilePic(
+            data.profile?.profile?.profile_picture ||
+            data.profile?.profile_picture ||
+            data.profile_picture ||
+            ""
+          );
           setActiveLearners(
             (data.active_users || []).map((user) => ({
               id: user.id,
               username: user.username,
               full_name: user.profile?.name || user.full_name || "",
               email: user.email,
-              profile_type: user.profile?.profile_type || user.role || "Unknown",
+              profile_type: user.profile?.profile_type || user.profile_type || "Unknown",
               department: user.profile?.department || user.department || "",
             }))
           );
@@ -119,7 +125,7 @@ const TeacherDashboardContent = () => {
     if (username) loadDashboard();
   }, [username]);
 
-  // LMS Engagement (unchanged)
+  // LMS Engagement
   useEffect(() => {
     const loadAll = async () => {
       const res = await fetchLMSEngagement({});
@@ -158,7 +164,7 @@ const TeacherDashboardContent = () => {
     loadMonth();
   }, [selectedMonth]);
 
-  // Recent activities (unchanged)
+  // Recent activities
   useEffect(() => {
     const loadRecent = async () => {
       try {
@@ -178,11 +184,7 @@ const TeacherDashboardContent = () => {
   // Handlers
   const handleDropdownToggle = () => setShowDropdown((s) => !s);
   const handleMonthChange = (month) => setSelectedMonth(month);
-
-  const handleActiveLearnersClick = () => {
-    setShowActiveLearnersPage(true);
-  };
-
+  const handleActiveLearnersClick = () => setShowActiveLearnersPage(true);
   const handleBackToDashboard = () => setShowActiveLearnersPage(false);
 
   const handleLogout = async () => {
@@ -199,7 +201,7 @@ const TeacherDashboardContent = () => {
     }
   };
 
-  // Build chart series for selectedMonth (unchanged)
+  // Build chart series for selectedMonth
   const buildEngagementSeries = (rows = [], month = "") => {
     if (!Array.isArray(rows) || !month) return { labels: [], data: [] };
     const byDay = rows.reduce((acc, r) => {
@@ -240,7 +242,6 @@ const TeacherDashboardContent = () => {
     },
   };
 
-  // Recent activity charts (unchanged)
   const processRecentLoginsData = (loginsData) => {
     const byDate = (loginsData || []).reduce((acc, login) => {
       const date = login.login_date;
@@ -292,16 +293,14 @@ const TeacherDashboardContent = () => {
     ],
   };
 
-  // Sample notices data (to be replaced with API call if needed)
   const notices = [
     { id: 1, message: "Upcoming training session on August 30, 2025.", date: "2025-08-27" },
     { id: 2, message: "Deadline for homework submission extended to September 5, 2025.", date: "2025-08-27" },
     { id: 3, message: "New course materials uploaded for review.", date: "2025-08-26" },
   ];
 
-  // Function to get initials from teacherName
   const getInitials = (name) => {
-    if (!name) return "U"; // Default to 'U' for unknown if no name
+    if (!name) return "U";
     const names = name.trim().split(" ");
     let initials = names[0][0].toUpperCase();
     if (names.length > 1) {
@@ -346,13 +345,13 @@ const TeacherDashboardContent = () => {
 
         <div className="top-bar-right1">
           <div className="profile-pic-frame">
-            {data?.profile?.profile?.profile_pic ? (
+            {profilePic ? (
               <img
-                src={data.profile.profile.profile_pic}
+                src={profilePic}
                 alt="Profile"
                 style={{
-                  width: "50px",
-                  height: "50px",
+                  width: "80px",
+                  height: "80px",
                   objectFit: "cover",
                   borderRadius: "10px",
                 }}
@@ -433,7 +432,7 @@ const TeacherDashboardContent = () => {
                 {activeLearners.map((learner) => (
                   <tr key={learner.id}>
                     <td>{learner.username}</td>
-                    <td>{learner.name}</td>
+                    <td>{learner.full_name}</td> {/* <-- fixed */}
                     <td>{learner.email}</td>
                     <td>{learner.profile_type}</td>
                     <td>{learner.department}</td>
@@ -545,7 +544,7 @@ const TeacherDashboardContent = () => {
                   <Dropdown.Menu>
                     {availableMonths.length ? (
                       availableMonths.map((m) => (
-                        <Dropdown.Item key={m} onClick={() => handleMonthChange(m)}>
+                        <Dropdown.Item key={m} onClick={() => setSelectedMonth(m)}>
                           {m}
                         </Dropdown.Item>
                       ))
