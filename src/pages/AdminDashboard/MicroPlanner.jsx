@@ -163,7 +163,7 @@ const MicroPlanner = () => {
               </Button>
       </div>
               <Form.Select
-                className="w-auto border-success shadow-sm"
+                className="mp-select"
                 onChange={(e) => setSelectedWeek(e.target.value)}
                 value={selectedWeek}
               >
@@ -176,7 +176,7 @@ const MicroPlanner = () => {
               </Form.Select>
 
               <Form.Select
-                  className="w-auto border-success shadow-sm"
+                  className="mp-select"
                   onChange={(e) => setSelectedDepartment(e.target.value)}
                   value={selectedDepartment}
                   aria-label="Filter by Department"
