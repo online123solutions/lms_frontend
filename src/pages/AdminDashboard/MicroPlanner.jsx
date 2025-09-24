@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, } from "react";
 import { Modal, Button, Form, Spinner, Row, Col } from "react-bootstrap";
 import {
   fetchMicroPlanner,
@@ -16,6 +16,7 @@ const MicroPlanner = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dayModulePairs, setDayModulePairs] = useState([{ day: "", module: "" }]);
+  const [selectedDepartment, setSelectedDepartment] = useState("");
 
   const monthOptions = [
     "January", "February", "March", "April", "May", "June",
@@ -24,15 +25,20 @@ const MicroPlanner = () => {
 
   const weekOptions = ["Week 1", "Week 2", "Week 3", "Week 4"];
 
-  const departmentOptions = [
-    "HR", "IT", "Finance", "Marketing", "Sales",
-    "Operations", "Support", "Training", "Development", "Design"
-  ];
+  const defaultDepartmentOptions = [
+  "HR","IT","Finance","Marketing","Sales","Operations","Support","Training","Development","Design"
+];
 
   const modeOptions = ["Theoretical", "Practical"];
   const dayOptions = [
     "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
   ];
+
+  const departmentOptions = useMemo(() => {
+      const set = new Set(planners.map(p => p.department).filter(Boolean));
+      const fromData = Array.from(set);
+      return fromData.length ? fromData : defaultDepartmentOptions;
+    }, [planners]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -143,28 +149,43 @@ const MicroPlanner = () => {
 
   return (
     <div className="micro-planner container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="fw-bold text-success">📘 Planner</h2>
-        <Form.Select
-          className="w-auto border-success shadow-sm"
-          onChange={(e) => setSelectedWeek(e.target.value)}
-          value={selectedWeek}
-        >
-          <option value="">All Weeks</option>
-          {weekOptions.map((week) => (
-            <option key={week} value={week}>
-              {week}
-            </option>
-          ))}
-        </Form.Select>
-        <Button
-          variant="success"
-          onClick={() => handleShowModal()}
-          className="shadow-sm"
-        >
-          <i className="bi bi-plus-circle me-2"></i>Add Planner
-        </Button>
+      <div className="d-flex justify-content-between align-items-center mb-4 header">
+              <h2 className="fw-bold text-white">
+                <i className="bi bi-calendar-check" style={{ color: "#FFFFFF" }}></i> Planner
+              </h2>
+      
+              <Button
+                variant="info micro-btn"
+                onClick={() => handleShowModal()}
+                className="shadow-sm"
+              >
+                <i className="bi bi-plus-circle me-2"></i>Add Planner
+              </Button>
       </div>
+              <Form.Select
+                className="w-auto border-success shadow-sm"
+                onChange={(e) => setSelectedWeek(e.target.value)}
+                value={selectedWeek}
+              >
+                <option value="">All Weeks</option>
+                {weekOptions.map((week) => (
+                  <option key={week} value={week}>
+                    {week}
+                  </option>
+                ))}
+              </Form.Select>
+
+              <Form.Select
+                  className="w-auto border-success shadow-sm"
+                  onChange={(e) => setSelectedDepartment(e.target.value)}
+                  value={selectedDepartment}
+                  aria-label="Filter by Department"
+                >
+                  <option value="">All Departments</option>
+                  {departmentOptions.map((dept) => (
+                    <option key={dept} value={dept}>{dept}</option>
+                  ))}
+              </Form.Select>
 
       {loading ? (
         <div className="text-center my-5">
@@ -174,7 +195,7 @@ const MicroPlanner = () => {
         <p className="text-danger text-center">{error}</p>
       ) : (
         <div className="table-responsive">
-          <table className="table table-bordered table-hover align-middle shadow-sm">
+          <table className="micro-planner-table table table-bordered table-hover align-middle shadow-sm">
             <thead className="custom-header">
               <tr>
                 <th>Month</th>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Modal, Button, Form, Spinner } from "react-bootstrap";
+import React, { useEffect, useMemo, useState } from "react";
+import { Modal, Button, Form, Spinner, Alert } from "react-bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../utils/css/Trainer CSS/Macroplanner.css";
 import {
@@ -8,57 +8,78 @@ import {
   updateMacroPlanner,
 } from "../../api/adminAPIservice";
 
+const durationOptions = [
+  "1 Month","2 Months","3 Months","4 Months","5 Months","6 Months"
+];
+const defaultDepartmentOptions = [
+  "HR","IT","Finance","Marketing","Sales","Operations","Support","Training","Development","Design"
+];
+const staticWeekOptions = ["week 1","week 2","week 3","week 4"];
+const modeOptions = ["Theoretical","Practical"];
+
 const MacroPlanner = () => {
   const [planners, setPlanners] = useState([]);
-  const [months, setMonths] = useState([]);
-  const [weeks, setWeeks] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedWeek, setSelectedWeek] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [currentPlanner, setCurrentPlanner] = useState(null);
+  const [form, setForm] = useState({
+    month: "",
+    week: "",
+    duration: "",
+    department: "",
+    module: "",
+    mode: "Theoretical",
+  });
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
 
-  const monthOptions = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
-
-  const durationOptions = [
-    "1 Month", "2 Months", "3 Months", "4 Months", "5 Months", "6 Months"
-  ];
-
-  const departmentOptions = [
-    "HR", "IT", "Finance", "Marketing", "Sales",
-    "Operations", "Support", "Training", "Development", "Design"
-  ];
-
-  const weekOptions = ["week 1", "week 2", "week 3", "week 4"];
-
-  const modeOptions = ["Theoretical", "Practical"];
-
   useEffect(() => {
-    const fetchData = async () => {
+    (async () => {
       try {
         const result = await fetchMacroPlanner();
-        if (result.success) {
-          setPlanners(result.data);
-          const uniqueWeeks = [...new Set(result.data.map((p) => p.week))];
-          setWeeks(uniqueWeeks);
-        } else {
-          setError("Failed to fetch macroplanner data.");
-        }
-      } catch (error) {
+        if (result?.success) setPlanners(Array.isArray(result.data) ? result.data : []);
+        else setError("Failed to fetch macroplanner data.");
+      } catch {
         setError("An error occurred while fetching macroplanner data.");
       } finally {
         setLoading(false);
       }
-    };
-    fetchData();
+    })();
   }, []);
+
+  const departmentOptions = useMemo(() => {
+    const set = new Set(planners.map(p => p.department).filter(Boolean));
+    const fromData = Array.from(set);
+    return fromData.length ? fromData : defaultDepartmentOptions;
+  }, [planners]);
+
+  const weekOptions = useMemo(() => {
+    const set = new Set(planners.map(p => p.week).filter(Boolean));
+    const fromData = staticWeekOptions.filter(w => set.has(w));
+    return fromData.length ? fromData : staticWeekOptions;
+  }, [planners]);
+
+  const filteredPlanners = useMemo(() => {
+    return planners.filter(p => {
+      const deptOk = selectedDepartment ? p.department === selectedDepartment : true;
+      const weekOk = selectedWeek ? p.week === selectedWeek : true;
+      return deptOk && weekOk;
+    });
+  }, [planners, selectedDepartment, selectedWeek]);
 
   const handleShowModal = (planner = null) => {
     setCurrentPlanner(planner);
+    setError(null);
+    setForm({
+      month: planner?.month || "",
+      week: planner?.week || "",
+      duration: planner?.duration || "",
+      department: planner?.department || (departmentOptions[0] || ""),
+      module: planner?.module || "",
+      mode: planner?.mode || "Theoretical",
+    });
     setShowModal(true);
   };
 
@@ -67,66 +88,83 @@ const MacroPlanner = () => {
     setCurrentPlanner(null);
   };
 
-  const handleSavePlanner = async (event) => {
-    event.preventDefault();
-    setLoading(true);
-    const form = event.target;
-    const newPlanner = {
-      id: currentPlanner ? currentPlanner.id : null,
-      month: form.elements.month.value,
-      week: form.elements.week.value,
-      duration: form.elements.duration.value,
-      department: form.elements.department.value,
-      module: form.elements.module.value,
-      mode: form.elements.mode.value,
-    };
-
-    let result = currentPlanner
-      ? await updateMacroPlanner(newPlanner)
-      : await addMacroPlanner(newPlanner);
-
-    if (result.success) {
-      const updatedData = await fetchMacroPlanner();
-      if (updatedData.success) {
-        setPlanners(updatedData.data);
-        const uniqueWeeks = [...new Set(updatedData.data.map((p) => p.week))];
-        setWeeks(uniqueWeeks);
-      }
-      handleCloseModal();
-    } else {
-      console.error("Failed to save macroplanner:", result.error);
-      setError("Failed to save macroplanner: " + result.error);
-    }
-    setLoading(false);
+  const onFormChange = (e) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
-  const filteredPlanners = planners.filter((p) =>
-    selectedWeek ? p.week === selectedWeek : true
-  );
+  const handleSavePlanner = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setError(null);
+    const payload = {
+      id: currentPlanner ? currentPlanner.id : null,
+      month: form.month,
+      week: form.week,
+      duration: form.duration,
+      department: form.department,
+      module: form.module,
+      mode: form.mode,
+    };
+    try {
+      const result = currentPlanner
+        ? await updateMacroPlanner(payload)
+        : await addMacroPlanner(payload);
+
+      if (!result?.success) {
+        setError(result?.error || "Failed to save macroplanner.");
+        return;
+      }
+      const refreshed = await fetchMacroPlanner();
+      if (refreshed?.success) setPlanners(Array.isArray(refreshed.data) ? refreshed.data : []);
+      handleCloseModal();
+    } catch {
+      setError("Failed to save macroplanner.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <div className="macro-planner container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="fw-bold text-primary">📅 Road Map</h2>
-        <Form.Select
-          className="w-auto border-primary shadow-sm"
-          onChange={(e) => setSelectedWeek(e.target.value)}
-          value={selectedWeek}
-        >
-          <option value="">All Weeks</option>
-          {weekOptions.map((week) => (
-            <option key={week} value={week}>
-              {week}
-            </option>
-          ))}
-        </Form.Select>
-        <Button
-          variant="success"
-          onClick={() => handleShowModal()}
-          className="shadow-sm"
-        >
-          <i className="bi bi-plus-circle me-2"></i>Add Road Map
-        </Button>
+      {/* Dark header bar like your screenshot */}
+      <div className="d-flex justify-content-between align-items-center mb-4 header">
+        <h2 className="fw-bold text-white">
+          <i className="bi bi-calendar" style={{ color: "#FFFFFF" }}></i> Road Map
+        </h2>
+
+        <Button variant="info macro-btn" className="mp-add" onClick={() => handleShowModal()}>
+            <i className="bi bi-plus-circle me-2"></i>
+            Add Road Map
+          </Button>
+      </div>
+      <div className="mp-header">
+        <div className="mp-actions">
+          <Form.Select
+            className="mp-select"
+            onChange={(e) => setSelectedDepartment(e.target.value)}
+            value={selectedDepartment}
+            aria-label="Filter by Department"
+          >
+            <option value="">All Departments</option>
+            {departmentOptions.map((dept) => (
+              <option key={dept} value={dept}>{dept}</option>
+            ))}
+          </Form.Select>
+
+          <Form.Select
+            className="mp-select"
+            onChange={(e) => setSelectedWeek(e.target.value)}
+            value={selectedWeek}
+            aria-label="Filter by Week"
+          >
+            <option value="">All Weeks</option>
+            {weekOptions.map((w) => (
+              <option key={w} value={w}>{w}</option>
+            ))}
+          </Form.Select>
+
+        </div>
       </div>
 
       {loading ? (
@@ -134,7 +172,7 @@ const MacroPlanner = () => {
           <Spinner animation="border" variant="primary" />
         </div>
       ) : error ? (
-        <p className="text-danger text-center">{error}</p>
+        <Alert variant="danger" className="my-3">{error}</Alert>
       ) : (
         <div className="table-responsive">
           <table className="macro-planner-table">
@@ -155,7 +193,7 @@ const MacroPlanner = () => {
                     <td className="fw-medium">{planner.week}</td>
                     <td>{planner.duration}</td>
                     <td>{planner.department}</td>
-                    <td>{planner.module}</td>
+                    <td className="truncate">{planner.module}</td>
                     <td>{planner.mode}</td>
                     <td>
                       <Button
@@ -170,8 +208,8 @@ const MacroPlanner = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" className="text-center text-muted">
-                    No Macroplanner found for selected week.
+                  <td colSpan="6" className="text-center text-muted py-4">
+                    No Macroplanner found for selected filters.
                   </td>
                 </tr>
               )}
@@ -180,60 +218,50 @@ const MacroPlanner = () => {
         </div>
       )}
 
+      {/* Modal */}
       <Modal show={showModal} onHide={handleCloseModal} centered>
         <Modal.Header closeButton>
-          <Modal.Title>
-            {currentPlanner ? "Modify MacroPlanner" : "Add MacroPlanner"}
-          </Modal.Title>
+          <Modal.Title>{currentPlanner ? "Modify MacroPlanner" : "Add MacroPlanner"}</Modal.Title>
         </Modal.Header>
+
         <Form onSubmit={handleSavePlanner}>
           <Modal.Body>
+            {/* Keep Month if backend expects it (not used for filtering) */}
             <Form.Group className="mb-3" controlId="formMonth">
-              <Form.Label>Month</Form.Label>
-              <Form.Select
+              <Form.Label>Month (optional)</Form.Label>
+              <Form.Control
+                type="text"
                 name="month"
-                defaultValue={currentPlanner?.month || ""}
-                required
-              >
-                {monthOptions.map((month) => (
-                  <option key={month} value={month}>{month}</option>
-                ))}
-              </Form.Select>
+                placeholder="e.g., September"
+                value={form.month}
+                onChange={onFormChange}
+              />
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formWeek">
               <Form.Label>Week</Form.Label>
-              <Form.Select
-                name="week"
-                defaultValue={currentPlanner?.week || ""}
-                required
-              >
-                {weekOptions.map((week) => (
-                  <option key={week} value={week}>{week}</option>
+              <Form.Select name="week" value={form.week} onChange={onFormChange} required>
+                <option value="" disabled>Select week</option>
+                {staticWeekOptions.map((w) => (
+                  <option key={w} value={w}>{w}</option>
                 ))}
               </Form.Select>
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formDuration">
               <Form.Label>Duration</Form.Label>
-              <Form.Select
-                name="duration"
-                defaultValue={currentPlanner?.duration || ""}
-                required
-              >
-                {durationOptions.map((duration) => (
-                  <option key={duration} value={duration}>{duration}</option>
+              <Form.Select name="duration" value={form.duration} onChange={onFormChange} required>
+                <option value="" disabled>Select duration</option>
+                {durationOptions.map((d) => (
+                  <option key={d} value={d}>{d}</option>
                 ))}
               </Form.Select>
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formDepartment">
               <Form.Label>Department</Form.Label>
-              <Form.Select
-                name="department"
-                defaultValue={currentPlanner?.department || ""}
-                required
-              >
+              <Form.Select name="department" value={form.department} onChange={onFormChange} required>
+                <option value="" disabled>Select department</option>
                 {departmentOptions.map((dept) => (
                   <option key={dept} value={dept}>{dept}</option>
                 ))}
@@ -246,30 +274,28 @@ const MacroPlanner = () => {
                 type="text"
                 name="module"
                 placeholder="Enter module..."
-                defaultValue={currentPlanner?.module || ""}
+                value={form.module}
+                onChange={onFormChange}
                 required
               />
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formMode">
+            <Form.Group className="mb-0" controlId="formMode">
               <Form.Label>Mode</Form.Label>
-              <Form.Select
-                name="mode"
-                defaultValue={currentPlanner?.mode || "Theoretical"}
-                required
-              >
-                {modeOptions.map((mode) => (
-                  <option key={mode} value={mode}>{mode}</option>
+              <Form.Select name="mode" value={form.mode} onChange={onFormChange} required>
+                {modeOptions.map((m) => (
+                  <option key={m} value={m}>{m}</option>
                 ))}
               </Form.Select>
             </Form.Group>
           </Modal.Body>
+
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleCloseModal}>
+            <Button variant="secondary" onClick={handleCloseModal} disabled={saving}>
               Cancel
             </Button>
-            <Button variant="primary" type="submit">
-              {currentPlanner ? "Save Changes" : "Add MacroPlanner"}
+            <Button variant="primary" type="submit" disabled={saving}>
+              {saving ? (<><Spinner size="sm" className="me-2" /> Saving…</>) : (currentPlanner ? "Save Changes" : "Add MacroPlanner")}
             </Button>
           </Modal.Footer>
         </Form>

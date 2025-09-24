@@ -17,6 +17,7 @@ import {
 import { fetchAdminDashboard, fetchLMSEngagement, fetchRecentActivity } from "../../api/adminAPIservice";
 import { logout, requestPasswordReset, confirmPasswordReset } from "../../api/apiservice"; // Updated API calls
 import logoSO from "../../assets/logo1.png";
+import { mediaUrl } from "../../api/traineeAPIservice";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend,Filler);
 
@@ -107,6 +108,7 @@ const AdminDashboardContent = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [resetConfirmMessage, setResetConfirmMessage] = useState("");
+  const [profilePic, setProfilePic] = useState(""); 
 
   const username = localStorage.getItem("username") || "";
 
@@ -126,6 +128,14 @@ const AdminDashboardContent = () => {
           setCourses(
             data.departments?.flatMap((dept) => dept.courses || []) || []
           );
+
+          // Resolve trainer profile picture -> mediaUrl
+          const rawPic =
+            data.profile?.profile?.profile_picture ||
+            data.profile?.profile_picture ||
+            data.profile_picture ||
+            "";
+          setProfilePic(mediaUrl(rawPic) || "");
           setActiveLearners(
             (data.active_users || []).map((user) => ({
               id: user.id,
@@ -407,6 +417,14 @@ const AdminDashboardContent = () => {
     { id: 3, message: "New course materials uploaded for review.", date: "2025-08-26" },
   ];
 
+    const getInitials = (name) => {
+    if (!name) return "U";
+    const names = name.trim().split(" ");
+    let initials = names[0][0].toUpperCase();
+    if (names.length > 1) initials += names[names.length - 1][0].toUpperCase();
+    return initials;
+  };
+
   return (
     <ErrorBoundary>
       <div className="teacher-dashboard-content1">
@@ -444,6 +462,36 @@ const AdminDashboardContent = () => {
           </div>
 
           <div className="top-bar-right1">
+          <div className="profile-pic-frame">
+            {profilePic ? (
+              <img
+                src={profilePic}
+                alt="Profile"
+                onError={() => setProfilePic("")} // if 404, show initials
+                style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 10 }}
+              />
+            ) : (
+              <div
+                style={{
+                  width: 80,
+                  height: 80,
+                  backgroundColor: "#aeadae",
+                  borderRadius: 10,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 18,
+                  fontWeight: "bold",
+                  color: "#fff",
+                }}
+              >
+                {getInitials(teacherName)}
+              </div>
+            )}
+          </div>
+        </div>
+
+          {/* <div className="top-bar-right1">
             <Dropdown show={showDropdown} onToggle={handleDropdownToggle}>
               <Dropdown.Toggle className="cyan" id="dropdown-basic">
                 <i className="bi bi-gear"></i>
@@ -454,7 +502,7 @@ const AdminDashboardContent = () => {
                 <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-          </div>
+          </div> */}
         </div>
 
         {/* Active Learners Modal */}

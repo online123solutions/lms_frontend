@@ -35,16 +35,19 @@ const TrainingReport = () => {
   if (error) return <div className="error">{error}</div>;
 
   return (
-    <div className="training-report-container">
+    <div className="training-report-container mt-4 mb-4 shadow-sm rounded">
       <div className="report-card">
-        <h2 className="report-title">Training Report</h2>
+        <h2 className="report-title">
+          <i className="bi bi-file-earmark-bar-graph" style={{ color: "#FFFFFF" }}></i>Training Report
+        </h2>
         {reportData.length === 0 ? (
           <p className="no-data">No data available.</p>
         ) : (
-          <div className="table-responsive">
-            <table className="report-table table table-bordered table-hover align-middle shadow-sm">
+          <div className="table-wrapper table-responsive">
+            <table className="report-table bordered table-hover">
               <thead>
                 <tr>
+                  <th>User ID</th>
                   <th>Username</th>
                   <th>Name</th>
                   <th>Role</th>
@@ -52,12 +55,13 @@ const TrainingReport = () => {
                   <th>Department</th>
                   <th>Designation</th>
                   <th>Trainer Name</th>
-                  <th>Completed Lessons</th>
+                  <th>Details</th>
                 </tr>
               </thead>
               <tbody>
                 {reportData.map((user) => (
                   <tr key={user.user_id}>
+                    <td>{user.user_id}</td>
                     <td>{user.username}</td>
                     <td>{user.name || "N/A"}</td>
                     <td>{user.role}</td>
@@ -66,13 +70,12 @@ const TrainingReport = () => {
                     <td>{user.designation || "N/A"}</td>
                     <td>{user.trainer_name || "N/A"}</td>
                     <td>
-                      <ul className="lesson-list">
-                        {user.completed_lessons.map((lesson, index) => (
-                          <li key={index}>
-                            {lesson.lesson_title} - {lesson.completed ? "Completed" : "In Progress"} ({new Date(lesson.completed_at).toLocaleString()})
-                          </li>
-                        ))}
-                      </ul>
+                      <button
+                        className="btn btn-primary btn-sm"
+                        onClick={() => navigate(`/training-report/${user.user_id}`)}
+                      >
+                        View Details
+                      </button>
                     </td>
                   </tr>
                 ))}

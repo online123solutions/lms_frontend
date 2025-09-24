@@ -270,3 +270,56 @@ export async function trainingService() {
   const res = await apiClient.get("/training-report/");
   return res.data;
 }
+
+export async function getDetailedTrainingReport(userId) {
+  const res = await apiClient.get(`/training-report/${userId}/`);
+  return res.data;
+}
+
+export async function sendAdminNotification(notificationData) {
+  try {
+    const fd = new FormData();
+
+    // required
+    fd.append("subject", (notificationData.subject || "").trim());
+    fd.append("message", (notificationData.message || "").trim());
+
+    // coerce notification_type to backend-accepted values
+    const nt = (notificationData.notification_type || "info").toLowerCase();
+    const ntMapped = nt === "general" || nt === "reminder" ? "info" : nt; // map unsupported to "info"
+    fd.append("notification_type", ntMapped);
+
+    // mode + audience
+    fd.append("mode", notificationData.mode); // "group" | "individual"
+    fd.append(
+      "audience",
+      notificationData.mode === "group"
+        ? notificationData.audience || "both"
+        : "both" // backend ignores in individual mode anyway
+    );
+
+    // optional fields
+    const link = (notificationData.link || "").trim();
+    if (link) fd.append("link", link);
+
+    if (notificationData.mode === "individual") {
+      // usernames must be sent as repeated keys: usernames=alice&usernames=bob
+      (notificationData.usernames || []).forEach((u) => {
+        if (u) fd.append("usernames", u);
+      });
+    } else {
+      if (notificationData.audience !== "trainee") {
+        const dept = (notificationData.department || "").trim();
+        if (dept) fd.append("department", dept);
+      }
+    }
+
+    const res = await apiClient.post("/notifications/send/", fd, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return { success: true, data: res.data };
+  } catch (error) {
+    // bubble up field errors from DRF so the UI can show them
+    return { success: false, error: error.response?.data || error.message };
+  }
+}

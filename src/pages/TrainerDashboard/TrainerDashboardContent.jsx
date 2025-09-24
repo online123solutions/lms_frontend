@@ -385,7 +385,7 @@ const TeacherDashboardContent = () => {
             <ul>
               {activeLearners.map((learner) => (
                 <li key={learner.id}>
-                  {learner.full_name} ({learner.username}, {learner.profile_type}, {learner.department})
+                  {learner.name} ({learner.username}, {learner.profile_type}, {learner.department})
                 </li>
               ))}
             </ul>
