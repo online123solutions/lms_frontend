@@ -759,10 +759,10 @@ const AdminDashboardContent = () => {
                 </div>
                 <div className="quick-activities-grid1">
                   {[
-                    { text: "Add Courses", className: "pink", link: "#", disabled: false },
-                    { text: "Push Notification", className: "purple", link: "#", disabled: false },
-                    { text: "Add Lesson", className: "purple", link: "#", disabled: false },
-                    { text: "Add User", className: "pink", link: "#", disabled: false },
+                    { text: "Add Courses",       className: "pink",   link: "https://lms.steel.study/admin/",      disabled: false },
+                    { text: "Push Notification", className: "purple", link: "#",     disabled: false },
+                    { text: "Add Lesson",        className: "purple", link: "https://lms.steel.study/admin/",      disabled: false },
+                    { text: "Add User",          className: "pink",   link: "https://lms.steel.study/admin/",        disabled: false },
                   ].map((item, i) => (
                     <div
                       key={i}
