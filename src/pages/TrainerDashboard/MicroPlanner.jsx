@@ -16,24 +16,27 @@ const MicroPlanner = () => {
   const [error, setError] = useState(null);
   const [dayModulePairs, setDayModulePairs] = useState([{ day: "", module: "" }]);
 
-  // NEW: filter by week instead of month
+  // Filter by week (unchanged)
   const [selectedWeek, setSelectedWeek] = useState("");
 
   const monthOptions = [
     "January","February","March","April","May","June",
     "July","August","September","October","November","December"
   ];
-
   const weekOptions = ["Week 1", "Week 2", "Week 3", "Week 4"];
-
   const departmentOptions = [
     "HR","IT","Finance","Marketing","Sales",
     "Operations","Support","Training","Development","Design"
   ];
-
   const modeOptions = ["Theoretical", "Practical"];
   const dayOptions = [
     "Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"
+  ];
+
+  // ✅ NEW: Role options
+  const roleOptions = [
+    { value: "trainee", label: "Trainee" },
+    { value: "employee", label: "Employee" },
   ];
 
   useEffect(() => {
@@ -58,10 +61,9 @@ const MicroPlanner = () => {
     if (currentPlanner && currentPlanner.days && currentPlanner.name_of_topic) {
       const days = currentPlanner.days.split(",").map((d) => d.trim());
       const modules = Array.isArray(currentPlanner.name_of_topic) ? currentPlanner.name_of_topic : [];
-      const pairs = days.map((day, index) => ({
-        day,
-        module: modules[index] || "",
-      })).filter((pair) => pair.day);
+      const pairs = days
+        .map((day, index) => ({ day, module: modules[index] || "" }))
+        .filter((pair) => pair.day);
       setDayModulePairs(pairs.length ? pairs : [{ day: "", module: "" }]);
     } else {
       setDayModulePairs([{ day: "", module: "" }]);
@@ -96,6 +98,7 @@ const MicroPlanner = () => {
     event.preventDefault();
     setLoading(true);
     const form = event.target;
+
     const days = dayModulePairs.map((pair) => pair.day).filter((d) => d);
     const name_of_topic = dayModulePairs.map((pair) => pair.module).filter((m) => m);
 
@@ -111,9 +114,11 @@ const MicroPlanner = () => {
       week: form.elements.week.value,
       days: days.join(","),
       department: form.elements.department.value,
-      no_of_sessions: parseInt(form.elements.no_of_sessions.value),
+      no_of_sessions: parseInt(form.elements.no_of_sessions.value, 10),
       name_of_topic,
       mode: form.elements.mode.value,
+      // ✅ include role in payload
+      role: form.elements.role.value,
     };
 
     const result = currentPlanner
@@ -131,7 +136,7 @@ const MicroPlanner = () => {
     setLoading(false);
   };
 
-  // UPDATED: filter by selectedWeek
+  // Filter by selectedWeek (unchanged)
   const filteredPlanners = planners.filter((p) =>
     selectedWeek ? p.week === selectedWeek : true
   );
@@ -143,7 +148,6 @@ const MicroPlanner = () => {
           <i className="bi bi-calendar-check" style={{ color: "#FFFFFF" }}></i> Planner
         </h2>
 
-        {/* UPDATED: Week filter dropdown */}
         <Form.Select
           className="w-auto border-success shadow-sm"
           onChange={(e) => setSelectedWeek(e.target.value)}
@@ -183,6 +187,8 @@ const MicroPlanner = () => {
                 <th>Department</th>
                 <th>Sessions</th>
                 <th>Mode</th>
+                {/* ✅ show role */}
+                <th>Role</th>
                 <th>Modify</th>
               </tr>
             </thead>
@@ -202,6 +208,8 @@ const MicroPlanner = () => {
                       <td>{planner.department}</td>
                       <td>{planner.no_of_sessions}</td>
                       <td>{planner.mode}</td>
+                      {/* ✅ show role */}
+                      <td className="text-capitalize">{planner.role}</td>
                       <td>
                         <Button
                           variant="outline-success"
@@ -216,7 +224,7 @@ const MicroPlanner = () => {
                 })
               ) : (
                 <tr>
-                  <td colSpan="7" className="text-center text-muted">
+                  <td colSpan="8" className="text-center text-muted">
                     No Microplanner found for selected week.
                   </td>
                 </tr>
@@ -321,10 +329,7 @@ const MicroPlanner = () => {
                 required
               >
                 <option value="">Select Department</option>
-                {[
-                  "HR","IT","Finance","Marketing","Sales",
-                  "Operations","Support","Training","Development","Design"
-                ].map((dept) => (
+                {departmentOptions.map((dept) => (
                   <option key={dept} value={dept}>{dept}</option>
                 ))}
               </Form.Select>
@@ -349,12 +354,29 @@ const MicroPlanner = () => {
                 required
               >
                 <option value="">Select Mode</option>
-                {["Theoretical","Practical"].map((mode) => (
+                {modeOptions.map((mode) => (
                   <option key={mode} value={mode}>{mode}</option>
                 ))}
               </Form.Select>
             </Form.Group>
+
+            {/* ✅ NEW: Role dropdown */}
+            <Form.Group className="mb-3" controlId="formRole">
+              <Form.Label>Role</Form.Label>
+              <Form.Select
+                name="role"
+                defaultValue={currentPlanner?.role || "trainee"}
+                required
+              >
+                {roleOptions.map((r) => (
+                  <option key={r.value} value={r.value}>
+                    {r.label}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
           </Modal.Body>
+
           <Modal.Footer>
             <Button variant="secondary" onClick={handleCloseModal}>
               Cancel

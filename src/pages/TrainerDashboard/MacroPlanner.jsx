@@ -7,13 +7,10 @@ import {
   addMacroPlanner,
   updateMacroPlanner,
 } from "../../api/trainerAPIservice";
-import "../../index.css"
+import "../../index.css";
 
 const MacroPlanner = () => {
   const [planners, setPlanners] = useState([]);
-  const [months, setMonths] = useState([]);
-  const [weeks, setWeeks] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState("");
   const [selectedWeek, setSelectedWeek] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [currentPlanner, setCurrentPlanner] = useState(null);
@@ -21,33 +18,37 @@ const MacroPlanner = () => {
   const [error, setError] = useState(null);
 
   const monthOptions = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January","February","March","April","May","June",
+    "July","August","September","October","November","December",
   ];
 
   const durationOptions = [
-    "1 Month", "2 Months", "3 Months", "4 Months", "5 Months", "6 Months"
+    "1 Month","2 Months","3 Months","4 Months","5 Months","6 Months",
   ];
 
   const departmentOptions = [
-    "HR", "IT", "Finance", "Marketing", "Sales",
-    "Operations", "Support", "Training", "Development", "Design"
+    "HR","IT","Finance","Marketing","Sales",
+    "Operations","Support","Training","Development","Design",
   ];
 
-  const weekOptions= ["week 1","week 2","week 3","week 4"];
+  const weekOptions = ["week 1","week 2","week 3","week 4"];
+
+  // ✅ NEW: Role options
+  const roleOptions = [
+    { value: "trainee", label: "Trainee" },
+    { value: "employee", label: "Employee" },
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const result = await fetchMacroPlanner();
         if (result.success) {
-          setPlanners(result.data);
-          const uniqueWeeks = [...new Set(result.data.map((p) => p.week))];
-          setWeeks(uniqueWeeks);
+          setPlanners(result.data || []);
         } else {
           setError("Failed to fetch macroplanner data.");
         }
-      } catch (error) {
+      } catch (err) {
         setError("An error occurred while fetching macroplanner data.");
       } finally {
         setLoading(false);
@@ -70,6 +71,7 @@ const MacroPlanner = () => {
     event.preventDefault();
     setLoading(true);
     const form = event.target;
+
     const newPlanner = {
       id: currentPlanner ? currentPlanner.id : null,
       month: form.elements.month.value,
@@ -77,19 +79,17 @@ const MacroPlanner = () => {
       duration: form.elements.duration.value,
       department: form.elements.department.value,
       module: form.elements.module.value,
+      // ✅ include role in payload
+      role: form.elements.role.value,
     };
 
-    let result = currentPlanner
+    const result = currentPlanner
       ? await updateMacroPlanner(newPlanner)
       : await addMacroPlanner(newPlanner);
 
     if (result.success) {
       const updatedData = await fetchMacroPlanner();
-      if (updatedData.success) {
-        setPlanners(updatedData.data);
-        const uniqueWeeks = [...new Set(updatedData.data.map((p) => p.week))];
-        setWeeks(uniqueWeeks);
-      }
+      if (updatedData.success) setPlanners(updatedData.data || []);
       handleCloseModal();
     } else {
       console.error("Failed to save macroplanner:", result.error);
@@ -137,12 +137,14 @@ const MacroPlanner = () => {
       ) : (
         <div className="table-responsive">
           <table className="macro-planner-table">
-            <thead className="">
+            <thead>
               <tr>
                 <th>Week</th>
                 <th>Duration</th>
                 <th>Department</th>
                 <th>Module</th>
+                {/* ✅ show role */}
+                <th>Role</th>
                 <th>Modify</th>
               </tr>
             </thead>
@@ -154,6 +156,8 @@ const MacroPlanner = () => {
                     <td>{planner.duration}</td>
                     <td>{planner.department}</td>
                     <td>{planner.module}</td>
+                    {/* ✅ show role */}
+                    <td className="text-capitalize">{planner.role}</td>
                     <td>
                       <Button
                         variant="outline-primary"
@@ -167,7 +171,7 @@ const MacroPlanner = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="text-center text-muted">
+                  <td colSpan="6" className="text-center text-muted">
                     No Macroplanner found for selected week.
                   </td>
                 </tr>
@@ -247,7 +251,24 @@ const MacroPlanner = () => {
                 required
               />
             </Form.Group>
+
+            {/* ✅ NEW: Role dropdown */}
+            <Form.Group className="mb-3" controlId="formRole">
+              <Form.Label>Role</Form.Label>
+              <Form.Select
+                name="role"
+                defaultValue={currentPlanner?.role || "trainee"}
+                required
+              >
+                {roleOptions.map((r) => (
+                  <option key={r.value} value={r.value}>
+                    {r.label}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
           </Modal.Body>
+
           <Modal.Footer>
             <Button variant="secondary" onClick={handleCloseModal}>
               Cancel
