@@ -186,3 +186,13 @@ export const markLessonCompleted = async (lessonSlug) => {
     return fail(error, "Failed to mark lesson as completed.");
   }
 };
+
+export const fetchSOP = async () => {
+  try {
+    const response = await apiClient.get(`/sops/`);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error fetching SOPs:", error);
+    return { success: false, error: handleError(error, "Failed to fetch SOPs.") };
+  }
+};

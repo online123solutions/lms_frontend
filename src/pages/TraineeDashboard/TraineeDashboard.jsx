@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import Card from "../../UIcomponents/dashboard/card";
-import { fetchTraineeDashboard, mediaUrl, fetchTraineeNotifications } from "../../api/traineeAPIservice";
+import { fetchTraineeDashboard, mediaUrl, fetchTraineeNotifications,fetchSOP } from "../../api/traineeAPIservice";
 import { logout } from "../../api/apiservice";
 import "../../utils/css/sidebar.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -29,6 +29,10 @@ const TraineeDashboard = () => {
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0); 
   const [showDropdown, setShowDropdown] = useState(false);
+  const [sops, setSops] = useState([]);
+  const [sopsLoading, setSopsLoading] = useState(false);
+  const [sopsError,   setSopsError]   = useState("");
+
 
   const [showResetRequestModal, setShowResetRequestModal] = useState(false);
     const [resetEmail, setResetEmail] = useState("");
@@ -88,6 +92,21 @@ const TraineeDashboard = () => {
           reloadBadge(); // ✅ also load unread count
         }
       }, [username, navigate, isAuthenticated, reloadBadge]);
+
+  
+  // fetch when the SOPs tab is opened (or on mount if you prefer)
+  useEffect(() => {
+    const load = async () => {
+      setSopsLoading(true);
+      setSopsError("");
+      const res = await fetchSOP();
+      if (res.success) setSops(res.data || []);
+      else setSopsError(res.error || "Failed to load SOPs.");
+      setSopsLoading(false);
+    };
+    if (activeContent === "sops") load();
+  }, [activeContent]);
+
 
   const handleLogout = async () => {
     const result = await logout();
@@ -205,6 +224,45 @@ const TraineeDashboard = () => {
             onRefreshBadge={reloadBadge}
           />
         );
+      // small renderer (drop inside renderContent switch)
+      case "sops":
+        if (sopsLoading) return <Loader />;
+        if (sopsError)   return <div style={{padding:16,color:"crimson"}}>{sopsError}</div>;
+        if (!sops?.length) return <div style={{padding:16}}>No SOPs assigned to you yet.</div>;
+
+        return (
+          <div style={{ padding: 16 }}>
+            <h3 style={{ marginBottom: 12 }}>Your SOPs</h3>
+            <div style={{ display: "grid", gap: 12 }}>
+              {sops.map((sop) => (
+                <div key={sop.id} style={{
+                  background:"#fff", borderRadius:12, boxShadow:"0 1px 4px rgba(0,0,0,.08)",
+                  padding:16, display:"grid", gap:6
+                }}>
+                  <div style={{fontWeight:700}}>{sop.title}</div>
+                  {sop.note && <div style={{opacity:.8, fontSize:14}}>{sop.note}</div>}
+                  <div style={{fontSize:12, opacity:.7}}>
+                    {sop.department ? <>Dept: {sop.department} · </> : null}
+                    {sop.target_role ? <>Role: {sop.target_role}</> : null}
+                    {sop.created_at ? <> · {new Date(sop.created_at).toLocaleString()}</> : null}
+                  </div>
+                  {sop.file && (
+                    <div style={{ marginTop: 6 }}>
+                      <a
+                        href={mediaUrl ? mediaUrl(sop.file) : sop.file}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="btn btn-sm btn-primary"
+                      >
+                        View PDF
+                      </a>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
       default:
         return <div>Select an option</div>;
     }
@@ -275,6 +333,7 @@ const TraineeDashboard = () => {
               "notifications",
               "queries",
               "loginActivity",
+              'sops',
             ].map((key) => {
               const labelMap = {
                 dashboard: "Dashboard",
@@ -286,6 +345,7 @@ const TraineeDashboard = () => {
                 notifications: "Notifications",
                 queries: "Trainee Queries",
                 loginActivity: "Login Activity",
+                sops: "SOPs",
               };
               const iconMap = {
                 dashboard: "bi-house",
@@ -299,6 +359,7 @@ const TraineeDashboard = () => {
                 notifications: "bi-bell",
                 queries: "bi-chat-left-dots",
                 loginActivity: "bi-clock-history",
+                sops: "bi-file-earmark-text"
               };
               return (
                 <div

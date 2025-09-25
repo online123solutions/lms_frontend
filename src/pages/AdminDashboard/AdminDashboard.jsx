@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { fetchAdminDashboard } from '../../api/adminAPIservice';
+import { fetchAdminDashboard,fetchSOP,mediaUrl } from '../../api/adminAPIservice';
 import { logout,requestPasswordReset, confirmPasswordReset } from '../../api/apiservice';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Loader from '../../UIcomponents/dashboard/loader';
@@ -24,8 +24,7 @@ const MENU = [
   { label: 'Training Report', key: 'report', icon: 'bi-file-earmark-bar-graph' },
   { label: 'Assessment Report', key: 'assessmentReport', icon: 'bi-graph-up' },
   { label: 'Notifications', key: 'notifications', icon: 'bi-bell' },
-  // { label: 'Queries', key: 'queries', icon: 'bi-chat-left-text' },
-  // { label: 'SOP', key: 'STEM-SOP', icon: 'bi-file-earmark-text' },
+  { label: 'SOP', key: 'sops', icon: 'bi-file-earmark-text' },
 ];
 
 const AdminDashboard = () => {
@@ -40,6 +39,9 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [sops, setSops] = useState([]);
+  const [sopsLoading, setSopsLoading] = useState(false);
+  const [sopsError,   setSopsError]   = useState("");
 
   const isAuthenticated = localStorage.getItem('isAuthenticated');
   const name = data?.profile?.name || (username ? username : 'Admin');
@@ -98,6 +100,18 @@ const AdminDashboard = () => {
     };
     if (username) load();
   }, [username, isAuthenticated, navigate]);
+
+    useEffect(() => {
+      const load = async () => {
+        setSopsLoading(true);
+        setSopsError("");
+        const res = await fetchSOP();
+        if (res.success) setSops(res.data || []);
+        else setSopsError(res.error || "Failed to load SOPs.");
+        setSopsLoading(false);
+      };
+      if (activeContent === "sops") load();
+    }, [activeContent]);
 
   useEffect(() => {
     const onKey = (e) => {
@@ -181,6 +195,45 @@ const AdminDashboard = () => {
         return <AdminAssessmentReports />;
       case 'notifications':
         return <AdminNotification />;
+
+      case "sops":
+        if (sopsLoading) return <Loader />;
+        if (sopsError)   return <div style={{padding:16,color:"crimson"}}>{sopsError}</div>;
+        if (!sops?.length) return <div style={{padding:16}}>No SOPs assigned to you yet.</div>;
+
+        return (
+          <div style={{ padding: 16 }}>
+            <h3 style={{ marginBottom: 12 }}>Your SOPs</h3>
+            <div style={{ display: "grid", gap: 12 }}>
+              {sops.map((sop) => (
+                <div key={sop.id} style={{
+                  background:"#fff", borderRadius:12, boxShadow:"0 1px 4px rgba(0,0,0,.08)",
+                  padding:16, display:"grid", gap:6
+                }}>
+                  <div style={{fontWeight:700}}>{sop.title}</div>
+                  {sop.note && <div style={{opacity:.8, fontSize:14}}>{sop.note}</div>}
+                  <div style={{fontSize:12, opacity:.7}}>
+                    {sop.department ? <>Dept: {sop.department} · </> : null}
+                    {sop.target_role ? <>Role: {sop.target_role}</> : null}
+                    {sop.created_at ? <> · {new Date(sop.created_at).toLocaleString()}</> : null}
+                  </div>
+                  {sop.file && (
+                    <div style={{ marginTop: 6 }}>
+                      <a
+                        href={mediaUrl ? mediaUrl(sop.file) : sop.file}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="btn btn-sm btn-primary"
+                      >
+                        View PDF
+                      </a>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
 
       default:
         return <div style={{ padding: 20 }}>Select an option</div>;

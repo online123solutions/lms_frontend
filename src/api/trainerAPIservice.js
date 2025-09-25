@@ -381,3 +381,27 @@ export async function getDetailedTrainingReport(userId) {
   const res = await apiClient.get(`/training-report/${userId}/`);
   return res.data;
 }
+
+export const API_BASE =
+  (process.env.REACT_APP_API_BASE_URL || "https://lms.steel.study").replace(/\/+$/, "");
+  
+export function mediaUrl(path) {
+  if (!path) return "";
+  return /^https?:\/\//i.test(path) ? path : `${API_BASE}${path.startsWith("/") ? "" : "/"}${path}`;
+}
+
+const handleError = (error) => {
+  console.error("API call failed: ", error);
+  // You can add further custom logic here to handle errors like showing a notification
+  throw error; // Rethrow the error to propagate it
+};
+
+export const fetchSOP = async () => {
+  try {
+    const response = await apiClient.get(`/sops/`);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error fetching SOPs:", error);
+    return { success: false, error: handleError(error, "Failed to fetch SOPs.") };
+  }
+};
