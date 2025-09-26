@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import {
   fetchTraineeDashboard,
   fetchTraineeNotifications,
-  markNotificationRead,mediaUrl
+  markNotificationRead,mediaUrl,getTraineeProgress
 } from "../../api/traineeAPIservice";
 import "../../UIcomponents/dashboard/profilecard.css";
 import Social from "../../UIcomponents/dashboard/Social";
@@ -121,6 +121,18 @@ BannerSlider.propTypes = {
     ),
   }),
 };
+
+// small UI styles used above
+const miniCardStyle = {
+  gridColumn: "span 3",
+  background: "#fff",
+  borderRadius: 12,
+  padding: 12,
+  boxShadow: "0 1px 4px rgba(0,0,0,.06)",
+};
+const miniLabel = { fontSize: 12, color: "#6b7280" };
+const miniValue = { fontSize: 22, fontWeight: 800, color: "#111827" };
+
 
 // ---------------- ProfileCard -----------------
 const ProfileCard = ({ username }) => {
@@ -432,11 +444,12 @@ const UpdatesCard = ({ data }) => {
   return (
     <div className="updates-card" style={{
       background:"#fff",
-      padding:"20px",
-      borderRadius:"15px",
-      boxShadow:"0 2px 10px rgba(0,0,0,.1)",
-      marginTop:"20px",
-      height:"100vh"
+      padding:"16px 18px",                    // match .mp-card
+      borderRadius:"14px",                    // match .mp-card
+      boxShadow:"0 6px 18px rgba(0,0,0,.06)", // match .mp-card
+      marginTop:"0",
+      maxHeight:"420px",
+      overflowY:"auto"
     }}>
       <h3 style={{ color:"#333", marginBottom:"12px" }}>Latest Updates</h3>
       <ul>
@@ -465,6 +478,86 @@ UpdatesCard.propTypes = {
   }),
 };
 
+// --- My Progress (summary only) ---
+const ProgressMiniCard = () => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await getTraineeProgress(); // /trainee-progress/
+        setData(res);
+      } catch (e) {
+        setErr("Failed to load progress.");
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  if (loading) return <section className="card mp-card"><div className="text-center py-2">Loading…</div></section>;
+  if (err) return <section className="card mp-card"><div className="text-danger text-center py-2">{err}</div></section>;
+  if (!data) return null;
+
+  const t = data.totals || { subjects_total:0, lessons_total:0, lessons_completed:0, progress_pct:0 };
+
+  return (
+    <section className="card mp-card">
+      <div className="mp-header">
+        <div className="mp-title">
+          <i className="bi bi-bar-chart-line"></i>
+          <span>My Progress</span>
+        </div>
+      </div>
+
+      {/* 3 chips in a single row */}
+      <div className="mp-kpis">
+        <div className="mp-chip">
+          <span className="mp-chip-icon bg-blue"><i className="bi bi-journal"></i></span>
+          <div>
+            <div className="mp-chip-label">Subjects</div>
+            <div className="mp-chip-value">{t.subjects_total}</div>
+          </div>
+        </div>
+        <div className="mp-chip">
+          <span className="mp-chip-icon bg-amber"><i className="bi bi-puzzle"></i></span>
+          <div>
+            <div className="mp-chip-label">Lessons</div>
+            <div className="mp-chip-value">{t.lessons_total}</div>
+          </div>
+        </div>
+        <div className="mp-chip">
+          <span className="mp-chip-icon bg-green"><i className="bi bi-check2-circle"></i></span>
+          <div>
+            <div className="mp-chip-label">Completed</div>
+            <div className="mp-chip-value">{t.lessons_completed}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Overall meter only */}
+      <div className="mp-progress">
+        <div
+          className="mp-donut"
+          style={{ "--p": t.progress_pct }}
+          data-label={`${t.progress_pct}%`}
+        />
+        <div>
+          <div style={{ fontWeight: 700, color: "#0f172a", marginBottom: 6 }}>Overall Progress</div>
+          <div style={{ fontSize: 13, color: "#6b7280" }}>
+            Keep going! <b>{t.lessons_completed}</b> of <b>{t.lessons_total}</b> lessons done.
+          </div>
+        </div>
+      </div>
+
+    </section>
+  );
+};
+
+
 // ---------------- DashboardCard -----------------
 const DashboardCard = () => {
   const username = localStorage.getItem("username") || "";
@@ -491,6 +584,7 @@ const DashboardCard = () => {
           <ActionCards activeQuizzes={activeQuizzes} />
         </div>
         <UpdatesCard data={data} />
+        <ProgressMiniCard />
       </div>
     </div>
   );

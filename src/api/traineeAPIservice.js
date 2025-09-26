@@ -206,3 +206,9 @@ export async function fetchStandardLibrary() {
     return { success: false, error: e?.response?.data?.detail || e.message };
   }
 }
+
+
+export async function getTraineeProgress() {
+  const { data } = await apiClient.get("/trainee-progress/");
+  return data; // { user_id, username, name, totals, subjects[] }
+}

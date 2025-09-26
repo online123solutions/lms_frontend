@@ -25,6 +25,7 @@ import TraineeNotificationPage from "./TraineeNotification";
 import logoSO from "../../assets/logo4.png";
 import { Dropdown, Form, Button, Modal } from "react-bootstrap";
 import { requestPasswordReset, confirmPasswordReset } from "../../api/apiservice";
+import TraineeProgress from "./TraineeProgress";
 
 const TraineeDashboard = () => {
   const [data, setData] = useState(null);
@@ -181,6 +182,7 @@ const TraineeDashboard = () => {
       setResetConfirmMessage(`Error: ${e.message || "Failed to reset password."}`);
     }
   };
+  
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -318,6 +320,8 @@ const TraineeDashboard = () => {
         return <TraineeLoginActivity />;
       case "notifications":
         return <TraineeNotificationPage onRefreshBadge={reloadBadge} />;
+      case "progress":
+        return <TraineeProgress />;
 
       // Combined SOPs + Standard Library view with tabs
       case "sops": {
@@ -445,7 +449,7 @@ const TraineeDashboard = () => {
               "queries",
               "loginActivity",
               "sops",
-              // "standardlibrary", 
+              "progress",
             ].map((key) => {
               const labelMap = {
                 dashboard: "Dashboard",
@@ -458,7 +462,7 @@ const TraineeDashboard = () => {
                 queries: "Trainee Queries",
                 loginActivity: "Login Activity",
                 sops: "SOPs",
-                // standardlibrary: "Standard Library", // ✅
+                progress: "Progress",
               };
               const iconMap = {
                 dashboard: "bi-house",
@@ -473,7 +477,7 @@ const TraineeDashboard = () => {
                 queries: "bi-chat-left-dots",
                 loginActivity: "bi-clock-history",
                 sops: "bi-file-earmark-text",
-                // standardlibrary: "bi-collection", // ✅
+                progress: "bi-bar-chart",
               };
 
               const onClick = () => {

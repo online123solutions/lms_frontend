@@ -6,6 +6,98 @@ import "../../utils/css/Trainee CSS/trainee-dashboard-content.css";
 import { useState } from "react";  
 import "../../index.css"
 
+function ProgressCard() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await getTraineeProgress(); // GET /trainee-progress/
+        setData(res);
+      } catch (e) {
+        setErr("Failed to load progress.");
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  if (loading) return <div className="text-center py-3">Loading…</div>;
+  if (err) return <div className="text-danger text-center py-3">{err}</div>;
+  if (!data) return null;
+
+  const t = data.totals || {
+    subjects_total: 0,
+    lessons_total: 0,
+    lessons_completed: 0,
+    lessons_pending: 0,
+    progress_pct: 0,
+  };
+
+  return (
+    <div className="td-progress-wrap">
+      {/* Top mini KPIs */}
+      <div className="td-progress-kpis">
+        <div className="mini">
+          <div className="label">Subjects</div>
+          <div className="value">{t.subjects_total}</div>
+        </div>
+        <div className="mini">
+          <div className="label">Lessons</div>
+          <div className="value">{t.lessons_total}</div>
+        </div>
+        <div className="mini">
+          <div className="label">Completed</div>
+          <div className="value">{t.lessons_completed}</div>
+        </div>
+        <div className="bar">
+          <div className="bar-head">
+            <span>Overall Progress</span>
+            <b>{t.progress_pct}%</b>
+          </div>
+          <div className="bar-track">
+            <div className="bar-fill" style={{ width: `${t.progress_pct}%` }} />
+          </div>
+        </div>
+      </div>
+
+      {/* Compact table (3 cols like your screenshot) */}
+      <div className="table-responsive mt-3">
+        <table className="table table-bordered table-hover align-middle shadow-sm">
+          <thead style={{ background: "#eaf4ff" }}>
+            <tr>
+              <th>Subject</th>
+              <th className="text-center">Total</th>
+              <th className="text-center">Completed</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.subjects?.length ? (
+              data.subjects.map((s) => (
+                <tr key={s.subject_id}>
+                  <td className="fw-medium">{s.subject_name}</td>
+                  <td className="text-center">{s.total_lessons}</td>
+                  <td className="text-center">{s.completed_lessons}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="3" className="text-center text-muted">
+                  No subject data yet.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+
 export default function TraineeDashboardContent({ data }) {
   // ---- Safe reads + fallbacks (adapt keys to your API) ----
   const name   = data?.profile?.name || "Trainee";
