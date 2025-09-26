@@ -19,6 +19,7 @@ import EmployeeNotificationsPage from "./EmployeeNotification";
 import logoSO from "../../assets/logo4.png"; 
 import { Dropdown,Form,Button,Modal } from "react-bootstrap";
 import { requestPasswordReset, confirmPasswordReset } from "../../api/apiservice";
+import EmployeeProgress from "./EmployeeProgress";
 
 const EmployeeDashboard = () => {
   const [data, setData] = useState(null);
@@ -361,6 +362,8 @@ const EmployeeDashboard = () => {
           </div>
         );
       }
+      case "progress":
+        return <EmployeeProgress />;
       default:
         return <div>Select an option</div>;
     }
@@ -432,6 +435,7 @@ const EmployeeDashboard = () => {
               "queries",
               "loginActivity",
               "sops",
+              "progress",
             ].map((key) => {
               const labelMap = {
                 dashboard: "Dashboard",
@@ -444,6 +448,7 @@ const EmployeeDashboard = () => {
                 queries: "Queries",
                 loginActivity: "Login Activity",
                 sops: "SOP",
+                progress: "Progress",
               };
               const iconMap = {
                 dashboard: "bi-house",
@@ -457,6 +462,7 @@ const EmployeeDashboard = () => {
                 queries: "bi-chat-left-dots",
                 loginActivity: "bi-clock-history",
                 sops: "bi-file-earmark-text",
+                progress: "bi-bar-chart-line",
               };
               return (
                 <div

@@ -3,12 +3,10 @@ import PropTypes from "prop-types";
 import {
   fetchEmployeeDashboard,
   fetchEmployeeNotifications,
-  markNotificationRead,
+  markNotificationRead,getEmployeeProgress
 } from "../../api/employeeAPIservice";
 import "../../UIcomponents/dashboard/profilecard.css";
-import Social from "../../UIcomponents/dashboard/Social";
 import PerformanceChart from "./PerformanceChart";
-import BarGraph from "./BarGraph";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { mediaUrl } from "../../api/traineeAPIservice";
 
@@ -415,6 +413,85 @@ const UpdatesCard = ({ data }) => {
   );
 };
 
+// --- My Progress (summary only) ---
+const ProgressMiniCard = () => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await getEmployeeProgress(); // /trainee-progress/
+        setData(res);
+      } catch (e) {
+        setErr("Failed to load progress.");
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  if (loading) return <section className="card mp-card"><div className="text-center py-2">Loading…</div></section>;
+  if (err) return <section className="card mp-card"><div className="text-danger text-center py-2">{err}</div></section>;
+  if (!data) return null;
+
+  const t = data.totals || { subjects_total:0, lessons_total:0, lessons_completed:0, progress_pct:0 };
+
+  return (
+    <section className="card mp-card">
+      <div className="mp-header">
+        <div className="mp-title">
+          <i className="bi bi-bar-chart-line"></i>
+          <span>My Progress</span>
+        </div>
+      </div>
+
+      {/* 3 chips in a single row */}
+      <div className="mp-kpis">
+        <div className="mp-chip">
+          <span className="mp-chip-icon bg-blue"><i className="bi bi-journal"></i></span>
+          <div>
+            <div className="mp-chip-label">Subjects</div>
+            <div className="mp-chip-value">{t.subjects_total}</div>
+          </div>
+        </div>
+        <div className="mp-chip">
+          <span className="mp-chip-icon bg-amber"><i className="bi bi-puzzle"></i></span>
+          <div>
+            <div className="mp-chip-label">Lessons</div>
+            <div className="mp-chip-value">{t.lessons_total}</div>
+          </div>
+        </div>
+        <div className="mp-chip">
+          <span className="mp-chip-icon bg-green"><i className="bi bi-check2-circle"></i></span>
+          <div>
+            <div className="mp-chip-label">Completed</div>
+            <div className="mp-chip-value">{t.lessons_completed}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Overall meter only */}
+      <div className="mp-progress">
+        <div
+          className="mp-donut"
+          style={{ "--p": t.progress_pct }}
+          data-label={`${t.progress_pct}%`}
+        />
+        <div>
+          <div style={{ fontWeight: 700, color: "#0f172a", marginBottom: 6 }}>Overall Progress</div>
+          <div style={{ fontSize: 13, color: "#6b7280" }}>
+            Keep going! <b>{t.lessons_completed}</b> of <b>{t.lessons_total}</b> lessons done.
+          </div>
+        </div>
+      </div>
+
+    </section>
+  );
+};
+
 UpdatesCard.propTypes = {
   data: PropTypes.shape({
     admin_updates: PropTypes.arrayOf(
@@ -452,6 +529,7 @@ const DashboardCard = () => {
           <ActionCards activeQuizzes={activeQuizzes} />
         </div>
         <UpdatesCard data={data} /> {/* Replaced LearningActivity with UpdatesCard */}
+        <ProgressMiniCard />
       </div>
     </div>
   );

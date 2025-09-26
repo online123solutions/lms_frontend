@@ -6,9 +6,7 @@ import {
   markNotificationRead,mediaUrl,getTraineeProgress
 } from "../../api/traineeAPIservice";
 import "../../UIcomponents/dashboard/profilecard.css";
-import Social from "../../UIcomponents/dashboard/Social";
 import PerformanceChart from "./PerformanceChart";
-import BarGraph from "./BarGraph";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../index.css";
 
