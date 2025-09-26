@@ -2,7 +2,13 @@ import { useEffect, useState, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import Card from "../../UIcomponents/dashboard/card";
-import { fetchTraineeDashboard, mediaUrl, fetchTraineeNotifications,fetchSOP } from "../../api/traineeAPIservice";
+import {
+  fetchTraineeDashboard,
+  mediaUrl,
+  fetchTraineeNotifications,
+  fetchSOP,
+  fetchStandardLibrary, // ✅ NEW
+} from "../../api/traineeAPIservice";
 import { logout } from "../../api/apiservice";
 import "../../utils/css/sidebar.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -16,8 +22,8 @@ import AssessmentReport from "../../UIcomponents/dashboard/AssessmentReport";
 import MacroPlanner from "./MacroPlanner";
 import MicroPlanner from "./MicroPlanner";
 import TraineeNotificationPage from "./TraineeNotification";
-import logoSO from "../../assets/logo4.png"; 
-import { Dropdown,Form,Button,Modal } from "react-bootstrap";
+import logoSO from "../../assets/logo4.png";
+import { Dropdown, Form, Button, Modal } from "react-bootstrap";
 import { requestPasswordReset, confirmPasswordReset } from "../../api/apiservice";
 
 const TraineeDashboard = () => {
@@ -27,22 +33,28 @@ const TraineeDashboard = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const navigate = useNavigate();
-  const [unreadCount, setUnreadCount] = useState(0); 
+  const [unreadCount, setUnreadCount] = useState(0);
   const [showDropdown, setShowDropdown] = useState(false);
+
+  // SOPs + Standard Library
   const [sops, setSops] = useState([]);
   const [sopsLoading, setSopsLoading] = useState(false);
-  const [sopsError,   setSopsError]   = useState("");
+  const [sopsError, setSopsError] = useState("");
+  const [library, setLibrary] = useState([]);                 // ✅ NEW
+  const [libraryLoading, setLibraryLoading] = useState(false); // ✅ NEW
+  const [libraryError, setLibraryError] = useState("");        // ✅ NEW
+  const [sopsTab, setSopsTab] = useState(() => localStorage.getItem("sopsTab") || "sops"); // ✅ NEW
 
-
+  // Password reset modals
   const [showResetRequestModal, setShowResetRequestModal] = useState(false);
-    const [resetEmail, setResetEmail] = useState("");
-    const [resetRequestMessage, setResetRequestMessage] = useState("");
-    const [showResetConfirmModal, setShowResetConfirmModal] = useState(false);
-    const [uidb64, setUidb64] = useState("");
-    const [token, setToken] = useState("");
-    const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [resetConfirmMessage, setResetConfirmMessage] = useState("");
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetRequestMessage, setResetRequestMessage] = useState("");
+  const [showResetConfirmModal, setShowResetConfirmModal] = useState(false);
+  const [uidb64, setUidb64] = useState("");
+  const [token, setToken] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [resetConfirmMessage, setResetConfirmMessage] = useState("");
 
   const username = localStorage.getItem("username") || "";
   const isAuthenticated = localStorage.getItem("isAuthenticated");
@@ -50,53 +62,57 @@ const TraineeDashboard = () => {
   const [activeContent, setActiveContent] = useState(() => {
     return localStorage.getItem("activeContent") || "dashboard";
   });
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // mobile toggle
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("activeContent", activeContent);
   }, [activeContent]);
 
-   // ✅ Unread badge loader (exposed so child can refresh after marking read)
-    const reloadBadge = useCallback(async () => {
-      try {
-        const res = await fetchTraineeNotifications({ unread: true });
-        if (res.success) setUnreadCount(Array.isArray(res.data) ? res.data.length : 0);
-      } catch {
-        // keep silent; badge is optional
-      }
-    }, []);
-  
-    useEffect(() => {
-        if (isAuthenticated !== "true") {
-          navigate("/login");
-          return;
-        }
-  
-        const fetchData = async () => {
-          try {
-            const result = await fetchTraineeDashboard(username);
-            if (result.success) {
-              setData(result.data);
-            } else {
-              setError("An error occurred while fetching dashboard data.");
-            }
-          } catch (error) {
-            setError("An error occurred while fetching data.");
-          } finally {
-            setLoading(false);
-          }
-        };
-  
-        if (username) {
-          fetchData();
-          reloadBadge(); // ✅ also load unread count
-        }
-      }, [username, navigate, isAuthenticated, reloadBadge]);
-
-  
-  // fetch when the SOPs tab is opened (or on mount if you prefer)
+  // keep sops tab persistent
   useEffect(() => {
-    const load = async () => {
+    localStorage.setItem("sopsTab", sopsTab);
+  }, [sopsTab]);
+
+  // unread badge
+  const reloadBadge = useCallback(async () => {
+    try {
+      const res = await fetchTraineeNotifications({ unread: true });
+      if (res.success) setUnreadCount(Array.isArray(res.data) ? res.data.length : 0);
+    } catch {
+      /* silent */
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isAuthenticated !== "true") {
+      navigate("/login");
+      return;
+    }
+
+    const fetchData = async () => {
+      try {
+        const result = await fetchTraineeDashboard(username);
+        if (result.success) {
+          setData(result.data);
+        } else {
+          setError("An error occurred while fetching dashboard data.");
+        }
+      } catch (error) {
+        setError("An error occurred while fetching data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (username) {
+      fetchData();
+      reloadBadge();
+    }
+  }, [username, navigate, isAuthenticated, reloadBadge]);
+
+  // Load SOPs when SOPs tab opens (or stays default)
+  useEffect(() => {
+    const loadSOPs = async () => {
       setSopsLoading(true);
       setSopsError("");
       const res = await fetchSOP();
@@ -104,10 +120,23 @@ const TraineeDashboard = () => {
       else setSopsError(res.error || "Failed to load SOPs.");
       setSopsLoading(false);
     };
-    if (activeContent === "sops") load();
-  }, [activeContent]);
+    if (activeContent === "sops" && sopsTab === "sops") loadSOPs();
+  }, [activeContent, sopsTab]);
 
+  // Load Standard Library when Library tab opens
+  useEffect(() => {
+    const loadLibrary = async () => {
+      setLibraryLoading(true);
+      setLibraryError("");
+      const res = await fetchStandardLibrary(); // backend should filter by user role
+      if (res.success) setLibrary(res.data || []);
+      else setLibraryError(res.error || "Failed to load Standard Library.");
+      setLibraryLoading(false);
+    };
+    if (activeContent === "sops" && sopsTab === "library") loadLibrary();
+  }, [activeContent, sopsTab]);
 
+  // Password Reset Handlers
   const handleLogout = async () => {
     const result = await logout();
     if (result.success) {
@@ -118,52 +147,124 @@ const TraineeDashboard = () => {
     }
   };
 
-  // Password Reset Handlers
-    const handleResetRequest = async (e) => {
-      e.preventDefault();
-      try {
-        const result = await requestPasswordReset({ email: resetEmail });
-        if (result.success) {
-          setResetRequestMessage("Password reset email sent successfully. Check your inbox.");
-        } else {
-          setResetRequestMessage(`Error: ${result.error || "Failed to send reset email."}`);
-        }
-      } catch (e) {
-        setResetRequestMessage(`Error: ${e.message || "Failed to send reset email."}`);
+  const handleResetRequest = async (e) => {
+    e.preventDefault();
+    try {
+      const result = await requestPasswordReset({ email: resetEmail });
+      if (result.success) {
+        setResetRequestMessage("Password reset email sent successfully. Check your inbox.");
+      } else {
+        setResetRequestMessage(`Error: ${result.error || "Failed to send reset email."}`);
       }
-    };
-  
-    const handleResetConfirm = async (e) => {
-      e.preventDefault();
-      if (newPassword !== confirmPassword) {
-        setResetConfirmMessage("Passwords do not match.");
-        return;
-      }
-      try {
-        const result = await confirmPasswordReset({ uidb64, token, new_password: newPassword });
-        if (result.success) {
-          setResetConfirmMessage("Password reset successfully. You can now log in.");
-          setTimeout(() => {
-            window.location.href = "/login";
-          }, 2000);
-        } else {
-          setResetConfirmMessage(`Error: ${result.error || "Failed to reset password."}`);
-        }
-      } catch (e) {
-        setResetConfirmMessage(`Error: ${e.message || "Failed to reset password."}`);
-      }
-    };
+    } catch (e) {
+      setResetRequestMessage(`Error: ${e.message || "Failed to send reset email."}`);
+    }
+  };
 
-    useEffect(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const uid = urlParams.get("uidb64");
-        const tok = urlParams.get("token");
-        if (uid && tok) {
-          setUidb64(uid);
-          setToken(tok);
-          setShowResetConfirmModal(true);
-        }
-      }, []);
+  const handleResetConfirm = async (e) => {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) {
+      setResetConfirmMessage("Passwords do not match.");
+      return;
+    }
+    try {
+      const result = await confirmPasswordReset({ uidb64, token, new_password: newPassword });
+      if (result.success) {
+        setResetConfirmMessage("Password reset successfully. You can now log in.");
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 2000);
+      } else {
+        setResetConfirmMessage(`Error: ${result.error || "Failed to reset password."}`);
+      }
+    } catch (e) {
+      setResetConfirmMessage(`Error: ${e.message || "Failed to reset password."}`);
+    }
+  };
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const uid = urlParams.get("uidb64");
+    const tok = urlParams.get("token");
+    if (uid && tok) {
+      setUidb64(uid);
+      setToken(tok);
+      setShowResetConfirmModal(true);
+    }
+  }, []);
+
+  // ---- renderers -------------------------------------------------
+
+  const renderSOPItem = (sop) => (
+    <div
+      key={sop.id}
+      style={{
+        background: "#fff",
+        borderRadius: 12,
+        boxShadow: "0 1px 4px rgba(0,0,0,.08)",
+        padding: 16,
+        display: "grid",
+        gap: 6,
+      }}
+    >
+      <div style={{ fontWeight: 700 }}>{sop.title}</div>
+      {sop.note && <div style={{ opacity: 0.8, fontSize: 14 }}>{sop.note}</div>}
+      <div style={{ fontSize: 12, opacity: 0.7 }}>
+        {sop.department ? <>Dept: {sop.department} · </> : null}
+        {sop.target_role ? <>Role: {sop.target_role}</> : null}
+        {sop.created_at ? <> · {new Date(sop.created_at).toLocaleString()}</> : null}
+      </div>
+      {sop.file && (
+        <div style={{ marginTop: 6 }}>
+          <a
+            href={mediaUrl ? mediaUrl(sop.file) : sop.file}
+            target="_blank"
+            rel="noreferrer"
+            className="btn btn-sm btn-primary"
+          >
+            View PDF
+          </a>
+        </div>
+      )}
+    </div>
+  );
+
+  const renderLibraryItem = (item) => (
+    <div
+      key={item.id}
+      style={{
+        background: "#fff",
+        borderRadius: 12,
+        boxShadow: "0 1px 4px rgba(0,0,0,.08)",
+        padding: 16,
+        display: "grid",
+        gap: 6,
+      }}
+    >
+      <div style={{ fontWeight: 700 }}>{item.title}</div>
+      {item.note && <div style={{ opacity: 0.8, fontSize: 14 }}>{item.note}</div>}
+      <div style={{ fontSize: 12, opacity: 0.7 }}>
+        {item.department ? <>Dept: {item.department} · </> : null}
+        {item.target_role ? <>Role: {item.target_role}</> : null}
+        {Array.isArray(item.tags) && item.tags.length ? (
+          <> · Tags: {item.tags.join(", ")}</>
+        ) : null}
+        {item.created_at ? <> · {new Date(item.created_at).toLocaleString()}</> : null}
+      </div>
+      {item.file && (
+        <div style={{ marginTop: 6 }}>
+          <a
+            href={mediaUrl ? mediaUrl(item.file) : item.file}
+            target="_blank"
+            rel="noreferrer"
+            className="btn btn-sm btn-outline-primary"
+          >
+            View File
+          </a>
+        </div>
+      )}
+    </div>
+  );
 
   const renderContent = () => {
     switch (activeContent) {
@@ -192,10 +293,7 @@ const TraineeDashboard = () => {
                       }
                     }}
                   >
-                    <Card
-                      title={subject.name}
-                      image={mediaUrl(subject.image)}
-                    />
+                    <Card title={subject.name} image={mediaUrl(subject.image)} />
                   </Link>
                 </div>
               ))
@@ -218,51 +316,61 @@ const TraineeDashboard = () => {
         return <QueryChat />;
       case "loginActivity":
         return <TraineeLoginActivity />;
-      case "notifications": // ✅ NEW
-        return (
-          <TraineeNotificationPage
-            onRefreshBadge={reloadBadge}
-          />
-        );
-      // small renderer (drop inside renderContent switch)
-      case "sops":
-        if (sopsLoading) return <Loader />;
-        if (sopsError)   return <div style={{padding:16,color:"crimson"}}>{sopsError}</div>;
-        if (!sops?.length) return <div style={{padding:16}}>No SOPs assigned to you yet.</div>;
+      case "notifications":
+        return <TraineeNotificationPage onRefreshBadge={reloadBadge} />;
 
+      // Combined SOPs + Standard Library view with tabs
+      case "sops": {
         return (
           <div style={{ padding: 16 }}>
-            <h3 style={{ marginBottom: 12 }}>Your SOPs</h3>
-            <div style={{ display: "grid", gap: 12 }}>
-              {sops.map((sop) => (
-                <div key={sop.id} style={{
-                  background:"#fff", borderRadius:12, boxShadow:"0 1px 4px rgba(0,0,0,.08)",
-                  padding:16, display:"grid", gap:6
-                }}>
-                  <div style={{fontWeight:700}}>{sop.title}</div>
-                  {sop.note && <div style={{opacity:.8, fontSize:14}}>{sop.note}</div>}
-                  <div style={{fontSize:12, opacity:.7}}>
-                    {sop.department ? <>Dept: {sop.department} · </> : null}
-                    {sop.target_role ? <>Role: {sop.target_role}</> : null}
-                    {sop.created_at ? <> · {new Date(sop.created_at).toLocaleString()}</> : null}
-                  </div>
-                  {sop.file && (
-                    <div style={{ marginTop: 6 }}>
-                      <a
-                        href={mediaUrl ? mediaUrl(sop.file) : sop.file}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="btn btn-sm btn-primary"
-                      >
-                        View PDF
-                      </a>
-                    </div>
-                  )}
-                </div>
-              ))}
+            <div
+              style={{
+                display: "flex",
+                gap: 8,
+                marginBottom: 16,
+                alignItems: "center",
+                flexWrap: "wrap",
+              }}
+            >
+              <Button
+                size="sm"
+                variant={sopsTab === "sops" ? "primary" : "outline-primary"}
+                onClick={() => setSopsTab("sops")}
+              >
+                SOPs
+              </Button>
+              <Button
+                size="sm"
+                variant={sopsTab === "library" ? "primary" : "outline-primary"}
+                onClick={() => setSopsTab("library")}
+              >
+                Standard Library
+              </Button>
             </div>
+
+            {sopsTab === "sops" ? (
+              sopsLoading ? (
+                <Loader />
+              ) : sopsError ? (
+                <div style={{ padding: 16, color: "crimson" }}>{sopsError}</div>
+              ) : !sops?.length ? (
+                <div style={{ padding: 16 }}>No SOPs assigned to you yet.</div>
+              ) : (
+                <div style={{ display: "grid", gap: 12 }}>{sops.map(renderSOPItem)}</div>
+              )
+            ) : libraryLoading ? (
+              <Loader />
+            ) : libraryError ? (
+              <div style={{ padding: 16, color: "crimson" }}>{libraryError}</div>
+            ) : !library?.length ? (
+              <div style={{ padding: 16 }}>No items available in the Standard Library for your role.</div>
+            ) : (
+              <div style={{ display: "grid", gap: 12 }}>{library.map(renderLibraryItem)}</div>
+            )}
           </div>
         );
+      }
+
       default:
         return <div>Select an option</div>;
     }
@@ -302,6 +410,8 @@ const TraineeDashboard = () => {
         >
           <HamButton onClick={() => setIsSidebarOpen((prev) => !prev)} />
         </div>
+
+        {/* SIDEBAR */}
         <div
           className={`sidebar ${isCollapsed ? "collapsed" : ""} ${isSidebarOpen ? "open" : ""}`}
           style={{
@@ -323,6 +433,7 @@ const TraineeDashboard = () => {
                 <img src={logoSO} alt="SO" className="sidebar-logo sidebar-logo--mini" />
               </div>
             )}
+
             {[
               "dashboard",
               "subjects",
@@ -333,7 +444,8 @@ const TraineeDashboard = () => {
               "notifications",
               "queries",
               "loginActivity",
-              'sops',
+              "sops",
+              // "standardlibrary", 
             ].map((key) => {
               const labelMap = {
                 dashboard: "Dashboard",
@@ -346,6 +458,7 @@ const TraineeDashboard = () => {
                 queries: "Trainee Queries",
                 loginActivity: "Login Activity",
                 sops: "SOPs",
+                // standardlibrary: "Standard Library", // ✅
               };
               const iconMap = {
                 dashboard: "bi-house",
@@ -359,18 +472,35 @@ const TraineeDashboard = () => {
                 notifications: "bi-bell",
                 queries: "bi-chat-left-dots",
                 loginActivity: "bi-clock-history",
-                sops: "bi-file-earmark-text"
+                sops: "bi-file-earmark-text",
+                // standardlibrary: "bi-collection", // ✅
               };
+
+              const onClick = () => {
+                // If user clicks actual "SOPs" set tab to SOPs view
+                if (key === "sops") setSopsTab("sops");
+                // If user clicks "Standard Library" we deep-link to SOPs page with Library tab
+                if (key === "standardlibrary") {
+                  setSopsTab("library");
+                  localStorage.setItem("sopsTab", "library");
+                  key = "sops"; // show the same combined page
+                }
+                setActiveContent(key === "standardlibrary" ? "sops" : key);
+                localStorage.setItem("activeContent", key === "standardlibrary" ? "sops" : key);
+                setSidebarVisible(false);
+                setIsSidebarOpen(false);
+              };
+
               return (
                 <div
                   key={key}
-                  className={`sidebar-item ${activeContent === key ? "active" : ""}`}
-                  onClick={() => {
-                    setActiveContent(key);
-                    localStorage.setItem("activeContent", key);
-                    setSidebarVisible(false);
-                    setIsSidebarOpen(false);
-                  }}
+                  className={`sidebar-item ${
+                    (activeContent === key) ||
+                    (key === "standardlibrary" && activeContent === "sops" && sopsTab === "library")
+                      ? "active"
+                      : ""
+                  }`}
+                  onClick={onClick}
                 >
                   <i className={`bi ${iconMap[key]} sidebar-icon`}></i>
                   {!isCollapsed && <span className="sidebar-text">{labelMap[key]}</span>}
@@ -383,15 +513,18 @@ const TraineeDashboard = () => {
             <div className="sidebar-item" onClick={() => setShowDropdown(!showDropdown)}>
               <i className="bi bi-gear sidebar-icon"></i>
               {!isCollapsed && <span className="sidebar-text">Settings</span>}
-              <Dropdown show={showDropdown} onToggle={() => setShowDropdown(!showDropdown)} className="settings-dropdown">
+              <Dropdown
+                show={showDropdown}
+                onToggle={() => setShowDropdown(!showDropdown)}
+                className="settings-dropdown"
+              >
                 <Dropdown.Menu align="end" className="bg-gray-800 text-white rounded-lg shadow-lg">
                   <Dropdown.Item as={Link} to="#/profile" className="hover:bg-gray-700 py-2 px-4">
                     Profile
                   </Dropdown.Item>
-                  <Dropdown.Item onClick={() => setShowResetRequestModal(true)}>Reset Password</Dropdown.Item>
-                  {/* <Dropdown.Item onClick={handleLogout} className="hover:bg-gray-700 py-2 px-4">
-                    Logout
-                  </Dropdown.Item> */}
+                  <Dropdown.Item onClick={() => setShowResetRequestModal(true)}>
+                    Reset Password
+                  </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </div>
@@ -401,7 +534,9 @@ const TraineeDashboard = () => {
               onClick={handleLogout}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleLogout(); }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") handleLogout();
+              }}
             >
               <i className="bi bi-box-arrow-right sidebar-icon"></i>
               {!isCollapsed && <span className="sidebar-text">Logout</span>}
@@ -409,6 +544,7 @@ const TraineeDashboard = () => {
           </div>
         </div>
 
+        {/* CONTENT */}
         <div
           className={`content-panel ${activeContent === "curriculum" ? "curriculum-panel" : ""}`}
           style={{
@@ -443,10 +579,16 @@ const TraineeDashboard = () => {
                 Send Reset Email
               </Button>
             </Form>
-            {resetRequestMessage && <p className={resetRequestMessage.includes("Error") ? "text-danger" : "text-success"}>{resetRequestMessage}</p>}
+            {resetRequestMessage && (
+              <p className={resetRequestMessage.includes("Error") ? "text-danger" : "text-success"}>
+                {resetRequestMessage}
+              </p>
+            )}
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowResetRequestModal(false)}>Close</Button>
+            <Button variant="secondary" onClick={() => setShowResetRequestModal(false)}>
+              Close
+            </Button>
           </Modal.Footer>
         </Modal>
 
@@ -481,10 +623,16 @@ const TraineeDashboard = () => {
                 Reset Password
               </Button>
             </Form>
-            {resetConfirmMessage && <p className={resetConfirmMessage.includes("Error") ? "text-danger" : "text-success"}>{resetConfirmMessage}</p>}
+            {resetConfirmMessage && (
+              <p className={resetConfirmMessage.includes("Error") ? "text-danger" : "text-success"}>
+                {resetConfirmMessage}
+              </p>
+            )}
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowResetConfirmModal(false)}>Close</Button>
+            <Button variant="secondary" onClick={() => setShowResetConfirmModal(false)}>
+              Close
+            </Button>
           </Modal.Footer>
         </Modal>
       </div>

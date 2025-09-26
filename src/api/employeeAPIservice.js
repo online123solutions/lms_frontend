@@ -214,3 +214,13 @@ export const fetchSOP = async () => {
     return { success: false, error: handleError(error, "Failed to fetch SOPs.") };
   }
 };
+
+export async function fetchStandardLibrary() {
+  // same auth pattern as fetchSOP()
+  try {
+    const res = await apiClient.get("/library/"); // ← your endpoint
+    return { success: true, data: res.data };
+  } catch (e) {
+    return { success: false, error: e?.response?.data?.detail || e.message };
+  }
+}

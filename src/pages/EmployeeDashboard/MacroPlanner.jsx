@@ -1,45 +1,48 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Form, Spinner } from "react-bootstrap";
+import { Form, Spinner } from "react-bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../utils/css/Trainer CSS/Macroplanner.css";
-import {
-  fetchMacroPlanner
-} from "../../api/employeeAPIservice";
+import { fetchMacroPlanner } from "../../api/employeeAPIservice";
 
 const MacroPlanner = () => {
   const [planners, setPlanners] = useState([]);
   const [weeks, setWeeks] = useState([]);
-  const [selectedWeek, setSelectedWeek] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const [currentPlanner, setCurrentPlanner] = useState(null);
+  const [selectedWeek, setSelectedWeek] = useState(""); // "" => All Weeks
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const weekOptions = [
-    "Week 1", "Week 2", "Week 3", "Week 4"
-  ];
-
-  const durationOptions = [
-    "1 Month", "2 Months", "3 Months", "4 Months", "5 Months", "6 Months"
-  ];
-
-  const departmentOptions = [
-    "HR", "IT", "Finance", "Marketing", "Sales",
-    "Operations", "Support", "Training", "Development", "Design"
-  ];
+  // Normalize helper => "week 2"
+  const normalizeWeek = (w) =>
+    String(w || "")
+      .toLowerCase()
+      .replace(/\s+/g, " ")
+      .trim();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const result = await fetchMacroPlanner();
         if (result.success) {
-          setPlanners(result.data);
-          const uniqueWeeks = [...new Set(result.data.map((p) => p.week))];
+          // normalize week values in data
+          const data = result.data.map((p) => ({
+            ...p,
+            week: normalizeWeek(p.week),
+          }));
+          setPlanners(data);
+
+          // unique, sorted weeks for dropdown
+          const uniqueWeeks = [...new Set(data.map((p) => p.week))].sort(
+            (a, b) => {
+              const na = parseInt(a.match(/\d+/)?.[0] || "0", 10);
+              const nb = parseInt(b.match(/\d+/)?.[0] || "0", 10);
+              return na - nb;
+            }
+          );
           setWeeks(uniqueWeeks);
         } else {
           setError("Failed to fetch macroplanner data.");
         }
-      } catch (error) {
+      } catch {
         setError("An error occurred while fetching macroplanner data.");
       } finally {
         setLoading(false);
@@ -48,19 +51,12 @@ const MacroPlanner = () => {
     fetchData();
   }, []);
 
-  const handleShowModal = (planner = null) => {
-    setCurrentPlanner(planner);
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setCurrentPlanner(null);
-  };
-
   const filteredPlanners = planners.filter((p) =>
-    selectedWeek ? p.week === selectedWeek : true
+    selectedWeek ? p.week === normalizeWeek(selectedWeek) : true
   );
+
+  const prettyWeek = (w) =>
+    w.replace(/^week\s/, (m) => m.charAt(0).toUpperCase() + m.slice(1)); // "Week 2"
 
   return (
     <div className="macro-planner container mt-4">
@@ -72,9 +68,9 @@ const MacroPlanner = () => {
           value={selectedWeek}
         >
           <option value="">All Weeks</option>
-          {weekOptions.map((week) => (
-            <option key={week} value={week}>
-              {week}
+          {weeks.map((w) => (
+            <option key={w} value={w}>
+              {prettyWeek(w)}
             </option>
           ))}
         </Form.Select>
@@ -102,7 +98,7 @@ const MacroPlanner = () => {
               {filteredPlanners.length > 0 ? (
                 filteredPlanners.map((planner) => (
                   <tr key={planner.id}>
-                    <td className="fw-medium">{planner.week}</td>
+                    <td className="fw-medium">{prettyWeek(planner.week)}</td>
                     <td>{planner.duration}</td>
                     <td>{planner.department}</td>
                     <td>{planner.module}</td>
