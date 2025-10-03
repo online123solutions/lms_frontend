@@ -415,3 +415,39 @@ export async function fetchStandardLibrary() {
     return { success: false, error: e?.response?.data?.detail || e.message };
   }
 }
+
+// --- NEW: Lesson Progress list ---
+export const fetchTrainerLessonProgress = async () => {
+  try {
+    const res = await apiClient.get(`/lesson-progress/`);
+    return { success: true, data: res.data };
+  } catch (error) {
+    return { success: false, error };
+  }
+};
+
+// GET /trainer/course-progress/
+export const fetchTrainerCourseProgress = async () => {
+  try {
+    const res = await apiClient.get(`/course-progress/`);
+    return { success: true, data: res.data };
+  } catch (error) {
+    console.error("fetchTrainerCourseProgress error:", error?.response?.data || error);
+    return { success: false, error: error?.response?.data || error };
+  }
+};
+
+// trainerAPIservice.js
+export const updateTrainerLessonProgress = async (lessonPk, action) => {
+  try {
+    const res = await apiClient.post(`/lesson-progress/`, {
+      lesson: lessonPk,      // MUST be integer PK
+      action,                // "start" | "complete"
+    });
+    return { success: true, data: res.data };
+  } catch (error) {
+    // <-- log full response for quick diagnosis
+    console.error("updateTrainerLessonProgress error:", error?.response?.data || error);
+    return { success: false, error: error?.response?.data || error };
+  }
+};

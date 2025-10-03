@@ -1,8 +1,15 @@
-import { useState, useEffect } from "react";
-import { fetchLessons, fetchCourses } from "../../api/trainerAPIservice";
+// src/components/Trainer/Curriculum.jsx
+import { useEffect, useMemo, useState } from "react";
+import {
+  fetchCourses,
+  fetchLessons,
+  fetchTrainerLessonProgress,
+  updateTrainerLessonProgress,
+} from "../../api/trainerAPIservice";
 import "../../utils/css/Trainer CSS/Curriculum.css";
-import "../../index.css"
+import "../../index.css";
 
+/* ------------------- ENV / URL HELPERS ------------------- */
 const IS_DEV = ["localhost", "127.0.0.1"].includes(window.location.hostname);
 const DEV_API = `${window.location.protocol}//${window.location.hostname}:8000`;
 
@@ -10,7 +17,9 @@ const toAbsolute = (url) => {
   if (!url) return "";
   if (/^https?:\/\//i.test(url)) return url;
   if (url.startsWith("/")) {
-    const base = IS_DEV ? DEV_API : `${window.location.protocol}//${window.location.host}`;
+    const base = IS_DEV
+      ? DEV_API
+      : `${window.location.protocol}//${window.location.host}`;
     return `${base}${url}`;
   }
   return url;
@@ -22,6 +31,7 @@ const makeGooglePDFViewer = (u) =>
   `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(u)}`;
 
 const makeYouTubeEmbed = (u) => {
+  if (!u) return null;
   if (u.includes("youtube.com/watch?v=")) {
     const id = u.split("watch?v=")[1].split("&")[0];
     return `https://www.youtube.com/embed/${id}?rel=0&showinfo=0&fs=1`;
@@ -33,83 +43,121 @@ const makeYouTubeEmbed = (u) => {
   return null;
 };
 
-const Courses = () => {
+/* ------------------- UI HELPERS ------------------- */
+const StatusBadge = ({ status }) => {
+  const s = (status || "not_started").toLowerCase();
+  const text =
+    s === "in_progress"
+      ? "In Progress"
+      : s.replace("_", " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  const tone =
+    s === "completed"
+      ? "success"
+      : s === "in_progress"
+      ? "warning"
+      : "secondary";
+  return <span className={`badge badge-${tone}`}>{text}</span>;
+};
+
+/* =========================================================
+   MAIN COMPONENT
+========================================================= */
+const Curriculum = () => {
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState("");
+  const [lessons, setLessons] = useState([]);
   const [topics, setTopics] = useState([]);
   const [selectedTopic, setSelectedTopic] = useState(null);
-  const [lessons, setLessons] = useState([]);
+
+  const [progressMap, setProgressMap] = useState({});
+  const [savingKey, setSavingKey] = useState(null);
+
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
-  const [viewerUrl, setViewerUrl] = useState(""); // iframe/object src
-  const [rawUrl, setRawUrl] = useState("");       // original absolute file URL
-  const [isPdfNative, setIsPdfNative] = useState(false); // dev-only native pdf
+  const [viewerUrl, setViewerUrl] = useState("");
+  const [rawUrl, setRawUrl] = useState("");
+  const [isPdfNative, setIsPdfNative] = useState(false);
 
-  // Load Courses
+  /* ------------------- LOAD DATA ------------------- */
   useEffect(() => {
-    const loadCourses = async () => {
+    const loadAll = async () => {
       try {
         setLoading(true);
-        const result = await fetchCourses();
-        if (result.success) {
-          const uniqueSubjects = result.data.map((course) => ({
-            id: course.course_id,
-            name: course.course_name,
+        const [coursesRes, lessonsRes, progressRes] = await Promise.all([
+          fetchCourses(),
+          fetchLessons(),
+          fetchTrainerLessonProgress(),
+        ]);
+
+        if (coursesRes.success) {
+          const uniqueSubjects = (coursesRes.data || []).map((c) => ({
+            id: c.id, // numeric id from backend
+            name: c.course_name,
           }));
           setSubjects(uniqueSubjects);
         } else {
           setError("Failed to load courses.");
         }
-      } catch (err) {
-        console.error("Unexpected error:", err);
-        setError("An unexpected error occurred.");
+
+        if (lessonsRes.success) {
+          const arr = Array.isArray(lessonsRes.data) ? lessonsRes.data : [];
+          setLessons(arr);
+        } else {
+          setLessons([]);
+        }
+
+        if (progressRes.success && Array.isArray(progressRes.data)) {
+          const map = {};
+          for (const row of progressRes.data) {
+            if (!row.lesson) continue;
+            map[row.lesson] = {
+              status: row.status ?? "not_started",
+              percent: row.percent ?? 0,
+              started_at: row.started_at ?? null,
+              completed_at: row.completed_at ?? null,
+              last_accessed_at: row.last_accessed_at ?? null,
+            };
+          }
+          setProgressMap(map);
+        } else {
+          setProgressMap({});
+        }
+      } catch (e) {
+        console.error(e);
+        setError("Unexpected error while loading curriculum.");
       } finally {
         setLoading(false);
       }
     };
-    loadCourses();
+    loadAll();
   }, []);
 
-  // Load Lessons
-  useEffect(() => {
-    const loadLessons = async () => {
-      try {
-        const result = await fetchLessons();
-        if (result.success) {
-          setLessons(Array.isArray(result.data) ? result.data : []);
-        } else {
-          setLessons([]);
-        }
-      } catch (err) {
-        console.error("Unexpected error:", err);
-        setLessons([]);
-      }
-    };
-    loadLessons();
-  }, []);
-
-  // Filter topics by subject
+  /* ------------------- FILTER TOPICS ------------------- */
   useEffect(() => {
     if (selectedSubject && lessons.length > 0) {
-      const filtered = lessons.filter((lesson) => lesson.courseName === selectedSubject);
+      const filtered = lessons.filter((l) => l.courseName === selectedSubject);
       setTopics(filtered);
       setSelectedTopic(null);
       setViewerUrl("");
       setRawUrl("");
       setIsPdfNative(false);
+    } else {
+      setTopics([]);
+      setSelectedTopic(null);
     }
   }, [selectedSubject, lessons]);
 
+  /* ------------------- SELECT TOPIC ------------------- */
   const handleTopicSelect = (topicName) => {
-    const selectedLesson = topics.find((lesson) => lesson.name === topicName);
+    const selectedLesson = topics.find((l) => l.name === topicName);
     setSelectedTopic(selectedLesson || null);
     setViewerUrl("");
     setRawUrl("");
     setIsPdfNative(false);
   };
 
-  // Decide best viewer for URL (dev vs prod)
+  /* ------------------- VIEWER ------------------- */
   const buildViewerForUrl = (absUrl) => {
     const yt = makeYouTubeEmbed(absUrl);
     if (yt) return { url: yt, kind: "youtube" };
@@ -118,12 +166,15 @@ const Courses = () => {
 
     if (IS_DEV) {
       if (lower.endsWith(".pdf")) return { url: absUrl, kind: "pdf-native" };
-      if (/\.(ppt|pptx|doc|docx)$/.test(lower)) return { url: "", kind: "office-dev" };
+      if (/\.(ppt|pptx|doc|docx)$/i.test(lower))
+        return { url: "", kind: "office-dev" };
       return { url: absUrl, kind: "direct" };
     }
 
-    if (/\.(ppt|pptx|doc|docx)$/.test(lower)) return { url: makeOfficeViewer(absUrl), kind: "office" };
-    if (lower.endsWith(".pdf")) return { url: makeGooglePDFViewer(absUrl), kind: "pdf" };
+    if (/\.(ppt|pptx|doc|docx)$/i.test(lower))
+      return { url: makeOfficeViewer(absUrl), kind: "office" };
+    if (lower.endsWith(".pdf"))
+      return { url: makeGooglePDFViewer(absUrl), kind: "pdf" };
     return { url: absUrl, kind: "direct" };
   };
 
@@ -137,11 +188,78 @@ const Courses = () => {
     if (kind === "pdf-native") {
       setIsPdfNative(true);
       setViewerUrl(abs);
-      return;
+    } else {
+      setViewerUrl(vUrl);
     }
-    setViewerUrl(vUrl);
   };
 
+  /* ------------------- PROGRESS ------------------- */
+  const selectedProgress = useMemo(() => {
+    if (!selectedTopic) return { status: "not_started", percent: 0 };
+    return (
+      progressMap[selectedTopic.db_id] || { status: "not_started", percent: 0 }
+    );
+  }, [selectedTopic, progressMap]);
+
+  const updateProgress = async (action) => {
+    if (!selectedTopic?.db_id) {
+      alert("Lesson ID missing. Please refresh.");
+      console.warn("No numeric PK for selected lesson:", selectedTopic);
+      return;
+    }
+
+    const pk = selectedTopic.db_id;
+    const key = `${pk}:${action}`;
+    setSavingKey(key);
+
+    try {
+      const res = await updateTrainerLessonProgress(pk, action);
+      if (!res.success) {
+        alert(
+          typeof res.error === "object"
+            ? JSON.stringify(res.error)
+            : "Failed to update progress"
+        );
+        return;
+      }
+      setProgressMap((prev) => {
+        const next = { ...prev };
+        const now = new Date().toISOString();
+        if (!next[pk]) next[pk] = { status: "not_started", percent: 0 };
+        if (action === "start") {
+          next[pk] = {
+            ...next[pk],
+            status: "in_progress",
+            started_at: next[pk].started_at || now,
+          };
+        } else if (action === "complete") {
+          next[pk] = {
+            ...next[pk],
+            status: "completed",
+            percent: 100,
+            started_at: next[pk].started_at || now,
+            completed_at: now,
+          };
+        } else if (action === "reset") {
+          next[pk] = {
+            status: "not_started",
+            percent: 0,
+            started_at: null,
+            completed_at: null,
+            last_accessed_at: null,
+          };
+        }
+        return next;
+      });
+    } catch (e) {
+      console.error(e);
+      alert("Error updating progress.");
+    } finally {
+      setSavingKey(null);
+    }
+  };
+
+  /* ------------------- RENDER ------------------- */
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
@@ -155,9 +273,9 @@ const Courses = () => {
           onChange={(e) => setSelectedSubject(e.target.value)}
         >
           <option value="">Select a Subject</option>
-          {subjects.map((subject) => (
-            <option key={subject.id} value={subject.name}>
-              {subject.name}
+          {subjects.map((s) => (
+            <option key={s.id} value={s.name}>
+              {s.name}
             </option>
           ))}
         </select>
@@ -168,32 +286,87 @@ const Courses = () => {
             value={selectedTopic?.name ?? ""}
           >
             <option value="">Select a Topic</option>
-            {topics.map((lesson) => (
-              <option key={lesson.id} value={lesson.name}>
-                {lesson.name}
+            {topics.map((l) => (
+              <option key={l.db_id || l.lesson_id} value={l.name}>
+                {l.name}
               </option>
             ))}
           </select>
         )}
 
         {selectedTopic && (
-          <div className="lesson-buttons">
-            {selectedTopic.lessonPlanUrl && (
-              <button onClick={() => handleContentDisplay(selectedTopic.lessonPlanUrl)}>
-                Lesson Plan
-              </button>
-            )}
-            {selectedTopic.lessonPpt && (
-              <button onClick={() => handleContentDisplay(selectedTopic.lessonPpt)}>
-                Lesson PPT
-              </button>
-            )}
-            {selectedTopic.videoUrl && (
-              <button onClick={() => handleContentDisplay(selectedTopic.videoUrl)}>
-                Tutorial Video
-              </button>
-            )}
-          </div>
+          <>
+            <div className="progress-meta">
+              <div>
+                <b>Status:</b> <StatusBadge status={selectedProgress.status} />
+              </div>
+              <div className="mono">
+                <b>Percent:</b> {selectedProgress.percent ?? 0}%
+              </div>
+            </div>
+
+            <div className="lesson-buttons">
+              {selectedTopic.lessonPlanUrl && (
+                <button
+                  onClick={() =>
+                    handleContentDisplay(selectedTopic.lessonPlanUrl)
+                  }
+                >
+                  Lesson Plan
+                </button>
+              )}
+              {selectedTopic.lessonPpt && (
+                <button
+                  onClick={() => handleContentDisplay(selectedTopic.lessonPpt)}
+                >
+                  Lesson PPT
+                </button>
+              )}
+              {selectedTopic.videoUrl && (
+                <button
+                  onClick={() => handleContentDisplay(selectedTopic.videoUrl)}
+                >
+                  Tutorial Video
+                </button>
+              )}
+            </div>
+
+            <div className="lesson-buttons" style={{ marginTop: 8 }}>
+              {selectedProgress.status !== "completed" && (
+                <>
+                  <button
+                    className="btn btn-sm btn-outline-primary"
+                    disabled={savingKey === `${selectedTopic.db_id}:start`}
+                    onClick={() => updateProgress("start")}
+                  >
+                    {savingKey === `${selectedTopic.db_id}:start`
+                      ? "..."
+                      : "Mark Started"}
+                  </button>
+                  <button
+                    className="btn btn-sm btn-success"
+                    disabled={savingKey === `${selectedTopic.db_id}:complete`}
+                    onClick={() => updateProgress("complete")}
+                  >
+                    {savingKey === `${selectedTopic.db_id}:complete`
+                      ? "..."
+                      : "Mark Completed"}
+                  </button>
+                </>
+              )}
+              {["completed", "in_progress"].includes(
+                (selectedProgress.status || "").toLowerCase()
+              ) && (
+                <button
+                  className="btn btn-sm btn-outline-secondary"
+                  disabled={savingKey === `${selectedTopic.db_id}:reset`}
+                  onClick={() => updateProgress("reset")}
+                >
+                  {savingKey === `${selectedTopic.db_id}:reset` ? "..." : "Reset"}
+                </button>
+              )}
+            </div>
+          </>
         )}
       </aside>
 
@@ -203,25 +376,36 @@ const Courses = () => {
             <>
               <h3 className="lesson-title">{selectedTopic.name}</h3>
 
-              {/* DEV: PPT/DOC fallback message */}
               {IS_DEV && rawUrl && /\.(ppt|pptx|doc|docx)$/i.test(rawUrl) && (
                 <div className="dev-fallback">
-                  <b>Preview unavailable in development.</b> Online viewers can’t access localhost.
+                  <b>Preview unavailable in development.</b>
                   <div style={{ marginTop: 8 }}>
-                    <a href={rawUrl} target="_blank" rel="noreferrer">Open original file</a> &nbsp;|&nbsp;
-                    <a href={rawUrl} download>Download</a>
+                    <a href={rawUrl} target="_blank" rel="noreferrer">
+                      Open original file
+                    </a>{" "}
+                    |{" "}
+                    <a href={rawUrl} download>
+                      Download
+                    </a>
                   </div>
                 </div>
               )}
 
-              {/* Viewer wrapper fills remaining height */}
               <div className="viewer-wrapper">
-                {/* DEV: native PDF */}
-                {IS_DEV && isPdfNative && rawUrl.toLowerCase().endsWith(".pdf") ? (
-                  <object key={rawUrl} data={rawUrl} type="application/pdf" className="viewer-frame">
+                {IS_DEV &&
+                isPdfNative &&
+                rawUrl.toLowerCase().endsWith(".pdf") ? (
+                  <object
+                    key={rawUrl}
+                    data={rawUrl}
+                    type="application/pdf"
+                    className="viewer-frame"
+                  >
                     <p>
-                      PDF preview not supported by this browser.{" "}
-                      <a href={rawUrl} target="_blank" rel="noreferrer">Open PDF</a>
+                      PDF preview not supported.{" "}
+                      <a href={rawUrl} target="_blank" rel="noreferrer">
+                        Open PDF
+                      </a>
                     </p>
                   </object>
                 ) : viewerUrl ? (
@@ -235,12 +419,15 @@ const Courses = () => {
                       allowFullScreen
                     />
                     <div className="viewer-footer">
-                      <a href={rawUrl} target="_blank" rel="noreferrer">Open original file</a>
+                      <a href={rawUrl} target="_blank" rel="noreferrer">
+                        Open original file
+                      </a>
                     </div>
                   </>
                 ) : (
-                  // nothing chosen yet or dev office fallback already shown above
-                  <div className="empty-space1"><p>Select content to view</p></div>
+                  <div className="empty-space1">
+                    <p>Select content to view</p>
+                  </div>
                 )}
               </div>
             </>
@@ -255,4 +442,4 @@ const Courses = () => {
   );
 };
 
-export default Courses;
+export default Curriculum;

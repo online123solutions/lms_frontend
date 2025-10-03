@@ -1,0 +1,160 @@
+/* src/utils/css/Trainer CSS/TrainerProgress.css */
+
+.training-report-container {
+  padding: 16px;
+}
+
+.report-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 8px 20px rgba(19, 29, 73, 0.06);
+}
+
+.report-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #0e1117;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.table-wrapper {
+  background: #ffffff;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.report-table thead th {
+  background: #0ba3e6;
+  color: #fff;
+  padding: 12px 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: .4px;
+}
+
+.report-table tbody td {
+  background: #fff;
+  padding: 10px;
+  border-bottom: 1px solid #eef0f4;
+  vertical-align: middle;
+}
+
+.report-table.bordered {
+  border: 1px solid #e7ecf4;
+  border-radius: 12px;
+}
+
+.report-table.table-hover tbody tr:hover td {
+  background: #f7fbff;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.progress {
+  height: 22px;
+  background-color: #eef2f7;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress.slim {
+  height: 18px;
+}
+
+.progress-bar {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  background-color: #28a745;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.badge-success { background: #1a7f37; color: #fff; }
+.badge-warning { background: #ffb84c; color: #2b1b00; }
+.badge-secondary { background: #d9dee5; color: #2b3545; }
+
+/* Overall chips */
+.overall-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 12px;
+}
+.overall-chip {
+  background: #f2f7ff;
+  border: 1px solid #e5eefc;
+  color: #1c2b4a;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+.overall-value {
+  margin-left: 8px;
+  background: #0ba3e6;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-weight: 800;
+}
+.overall-mini {
+  color: #73809a;
+  font-size: 12px;
+}
+
+/* Buttons (compact) */
+.btn {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.btn + .btn { margin-left: 6px; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .report-title { font-size: 16px; }
+  .report-table thead { display: none; } /* optional stacking on mobile */
+  .report-table tbody tr {
+    display: block;
+    border: 1px solid #eef0f4;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  .report-table tbody td {
+    display: block;
+    padding: 8px 10px;
+  }
+  .progress { height: 16px; }
+}

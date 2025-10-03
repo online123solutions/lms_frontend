@@ -17,6 +17,7 @@ import TrainerNotification from "./TrainerNotification";
 import HamButton from "../../Components/Hamburger";
 import TrainingReport from "./TrainingReport";
 import logoS from "../../assets/logo4.png";
+import TrainerProgress from "./TrainerProgress";
 
 const MENU = [
   { label: "Dashboard", key: "dashboard", icon: "bi-house" },
@@ -27,6 +28,7 @@ const MENU = [
   { label: "Assessment Report", key: "assessmentReport", icon: "bi-graph-up" },
   { label: "Notifications", key: "notifications", icon: "bi-bell" },
   { label: "Queries", key: "queries", icon: "bi-chat-left-text" },
+  { label: "Progress", key: "trainerProgress", icon: "bi-bar-chart" }, // ✅ NEW
   { label: "SOP", key: "sops", icon: "bi-file-earmark-text" },
 ];
 
@@ -267,6 +269,7 @@ const TeacherDashboard = () => {
       case "curriculum": return <Curriculum />;
       case "queries": return <TrainerChat />;
       case "notifications": return <TrainerNotification />;
+      case "trainerProgress": return <TrainerProgress />;
       case "sops": {
         return (
           <div style={{ padding: 16 }}>
