@@ -259,7 +259,7 @@ const TraineeDashboard = () => {
             href={mediaUrl ? mediaUrl(item.file) : item.file}
             target="_blank"
             rel="noreferrer"
-            className="btn btn-sm btn-outline-primary"
+            className="btn btn-sm btn-primary"
           >
             View File
           </a>
@@ -336,20 +336,33 @@ const TraineeDashboard = () => {
                 flexWrap: "wrap",
               }}
             >
-              <Button
-                size="sm"
-                variant={sopsTab === "sops" ? "primary" : "outline-primary"}
-                onClick={() => setSopsTab("sops")}
-              >
-                SOPs
-              </Button>
-              <Button
-                size="sm"
-                variant={sopsTab === "library" ? "primary" : "outline-primary"}
-                onClick={() => setSopsTab("library")}
-              >
-                Standard Library
-              </Button>
+              <div className="segmented" role="tablist" aria-label="SOPs and Library">
+                <button
+                  type="button"
+                  className={`seg-btn ${sopsTab === "sops" ? "active" : ""}`}
+                  role="tab"
+                  aria-selected={sopsTab === "sops"}
+                  onClick={() => {
+                    setSopsTab("sops");
+                    localStorage.setItem("sopsTab", "sops");
+                  }}
+                >
+                  SOPs
+                </button>
+
+                <button
+                  type="button"
+                  className={`seg-btn ${sopsTab === "library" ? "active" : ""}`}
+                  role="tab"
+                  aria-selected={sopsTab === "library"}
+                  onClick={() => {
+                    setSopsTab("library");
+                    localStorage.setItem("sopsTab", "library");
+                  }}
+                >
+                  Standard Library
+                </button>
+              </div>
             </div>
 
             {sopsTab === "sops" ? (
