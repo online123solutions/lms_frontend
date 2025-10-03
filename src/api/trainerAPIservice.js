@@ -35,6 +35,12 @@ export const fetchCourses = async () => {
 };
 
 
+const toInt = (v) => {
+  const n = Number(v);
+  return Number.isInteger(n) ? n : null;
+};
+
+// ✅ Make ids numeric & consistent
 export const fetchLessons = async (initialUrl = "/course-lessons/") => {
   try {
     let allLessons = [];
@@ -47,7 +53,7 @@ export const fetchLessons = async (initialUrl = "/course-lessons/") => {
         const token = localStorage.getItem("authToken");
         response = await axios.get(nextPageUrl, {
           headers: {
-            "Authorization": `Token ${token}`,
+            Authorization: `Token ${token}`,
             "Content-Type": "application/json",
             Accept: "application/json",
           },
@@ -56,34 +62,28 @@ export const fetchLessons = async (initialUrl = "/course-lessons/") => {
         response = await apiClient.get(nextPageUrl);
       }
 
-      const rawData = response.data;
+      const raw = response.data;
+      const items = Array.isArray(raw) ? raw : Array.isArray(raw?.results) ? raw.results : [];
 
-      // ✅ NEW: support raw array and paginated object
-      const lessonsRaw = Array.isArray(rawData)
-        ? rawData
-        : Array.isArray(rawData.results)
-        ? rawData.results
-        : [];
+      const lessons = items.map((lesson) => {
+        const id = toInt(lesson.lesson_id) ?? toInt(lesson.id) ?? toInt(lesson.pk) ?? toInt(lesson.lesson);
+        const courseId = toInt(lesson.course) ?? toInt(lesson.course_id) ?? toInt(lesson?.course?.id);
+        return {
+          id,                   // numeric PK
+          db_id: id,            // keep this alias for UI code
+          name: lesson.lesson_name ?? lesson.name ?? lesson.title ?? (id != null ? `Lesson #${id}` : "Lesson"),
+          courseId,             // numeric
+          courseName: lesson.course_name ?? lesson?.course?.name ?? "—",
+          videoUrl: lesson.lesson_video || null,
+          lessonPlanUrl: lesson.lesson_plans || null,
+          lessonPpt: lesson.lesson_ppt || null,
+          lessonEditor: lesson.lesson_editor || "",
+          displayOnFrontend: !!lesson.display_on_frontend,
+        };
+      });
 
-      if (!Array.isArray(lessonsRaw)) {
-        throw new Error("Invalid API response format");
-      }
-
-      const lessons = lessonsRaw.map((lesson) => ({
-        id: lesson.lesson_id,
-        name: lesson.lesson_name,
-        courseId: lesson.course,  
-        courseName: lesson.course_name,
-        videoUrl: lesson.lesson_video || null,
-        lessonPlanUrl: lesson.lesson_plans || null,
-        lessonPpt: lesson.lesson_ppt || null,
-        lessonEditor: lesson.lesson_editor || "",
-        displayOnFrontend: lesson.display_on_frontend,
-        }));
-      allLessons = [...allLessons, ...lessons];
-
-      // 🛑 No pagination anymore
-      nextPageUrl = null;
+      allLessons = allLessons.concat(lessons);
+      nextPageUrl = null; // no pagination
     }
 
     return { success: true, data: allLessons };
@@ -440,14 +440,16 @@ export const fetchTrainerCourseProgress = async () => {
 // trainerAPIservice.js
 export const updateTrainerLessonProgress = async (lessonPk, action) => {
   try {
+    const pk = Number(lessonPk);
+    if (!Number.isInteger(pk)) throw new Error(`Invalid lesson pk: ${lessonPk}`);
+
     const res = await apiClient.post(`/lesson-progress/`, {
-      lesson: lessonPk,      // MUST be integer PK
-      action,                // "start" | "complete"
+      lesson: pk,   // integer, not string
+      action,       // "start" | "complete" | (optionally "reset" if supported)
     });
     return { success: true, data: res.data };
   } catch (error) {
-    // <-- log full response for quick diagnosis
     console.error("updateTrainerLessonProgress error:", error?.response?.data || error);
-    return { success: false, error: error?.response?.data || error };
+    return { success: false, error: error?.response?.data || error.message || error };
   }
 };

@@ -43,6 +43,19 @@ const makeYouTubeEmbed = (u) => {
   return null;
 };
 
+/* ------------------- ID HELPERS (robust numeric PKs) ------------------- */
+const toInt = (v) => {
+  const n = Number(v);
+  return Number.isInteger(n) ? n : null;
+};
+const getLessonPk = (obj) =>
+  toInt(obj?.db_id) ??
+  toInt(obj?.id) ??
+  toInt(obj?.lesson_id) ??
+  toInt(obj?.lesson);
+const getCourseId = (obj) =>
+  toInt(obj?.courseId) ?? toInt(obj?.course_id) ?? toInt(obj?.course);
+
 /* ------------------- UI HELPERS ------------------- */
 const StatusBadge = ({ status }) => {
   const s = (status || "not_started").toLowerCase();
@@ -63,13 +76,14 @@ const StatusBadge = ({ status }) => {
    MAIN COMPONENT
 ========================================================= */
 const Curriculum = () => {
-  const [subjects, setSubjects] = useState([]);
-  const [selectedSubject, setSelectedSubject] = useState("");
-  const [lessons, setLessons] = useState([]);
-  const [topics, setTopics] = useState([]);
-  const [selectedTopic, setSelectedTopic] = useState(null);
+  const [subjects, setSubjects] = useState([]);            // [{id, name}]
+  const [selectedSubjectId, setSelectedSubjectId] = useState(null); // numeric course id
 
-  const [progressMap, setProgressMap] = useState({});
+  const [lessons, setLessons] = useState([]);              // full catalog
+  const [topics, setTopics] = useState([]);                // lessons filtered by subject
+  const [selectedTopic, setSelectedTopic] = useState(null);// full lesson object
+
+  const [progressMap, setProgressMap] = useState({});      // { [lessonId:number]: {...} }
   const [savingKey, setSavingKey] = useState(null);
 
   const [loading, setLoading] = useState(true);
@@ -90,28 +104,40 @@ const Curriculum = () => {
           fetchTrainerLessonProgress(),
         ]);
 
+        // Subjects (courses)
         if (coursesRes.success) {
-          const uniqueSubjects = (coursesRes.data || []).map((c) => ({
-            id: c.id, // numeric id from backend
-            name: c.course_name,
-          }));
+          const arr = Array.isArray(coursesRes.data) ? coursesRes.data : [];
+          const uniqueSubjects = arr.map((c) => ({
+            id: toInt(c.id) ?? toInt(c.course_id),           // numeric
+            name: c.course_name ?? c.name ?? c.title ?? "—",
+          })).filter((c) => c.id != null);
           setSubjects(uniqueSubjects);
         } else {
           setError("Failed to load courses.");
+          setSubjects([]);
         }
 
+        // Lessons (full catalog) – your API normalizer should already give numeric ids
         if (lessonsRes.success) {
           const arr = Array.isArray(lessonsRes.data) ? lessonsRes.data : [];
-          setLessons(arr);
+          // Ensure numeric fallbacks just in case
+          const normalized = arr.map((l) => ({
+            ...l,
+            db_id: getLessonPk(l),
+            courseId: getCourseId(l),
+          }));
+          setLessons(normalized);
         } else {
           setLessons([]);
         }
 
+        // Progress rows (only touched lessons) → map keyed by numeric PK
         if (progressRes.success && Array.isArray(progressRes.data)) {
           const map = {};
           for (const row of progressRes.data) {
-            if (!row.lesson) continue;
-            map[row.lesson] = {
+            const pk = getLessonPk(row);
+            if (pk == null) continue;
+            map[pk] = {
               status: row.status ?? "not_started",
               percent: row.percent ?? 0,
               started_at: row.started_at ?? null,
@@ -135,8 +161,8 @@ const Curriculum = () => {
 
   /* ------------------- FILTER TOPICS ------------------- */
   useEffect(() => {
-    if (selectedSubject && lessons.length > 0) {
-      const filtered = lessons.filter((l) => l.courseName === selectedSubject);
+    if (selectedSubjectId != null && lessons.length > 0) {
+      const filtered = lessons.filter((l) => getCourseId(l) === selectedSubjectId);
       setTopics(filtered);
       setSelectedTopic(null);
       setViewerUrl("");
@@ -146,11 +172,12 @@ const Curriculum = () => {
       setTopics([]);
       setSelectedTopic(null);
     }
-  }, [selectedSubject, lessons]);
+  }, [selectedSubjectId, lessons]);
 
   /* ------------------- SELECT TOPIC ------------------- */
-  const handleTopicSelect = (topicName) => {
-    const selectedLesson = topics.find((l) => l.name === topicName);
+  const handleTopicSelect = (lessonPkStr) => {
+    const lessonPk = toInt(lessonPkStr);
+    const selectedLesson = topics.find((l) => getLessonPk(l) === lessonPk);
     setSelectedTopic(selectedLesson || null);
     setViewerUrl("");
     setRawUrl("");
@@ -195,25 +222,24 @@ const Curriculum = () => {
 
   /* ------------------- PROGRESS ------------------- */
   const selectedProgress = useMemo(() => {
-    if (!selectedTopic) return { status: "not_started", percent: 0 };
-    return (
-      progressMap[selectedTopic.db_id] || { status: "not_started", percent: 0 }
-    );
+    const pk = getLessonPk(selectedTopic || {});
+    if (pk == null) return { status: "not_started", percent: 0 };
+    return progressMap[pk] || { status: "not_started", percent: 0 };
   }, [selectedTopic, progressMap]);
 
   const updateProgress = async (action) => {
-    if (!selectedTopic?.db_id) {
+    const pk = getLessonPk(selectedTopic || {});
+    if (pk == null) {
       alert("Lesson ID missing. Please refresh.");
       console.warn("No numeric PK for selected lesson:", selectedTopic);
       return;
     }
 
-    const pk = selectedTopic.db_id;
     const key = `${pk}:${action}`;
     setSavingKey(key);
 
     try {
-      const res = await updateTrainerLessonProgress(pk, action);
+      const res = await updateTrainerLessonProgress(pk, action); // API coerces to int too
       if (!res.success) {
         alert(
           typeof res.error === "object"
@@ -240,14 +266,6 @@ const Curriculum = () => {
             started_at: next[pk].started_at || now,
             completed_at: now,
           };
-        } else if (action === "reset") {
-          next[pk] = {
-            status: "not_started",
-            percent: 0,
-            started_at: null,
-            completed_at: null,
-            last_accessed_at: null,
-          };
         }
         return next;
       });
@@ -268,29 +286,37 @@ const Curriculum = () => {
       <aside className="sidebar1">
         <h2>Curriculum</h2>
 
+        {/* Subject (course) selector — value is numeric course id */}
         <select
-          value={selectedSubject}
-          onChange={(e) => setSelectedSubject(e.target.value)}
+          value={selectedSubjectId ?? ""}
+          onChange={(e) => {
+            const id = toInt(e.target.value);
+            setSelectedSubjectId(id);
+          }}
         >
           <option value="">Select a Subject</option>
           {subjects.map((s) => (
-            <option key={s.id} value={s.name}>
+            <option key={s.id} value={s.id}>
               {s.name}
             </option>
           ))}
         </select>
 
-        {selectedSubject && (
+        {/* Topic (lesson) selector — value is numeric lesson pk */}
+        {selectedSubjectId != null && (
           <select
             onChange={(e) => handleTopicSelect(e.target.value)}
-            value={selectedTopic?.name ?? ""}
+            value={getLessonPk(selectedTopic || {}) ?? ""}
           >
             <option value="">Select a Topic</option>
-            {topics.map((l) => (
-              <option key={l.db_id || l.lesson_id} value={l.name}>
-                {l.name}
-              </option>
-            ))}
+            {topics.map((l) => {
+              const lid = getLessonPk(l);
+              return (
+                <option key={lid ?? l.name} value={lid ?? ""}>
+                  {l.name}
+                </option>
+              );
+            })}
           </select>
         )}
 
@@ -336,35 +362,41 @@ const Curriculum = () => {
                 <>
                   <button
                     className="btn btn-sm btn-outline-primary"
-                    disabled={savingKey === `${selectedTopic.db_id}:start`}
+                    disabled={savingKey === `${getLessonPk(selectedTopic)}:start`}
                     onClick={() => updateProgress("start")}
                   >
-                    {savingKey === `${selectedTopic.db_id}:start`
+                    {savingKey === `${getLessonPk(selectedTopic)}:start`
                       ? "..."
                       : "Mark Started"}
                   </button>
                   <button
                     className="btn btn-sm btn-success"
-                    disabled={savingKey === `${selectedTopic.db_id}:complete`}
+                    disabled={
+                      savingKey === `${getLessonPk(selectedTopic)}:complete`
+                    }
                     onClick={() => updateProgress("complete")}
                   >
-                    {savingKey === `${selectedTopic.db_id}:complete`
+                    {savingKey === `${getLessonPk(selectedTopic)}:complete`
                       ? "..."
                       : "Mark Completed"}
                   </button>
                 </>
               )}
-              {["completed", "in_progress"].includes(
+              {/* {["completed", "in_progress"].includes(
                 (selectedProgress.status || "").toLowerCase()
-              ) && (
+              ) &&
+               (
                 <button
                   className="btn btn-sm btn-outline-secondary"
-                  disabled={savingKey === `${selectedTopic.db_id}:reset`}
+                  disabled={savingKey === `${getLessonPk(selectedTopic)}:reset`}
                   onClick={() => updateProgress("reset")}
                 >
-                  {savingKey === `${selectedTopic.db_id}:reset` ? "..." : "Reset"}
+                  {savingKey === `${getLessonPk(selectedTopic)}:reset`
+                    ? "..."
+                    : "Reset"}
                 </button>
-              )}
+              )
+              } */}
             </div>
           </>
         )}
