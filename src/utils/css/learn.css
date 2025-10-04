@@ -27,6 +27,7 @@ body {
   position: absolute;
   font-size: 20px;
   font-weight: bold;
+  margin-top: 80px;
 }
 
 .circle-container {
@@ -270,4 +271,29 @@ body {
   .section-content iframe {
     height: calc(100vh - 250px);
   }
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #393939;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.05s ease;
+  margin-right: 12px; /* keeps a little space before the circles */
+}
+
+.back-button:hover { background: #eaeaea; }
+.back-button:active { transform: translateY(1px); }
+
+.back-icon { font-size: 14px; }
+.back-text { font-weight: 500; }
+
+@media (max-width: 640px) {
+  .back-text { display: none; }   /* keep it compact on mobile */
+  .back-button { padding: 8px; }  /* icon-only */
 }

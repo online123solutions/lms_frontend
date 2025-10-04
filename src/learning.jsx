@@ -15,6 +15,8 @@ import "./utils/css/learn.css";
 import Loader from "./UIcomponents/dashboard/loader";
 import DocumentViewer from "./hint";
 import Popup from "./popup";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+
 
 const Learning = () => {
   const [totalCircles, setTotalCircles] = useState(0);
@@ -238,9 +240,27 @@ const Learning = () => {
     }
   };
 
+  const handleBack = () => {
+    // Go back if possible; otherwise fall back to a sensible route
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate("/learning"); // <-- adjust if your subject list lives elsewhere
+    }
+  };
+
   return (
     <div className="learning-container" key={currentCircle}> 
       <nav className="navbar1">
+        <button
+          className="back-button"
+          onClick={handleBack}
+          aria-label="Go back to subjects"
+          title="Back"
+        >
+          <FontAwesomeIcon icon={faArrowLeft} className="back-icon" />
+          <span className="back-text">Back</span>
+        </button>
         <div className="circle-container">
           {Array.from({ length: totalCircles }).map((_, index) => (
             <div
