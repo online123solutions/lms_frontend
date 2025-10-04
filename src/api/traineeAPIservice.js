@@ -212,3 +212,13 @@ export async function getTraineeProgress() {
   const { data } = await apiClient.get("/trainee-progress/");
   return data; // { user_id, username, name, totals, subjects[] }
 }
+
+export const submitFeedback = async (feedbackData) => {
+  try {
+    const res = await apiClient.post("/feedback/submit/", feedbackData);
+    return { success: true, data: res.data };
+  } catch (error) {
+    console.error("submitFeedback error:", error?.response?.data || error);
+    return { success: false, error: error?.response?.data || error };
+  }
+};

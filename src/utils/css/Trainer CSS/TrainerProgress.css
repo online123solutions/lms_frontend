@@ -158,3 +158,21 @@
   }
   .progress { height: 16px; }
 }
+
+/* Add to TrainerProgress.css */
+.lesson-rows { margin-top: 8px; }
+.lesson-rows-title { font-weight: 600; margin-bottom: 6px; }
+.lesson-rows-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px;
+}
+.lesson-row-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 12px;
+}

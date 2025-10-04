@@ -357,3 +357,44 @@ export async function fetchStandardLibrary() {
     return { success: false, error: e?.response?.data?.detail || e.message };
   }
 }
+
+export const fetchTraineeFeedback = async (params = {}) => {
+  try {
+    const res = await apiClient.get("/feedback/", { params });
+    return { success: true, data: res.data };
+  } catch (error) {
+    console.error("fetchTraineeFeedback error:", error?.response?.data || error);
+    return { success: false, error: error?.response?.data || error };
+  }
+};
+
+export async function fetchAdminCourseProgress(params = {}) {
+  try {
+    const res = await apiClient.get("/progress/trainer-courses/", {
+      params,
+    });
+    return { success: true, data: res.data };
+  } catch (error) {
+    console.error("fetchAdminCourseProgress error:", error?.response || error);
+    return { success: false, error: error?.response || error };
+  }
+}
+
+export async function fetchAdminLessonRows(params = {}) {
+  try {
+    const res = await apiClient.get("/progress/lesson-rows/", { params });
+    return { success: true, data: res.data };
+  } catch (error) {
+    console.error("fetchAdminLessonRows error:", error?.response || error);
+    return {
+      success: false,
+      error: {
+        status: error?.response?.status,
+        message:
+          error?.response?.data?.detail ||
+          error?.message ||
+          "Request failed",
+      },
+    };
+  }
+}

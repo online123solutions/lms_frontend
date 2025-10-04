@@ -15,6 +15,9 @@ import TrainingReport from './TrainingReport';
 import AdminAssessmentReports from './AssessmentReport';
 import { Dropdown,Button, Modal, Form  } from "react-bootstrap";
 import AdminNotification from './AdminNotification';
+import AdminFeedbackPage from './AdminFeedbackPage';
+import CourseProgress from './CourseProgress';
+import AdminUserImportCard from './AdminUserImportCard';
 
 const MENU = [
   { label: 'Dashboard', key: 'dashboard', icon: 'bi-house' },
@@ -25,6 +28,9 @@ const MENU = [
   { label: 'Assessment Report', key: 'assessmentReport', icon: 'bi-graph-up' },
   { label: 'Notifications', key: 'notifications', icon: 'bi-bell' },
   { label: 'SOP', key: 'sops', icon: 'bi-file-earmark-text' },
+  { label: 'Feedback', key: 'feedback', icon: 'bi-chat-dots' },
+  { label: 'Course Progress', key: 'courseProgress', icon: 'bi-bar-chart' },
+  { label: 'User Import', key: 'userImport', icon: 'bi-upload', component: AdminUserImportCard },  
 ];
 
 const AdminDashboard = () => {
@@ -286,6 +292,12 @@ const AdminDashboard = () => {
         return <AdminAssessmentReports />;
       case 'notifications':
         return <AdminNotification />;
+      case 'feedback':
+        return <AdminFeedbackPage />;
+      case 'courseProgress':
+        return <CourseProgress />;
+      case 'userImport':
+        return <AdminUserImportCard />;
 
       case "sops": {
         return (

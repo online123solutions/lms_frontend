@@ -319,40 +319,110 @@
   padding: 10px;
 }
 
-.feedback-section {
-  padding: 20px;
-  max-width: 600px;
-  margin: 0 auto;
+/* === Feedback card: wider + centered ===================== */
+.feedback-section.card {
+  /* element has both classes in JSX: className="feedback-section card" */
+  max-width: 900px;         /* was 600px */
+  width: 96%;
+  margin: 24px auto;        /* center horizontally with breathing room */
+  padding: 24px;            /* a bit more inner space */
+  border-radius: 16px;      /* match your card rounding */
 }
 
+/* Optional: headline spacing inside feedback card */
+.feedback-section.card h3 {
+  margin: 0 0 14px;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+/* === Form layout: two columns on desktop ================= */
+.feedback-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/* Keep labels nice and tight */
 .feedback-form .form-group {
-  margin-bottom: 15px;
-}
-
-.feedback-form label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-.feedback-form input[type="number"] {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.feedback-form .actions {
   display: flex;
-  gap: 10px;
-  margin-top: 20px;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.success-message {
-  color: #28a745;
-  background-color: #d4edda;
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 10px;
-  text-align: center;
+/* Inputs look consistent & roomy */
+.feedback-form input[type="number"],
+.feedback-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-size: 14px;
+  outline: none;
+  background: #fff;
+}
+
+/* Make textarea span full width */
+.feedback-form textarea {
+  min-height: 120px;
+  grid-column: 1 / -1; /* span both columns */
+  resize: vertical;
+}
+
+/* Actions row right-aligned with even spacing */
+.feedback-form .actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* === Buttons: unified pill style for both ================= */
+.btn-primary,
+.btn-back {
+  padding: 14px 22px;
+  border: none;
+  border-radius: 999px;           /* same pill radius */
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 15px;
+  transition: transform .02s ease, filter .15s ease;
+  box-shadow: 0 10px 20px rgba(17, 24, 39, 0.08);
+}
+
+.btn-primary {
+  background: #0ba3e6;
+  color: #fff;
+}
+
+.btn-back {
+  background: #393939;            /* same style, different color */
+  color: #fff;
+}
+
+.btn-primary:hover,
+.btn-back:hover {
+  filter: brightness(1.04);
+}
+
+.btn-primary:active,
+.btn-back:active {
+  transform: translateY(1px);
+}
+
+/* === Responsive: stack form on small screens ============== */
+@media (max-width: 760px) {
+  .feedback-section.card {
+    padding: 18px;
+    width: 94%;
+  }
+  .feedback-form {
+    grid-template-columns: 1fr;   /* single column */
+  }
+  .feedback-form textarea,
+  .feedback-form .actions {
+    grid-column: 1 / -1;
+  }
 }

@@ -244,3 +244,58 @@ const getCsrfToken = () => {
     .find((row) => row.startsWith("csrftoken="))
     ?.split("=")[1] || "";
 };
+
+// --- BULK USERS: Download template (GET -> blob)
+export const downloadStudentsTemplate = async () => {
+  try {
+    const res = await apiClient.get(`/account/template/`, {
+      responseType: "blob",
+    });
+
+    // Try to infer filename from Content-Disposition
+    const cd = res.headers?.["content-disposition"] || "";
+    const match = /filename\*?=(?:UTF-8'')?["']?([^"';]+)["']?/i.exec(cd);
+    const filename = match?.[1] || "students_template.xlsx";
+
+    // Trigger browser download
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+
+    return { success: true };
+  } catch (error) {
+    console.error("downloadStudentsTemplate error:", error);
+    return { success: false, error };
+  }
+};
+
+apiClient.interceptors.request.use((config) => {
+  if (config.data instanceof FormData) {
+    delete config.headers["Content-Type"]; // <= critical
+  }
+  return config;
+});
+
+// --- BULK USERS: Upload Excel (POST multipart/form-data)
+export const uploadStudentsExcel = async (file) => {
+  try {
+    const form = new FormData();
+    form.append("excel_file", file); // <-- or "excel" if your view uses that
+
+    const res = await apiClient.post(`/account/upload/`, form, {
+      // ensure JSON header is NOT sent
+      headers: { "Content-Type": undefined },
+      transformRequest: (d) => d, // no JSON stringify
+    });
+    return { success: true, data: res.data };
+  } catch (error) {
+    return { success: false, error: error?.response?.data || error };
+  }
+};
+
+
