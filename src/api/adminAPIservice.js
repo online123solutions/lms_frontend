@@ -398,3 +398,12 @@ export async function fetchAdminLessonRows(params = {}) {
     };
   }
 }
+
+export const fetchAdminNotifications = async (params) => {
+  try {
+    const res = await apiClient.get("/notifications/send/", { params });
+    return { success: true, data: res.data };
+  } catch (error) {
+    return { success: false, error: error?.response?.data || error };
+  }
+};

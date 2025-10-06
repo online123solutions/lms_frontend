@@ -297,5 +297,3 @@ export const uploadStudentsExcel = async (file) => {
     return { success: false, error: error?.response?.data || error };
   }
 };
-
-
