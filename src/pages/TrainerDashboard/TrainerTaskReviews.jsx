@@ -1,12 +1,13 @@
-// src/components/Trainer/TrainerTaskReviews.jsx
+// src/components/Trainer/TrainerTaskReviews.jsx (new component for trainer dashboard)
 import React, { useEffect, useRef, useState } from "react";
-import { Modal, Button, Form, Alert, Badge } from "react-bootstrap";
+import { Modal, Button, Form, Alert, Spinner } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {
-  listTraineeTasks,
+  listTraineeTasks,  // Reuse trainee API but trainer role filters dept
   reviewTraineeTask,
-} from "../../api/traineeTaskAPI";
-import "../../utils/css/Trainer CSS/trainernotification.css";
+  mediaUrl
+} from "../../api/traineeAPIservice";  // Assume shared; trainer uses same endpoints
+import "../../utils/css/Trainer CSS/trainernotification.css"; // Reuse grid/card styles
 
 const timeAgo = (iso) => {
   if (!iso) return "";
@@ -17,82 +18,73 @@ const timeAgo = (iso) => {
   return new Date(iso).toLocaleString();
 };
 
-const initialReview = { id: null, marks: "", feedback: "", review_file: null };
+const initialReviewForm = { marks: "", feedback: "", review_file: null };
 
 export default function TrainerTaskReviews() {
   const [items, setItems] = useState([]);
   const [count, setCount] = useState(0);
-  const [next, setNext] = useState(null);
-  const [prev, setPrev] = useState(null);
-  const [page, setPage] = useState(1);
-  const [pageSize] = useState(20);
-
-  // filters
-  const [statusFilter, setStatusFilter] = useState("submitted"); // default to submitted
-  const [deptFilter, setDeptFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("submitted"); // Default to unsubmitted
   const [traineeFilter, setTraineeFilter] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
 
-  // review modal
-  const [show, setShow] = useState(false);
-  const [reviewForm, setReviewForm] = useState(initialReview);
-  const [responseMsg, setResponseMsg] = useState(null);
-  const [saving, setSaving] = useState(false);
+  // Review modal
+  const [showReview, setShowReview] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [reviewForm, setReviewForm] = useState(initialReviewForm);
+  const [reviewMsg, setReviewMsg] = useState(null);
+  const [reviewing, setReviewing] = useState(false);
 
   const debRef = useRef(null);
 
-  const load = async ({ pageArg = page } = {}) => {
+  const load = async () => {
     setLoading(true);
     setErr("");
     try {
-      const params = { page: pageArg, page_size: pageSize };
+      const params = {};
       if (statusFilter) params.status = statusFilter;
-      if (deptFilter.trim()) params.department = deptFilter.trim();
       if (traineeFilter.trim()) params.trainee = traineeFilter.trim();
+      // No dept filter; backend auto-filters by trainer's dept
       const { success, data, error } = await listTraineeTasks(params);
       if (!success) throw error;
-      const results = Array.isArray(data.results) ? data.results : [];
+      
+      // Adjust for non-paginated response
+      let results = [];
+      let totalCount = 0;
+      if (Array.isArray(data)) {
+        results = data;
+        totalCount = data.length;
+      } else if (data && Array.isArray(data.results)) {
+        results = data.results;
+        totalCount = data.count || results.length;
+      } else {
+        results = [];
+        totalCount = 0;
+      }
       setItems(results);
-      setCount(typeof data.count === "number" ? data.count : results.length);
-      setNext(data.next || null);
-      setPrev(data.previous || null);
-      setPage(pageArg);
+      setCount(totalCount);
     } catch (e) {
-      setErr(
-        e?.detail || e?.error || "Failed to load submissions."
-      );
+      setErr(e?.detail || e?.error || "Failed to load submissions.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    load({ pageArg: 1 });
+    load();
   }, []);
 
   useEffect(() => {
     if (debRef.current) clearTimeout(debRef.current);
-    debRef.current = setTimeout(() => load({ pageArg: 1 }), 350);
+    debRef.current = setTimeout(() => load(), 350);
     return () => clearTimeout(debRef.current);
-  }, [statusFilter, deptFilter, traineeFilter]); // eslint-disable-line
+  }, [statusFilter, traineeFilter]);
 
-  const openReview = (submission) => {
-    setReviewForm({
-      id: submission.id,
-      marks: submission.marks ?? "",
-      feedback: submission.feedback ?? "",
-      review_file: null,
-    });
-    setResponseMsg(null);
-    setShow(true);
-  };
-
-  const closeReview = () => {
-    setShow(false);
-    setReviewForm(initialReview);
-    setResponseMsg(null);
+  const openReview = (task) => {
+    setSelectedTask(task);
+    setReviewForm(initialReviewForm);
+    setReviewMsg(null);
+    setShowReview(true);
   };
 
   const onReviewChange = (e) => {
@@ -100,65 +92,57 @@ export default function TrainerTaskReviews() {
     setReviewForm((s) => ({ ...s, [name]: files ? files[0] : value }));
   };
 
-  const doReview = async (e) => {
-    e.preventDefault();
-    setResponseMsg(null);
+  const closeReview = () => {
+    setShowReview(false);
+    setSelectedTask(null);
+    setReviewForm(initialReviewForm);
+    setReviewMsg(null);
+  };
 
-    // minimal validation
-    const n = parseInt(reviewForm.marks, 10);
-    if (Number.isNaN(n) || n < 0 || n > 100) {
-      setResponseMsg({ type: "danger", text: "Marks must be a number between 0 and 100." });
+  const handleReview = async (e) => {
+    e.preventDefault();
+    setReviewMsg(null);
+    const marks = parseInt(reviewForm.marks);
+    if (isNaN(marks) || marks < 0 || marks > 100) {
+      setReviewMsg({ type: "danger", text: "Marks must be a number between 0 and 100." });
       return;
     }
-
-    setSaving(true);
+    setReviewing(true);
     try {
-      const { success, data, error } = await reviewTraineeTask(reviewForm.id, {
-        marks: n,
-        feedback: reviewForm.feedback?.trim(),
-        review_file: reviewForm.review_file,
+      const { success, data, error } = await reviewTraineeTask(selectedTask.id, {
+        marks,
+        feedback: reviewForm.feedback.trim(),
+        review_file: reviewForm.review_file
       });
-      if (!success) {
-        const msg =
-          typeof error === "string"
-            ? error
-            : error?.non_field_errors?.join(", ") ||
-              Object.entries(error || {})
-                .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(", ") : v}`)
-                .join(" • ") ||
-              "Failed to save review.";
-        setResponseMsg({ type: "danger", text: msg });
-        return;
+      if (success) {
+        setReviewMsg({ type: "success", text: "Reviewed successfully." });
+        await load();  // Reload list
+        setTimeout(closeReview, 1500);
+      } else {
+        const msg = typeof error === "string" ? error :
+          error?.non_field_errors?.join(", ") ||
+          Object.entries(error || {}).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(", ") : v}`).join(" • ") ||
+          "Failed to review.";
+        setReviewMsg({ type: "danger", text: msg });
       }
-      setResponseMsg({ type: "success", text: "Review saved." });
-      await load({ pageArg: page }); // refresh current page
-      setShow(false);
     } finally {
-      setSaving(false);
+      setReviewing(false);
     }
   };
 
   return (
     <div className="tn-wrap">
       <div className="tn-header">
-        <div className="d-flex gap-2 align-items-center flex-wrap">
+        <div className="d-flex gap-2 align-items-center">
           <Form.Select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             style={{ width: 180 }}
           >
-            <option value="">All statuses</option>
-            <option value="submitted">Submitted</option>
+            <option value="submitted">Pending Review</option>
             <option value="reviewed">Reviewed</option>
+            <option value="">All</option>
           </Form.Select>
-
-          <Form.Control
-            style={{ width: 220 }}
-            placeholder="Filter by department"
-            value={deptFilter}
-            onChange={(e) => setDeptFilter(e.target.value)}
-          />
-
           <Form.Control
             style={{ width: 220 }}
             placeholder="Filter by trainee username"
@@ -178,17 +162,17 @@ export default function TrainerTaskReviews() {
         </div>
       ) : items.length === 0 ? (
         <div className="tn-empty">
-          <div className="emoji">📬</div>
-          <div>No submissions found.</div>
+          <div className="emoji">📋</div>
+          <div>No submissions to review.</div>
         </div>
       ) : (
         <>
           <div className="tn-grid">
             {items.map((s) => (
-              <div key={s.id} className="tn-card">
+              <div key={s.id} className="tn-card" onClick={() => openReview(s)}>
                 <div className="tn-card-top">
                   <div className="tn-title">
-                    {s.trainee_username || "(unknown)"} — {s.department || "No dept"}
+                    {s.department || "No department"} - {s.trainee_username}
                   </div>
                   <div className="tn-when">{timeAgo(s.submitted_at)}</div>
                 </div>
@@ -197,38 +181,26 @@ export default function TrainerTaskReviews() {
 
                 <div className="tn-chips">
                   <span className={`chip ${s.status === "reviewed" ? "chip-read" : "chip-unread"}`}>
-                    {s.status === "reviewed" ? "Reviewed" : "Submitted"}
+                    {s.status === "reviewed" ? "Reviewed" : "Pending"}
                   </span>
                   {s.marks !== null && s.marks !== undefined && (
                     <span className="chip chip-type">Marks: {s.marks}</span>
-                  )}
-                  {s.reviewed_by_username && (
-                    <span className="chip chip-sender">By: {s.reviewed_by_username}</span>
                   )}
                 </div>
 
                 <div className="tn-link d-flex flex-column">
                   {s.file && (
-                    <a href={s.file} target="_blank" rel="noreferrer">
+                    <a href={mediaUrl(s.file)} target="_blank" rel="noreferrer">
                       View submitted file
-                    </a>
-                  )}
-                  {s.review_file && (
-                    <a href={s.review_file} target="_blank" rel="noreferrer">
-                      View review file
                     </a>
                   )}
                 </div>
 
-                <div className="d-flex justify-content-end mt-2">
-                  <Button
-                    size="sm"
-                    variant={s.status === "reviewed" ? "outline-secondary" : "primary"}
-                    onClick={() => openReview(s)}
-                  >
-                    {s.status === "reviewed" ? "Update Review" : "Review"}
-                  </Button>
-                </div>
+                {s.feedback && (
+                  <div className="tn-body" style={{ marginTop: 8 }}>
+                    <b>Your Feedback:</b> {s.feedback}
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -237,45 +209,48 @@ export default function TrainerTaskReviews() {
             <span className="tn-count">
               Showing {items.length} of {count}
             </span>
-            <div className="tn-page-controls">
-              <button
-                className="btn-outline"
-                disabled={!prev || page <= 1}
-                onClick={() => load({ pageArg: Math.max(1, page - 1) })}
-              >
-                ← Prev
-              </button>
-              <span className="tn-page">Page {page}</span>
-              <button
-                className="btn-primary"
-                disabled={!next}
-                onClick={() => load({ pageArg: page + 1 })}
-              >
-                Next →
-              </button>
-            </div>
           </div>
         </>
       )}
 
-      {/* Review modal */}
-      <Modal show={show} onHide={closeReview} size="lg" centered>
+      {/* Review Modal */}
+      <Modal show={showReview} onHide={closeReview} size="lg" centered>
         <Modal.Header closeButton>
-          <Modal.Title>Review Submission</Modal.Title>
+          <Modal.Title>Review Submission #{selectedTask?.id} - {selectedTask?.trainee_username}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {responseMsg && <Alert variant={responseMsg.type}>{responseMsg.text}</Alert>}
-
-          <Form onSubmit={doReview}>
+          {selectedTask && (
+            <>
+              <div className="mb-3">
+                <strong>Department:</strong> {selectedTask.department || "None"}
+              </div>
+              {selectedTask.text && (
+                <div className="mb-3">
+                  <strong>Text:</strong> {selectedTask.text}
+                </div>
+              )}
+              {selectedTask.file && (
+                <div className="mb-3">
+                  <a href={mediaUrl(selectedTask.file)} target="_blank" rel="noreferrer" className="btn btn-sm btn-outline-primary">
+                    View File
+                  </a>
+                </div>
+              )}
+              <hr />
+            </>
+          )}
+          {reviewMsg && <Alert variant={reviewMsg.type}>{reviewMsg.text}</Alert>}
+          <Form onSubmit={handleReview}>
             <Form.Group className="mb-3">
-              <Form.Label>Marks (0–100)</Form.Label>
+              <Form.Label>Marks (required, 0-100)</Form.Label>
               <Form.Control
                 type="number"
                 name="marks"
                 value={reviewForm.marks}
                 onChange={onReviewChange}
-                min={0}
-                max={100}
+                min="0"
+                max="100"
+                placeholder="e.g., 85"
                 required
               />
             </Form.Group>
@@ -288,26 +263,22 @@ export default function TrainerTaskReviews() {
                 name="feedback"
                 value={reviewForm.feedback}
                 onChange={onReviewChange}
-                placeholder="Write feedback for the trainee…"
+                placeholder="Provide feedback..."
               />
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Attach Review File (optional)</Form.Label>
-              <Form.Control
-                type="file"
-                name="review_file"
-                onChange={onReviewChange}
-              />
-              <Form.Text muted>Attach annotated PDF, DOCX, images, etc.</Form.Text>
+              <Form.Label>Review File (optional)</Form.Label>
+              <Form.Control type="file" name="review_file" onChange={onReviewChange} />
+              <Form.Text muted>Attach a review document if needed.</Form.Text>
             </Form.Group>
 
             <div className="d-flex justify-content-end">
-              <Button variant="secondary" onClick={closeReview}>
+              <Button variant="secondary" onClick={closeReview} disabled={reviewing}>
                 Cancel
               </Button>
-              <Button type="submit" variant="success" className="ms-2" disabled={saving}>
-                {saving ? "Saving..." : "Save Review"}
+              <Button type="submit" variant="success" className="ms-2" disabled={reviewing}>
+                {reviewing ? <><Spinner size="sm" /> Reviewing...</> : "Review"}
               </Button>
             </div>
           </Form>

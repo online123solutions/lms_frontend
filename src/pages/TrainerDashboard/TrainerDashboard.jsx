@@ -18,6 +18,7 @@ import HamButton from "../../Components/Hamburger";
 import TrainingReport from "./TrainingReport";
 import logoS from "../../assets/logo4.png";
 import TrainerProgress from "./TrainerProgress";
+import TrainerTaskReviews from "./TrainerTaskReviews";
 
 const MENU = [
   { label: "Dashboard", key: "dashboard", icon: "bi-house" },
@@ -30,6 +31,7 @@ const MENU = [
   { label: "Queries", key: "queries", icon: "bi-chat-left-text" },
   { label: "Progress", key: "trainerProgress", icon: "bi-bar-chart" }, // ✅ NEW
   { label: "SOP", key: "sops", icon: "bi-file-earmark-text" },
+  { label: "Task Reviews", key: "taskReviews", icon: "bi-journal-check" }, // ✅ NEW
 ];
 
 const TeacherDashboard = () => {
@@ -270,6 +272,7 @@ const TeacherDashboard = () => {
       case "queries": return <TrainerChat />;
       case "notifications": return <TrainerNotification />;
       case "trainerProgress": return <TrainerProgress />;
+      case "taskReviews": return <TrainerTaskReviews />;
       case "sops": {
         return (
           <div style={{ padding: 16 }}>
