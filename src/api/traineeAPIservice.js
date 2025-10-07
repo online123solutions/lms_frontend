@@ -222,3 +222,45 @@ export const submitFeedback = async (feedbackData) => {
     return { success: false, error: error?.response?.data || error };
   }
 };
+
+export const listTraineeTasks = async (params = {}) => {
+  try {
+    const res = await apiClient.get("/trainee-tasks/", { params });
+    return { success: true, data: res.data };
+  } catch (error) {
+    return { success: false, error: error?.response?.data || error };
+  }
+};
+
+export const submitTraineeTask = async (formData) => {
+  try {
+    // Use apiClient for consistency (inherits baseURL/auth); override headers for FormData
+    const response = await apiClient.post('/trainee-tasks/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',  // Optional; browser usually auto-sets, but explicit for safety
+      },
+    });
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error('Upload error:', error);
+    return { success: false, error: error.response?.data || error.message };
+  }
+};
+
+// ---------- Review (trainer/admin) ----------
+export const reviewTraineeTask = async (id, { marks, feedback, review_file }) => {
+  try {
+    const fd = new FormData();
+    if (marks !== undefined && marks !== null) fd.append("marks", String(marks));
+    if (feedback) fd.append("feedback", feedback);
+    if (review_file) fd.append("review_file", review_file);
+    const res = await apiClient.post(`/trainee-tasks/${id}/review/`, fd, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return { success: true, data: res.data };
+  } catch (error) {
+    return { success: false, error: error?.response?.data || error };
+  }
+};

@@ -64,6 +64,19 @@ export default function TraineeChat() {
       listEndRef.current.scrollIntoView({ behavior: "smooth" });
   }, [selectedQuery, messageCount]);
 
+  useEffect(() => {
+    const onEsc = (e) => {
+      if (e.key === "Escape" && activeSection === "raise") {
+        setActiveSection(null);
+        setSelectedQuery(null);
+        setFilter("");
+        setError(null);
+      }
+    };
+    window.addEventListener("keydown", onEsc);
+    return () => window.removeEventListener("keydown", onEsc);
+  }, [activeSection]);
+
   const fetchQueries = async () => {
     setIsLoading(true);
     try {
@@ -226,12 +239,25 @@ export default function TraineeChat() {
           </div>
           <div className="qc-top-actions">
             {activeSection === "raise" && (
-              <button
-                className="btn-outline"
-                onClick={() => setSelectedQuery(null)}
-              >
-                + New Query
-              </button>
+              <>
+                <button
+                  className="btn-back"
+                  onClick={() => {
+                    setActiveSection(null);
+                    setSelectedQuery(null);
+                    setFilter("");
+                    setError(null);
+                  }}
+                >
+                  ← Back
+                </button>
+                <button
+                  className="btn-outline"
+                  onClick={() => setSelectedQuery(null)}
+                >
+                  + New Query
+                </button>
+              </>
             )}
           </div>
         </div>

@@ -26,6 +26,7 @@ import logoSO from "../../assets/logo4.png";
 import { Dropdown, Form, Button, Modal } from "react-bootstrap";
 import { requestPasswordReset, confirmPasswordReset } from "../../api/apiservice";
 import TraineeProgress from "./TraineeProgress";
+import TraineeTasks from "./TraineeTasks";
 
 const TraineeDashboard = () => {
   const [data, setData] = useState(null);
@@ -322,6 +323,8 @@ const TraineeDashboard = () => {
         return <TraineeNotificationPage onRefreshBadge={reloadBadge} />;
       case "progress":
         return <TraineeProgress />;
+      case "tasks":
+        return <TraineeTasks />;
 
       // Combined SOPs + Standard Library view with tabs
       case "sops": {
@@ -463,6 +466,7 @@ const TraineeDashboard = () => {
               "loginActivity",
               "sops",
               "progress",
+              "tasks", // ✅ NEW
             ].map((key) => {
               const labelMap = {
                 dashboard: "Dashboard",
@@ -476,6 +480,7 @@ const TraineeDashboard = () => {
                 loginActivity: "Login Activity",
                 sops: "SOPs",
                 progress: "Progress",
+                tasks: "Tasks",
               };
               const iconMap = {
                 dashboard: "bi-house",
@@ -491,6 +496,7 @@ const TraineeDashboard = () => {
                 loginActivity: "bi-clock-history",
                 sops: "bi-file-earmark-text",
                 progress: "bi-bar-chart",
+                tasks: "bi-list-check", // ✅ NEW
               };
 
               const onClick = () => {
