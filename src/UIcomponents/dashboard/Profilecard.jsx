@@ -1,16 +1,21 @@
+// src/components/Trainee/DashboardCard.jsx
 import { useEffect, useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import {
   fetchTraineeDashboard,
   fetchTraineeNotifications,
-  markNotificationRead,mediaUrl,getTraineeProgress
+  markNotificationRead,
+  mediaUrl,
+  getTraineeProgress,
+  fetchBanners,        // <-- added
 } from "../../api/traineeAPIservice";
 import "../../UIcomponents/dashboard/profilecard.css";
 import PerformanceChart from "./PerformanceChart";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../index.css";
+import UpdatesCard from "../../pages/TraineeDashboard/UpdatesCard";
 
-// small helpers
+/* ---------------- small helpers ---------------- */
 const formatDate = (iso) => {
   if (!iso) return "";
   try {
@@ -31,33 +36,59 @@ const formatDuration = (seconds) => {
   return `${s}s`;
 };
 
-// ---------------- BannerSlider -----------------
-const BannerSlider = ({ data }) => {
-  const slides = Array.isArray(data?.admin_news_list) && data.admin_news_list.length
-    ? data.admin_news_list
-    : [
-        {
-          title: "New Training Module Available!",
-          content:
-            "We are excited to announce a new training module on advanced techniques. Start learning today!",
-          image:
-            "https://images.unsplash.com/photo-1723384747376-90f201a3bd55?q=80&w=1971&auto=format&fit=crop",
-        },
-        {
-          title: "Planner Updated",
-          content:
-            "Your weekly planner has been refreshed. Check the new tasks and timelines.",
-          image:
-            "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1971&auto=format&fit=crop",
-        },
-        {
-          title: "Assessments Live",
-          content:
-            "Mid-term assessments are live. Attempt them before the deadline.",
-          image:
-            "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=1971&auto=format&fit=crop",
-        },
-      ];
+const toImageUrl = (maybeUrl) => {
+  if (!maybeUrl) return "";
+  // mediaUrl already handles absolute/relative in your codebase
+  return mediaUrl(maybeUrl);
+};
+
+/* ---------------- BannerSlider ----------------- */
+const BannerSlider = ({ data, banners = [] }) => {
+  // Prefer backend banners -> fallback to admin_news_list -> static
+  const apiSlides =
+    Array.isArray(banners) && banners.length
+      ? banners.map((b) => ({
+          title: b.title || "—",
+          content: b.text || "",
+          image: toImageUrl(b.image_url || b.image || ""),
+        }))
+      : [];
+
+  const fallbackSlidesFromData =
+    Array.isArray(data?.admin_news_list) && data.admin_news_list.length
+      ? data.admin_news_list
+      : [];
+
+  const defaultSlides = [
+    {
+      title: "New Training Module Available!",
+      content:
+        "We are excited to announce a new training module on advanced techniques. Start learning today!",
+      image:
+        "https://images.unsplash.com/photo-1723384747376-90f201a3bd55?q=80&w=1971&auto=format&fit=crop",
+    },
+    {
+      title: "Planner Updated",
+      content:
+        "Your weekly planner has been refreshed. Check the new tasks and timelines.",
+      image:
+        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1971&auto=format&fit=crop",
+    },
+    {
+      title: "Assessments Live",
+      content:
+        "Mid-term assessments are live. Attempt them before the deadline.",
+      image:
+        "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=1971&auto=format&fit=crop",
+    },
+  ];
+
+  const slides =
+    apiSlides.length > 0
+      ? apiSlides
+      : fallbackSlidesFromData.length > 0
+      ? fallbackSlidesFromData
+      : defaultSlides;
 
   const [i, setI] = useState(0);
 
@@ -71,7 +102,7 @@ const BannerSlider = ({ data }) => {
   return (
     <div className="slider-card">
       <div className="slider-head">
-        <h2 className="slider-title">{slides[i].title}</h2>
+        <h2 className="slider-title">{slides[i]?.title || ""}</h2>
         <div className="slider-nav">
           <button className="slider-btn" onClick={() => go(false)} aria-label="Previous">
             ‹
@@ -87,12 +118,14 @@ const BannerSlider = ({ data }) => {
           <div
             key={idx}
             className={`slide ${idx === i ? "active" : ""}`}
-            style={{ backgroundImage: `url(${s.image})` }}
+            style={{ backgroundImage: s.image ? `url(${s.image})` : "none" }}
+            aria-label={s.title}
+            role="img"
           />
         ))}
       </div>
 
-      <p className="slider-desc">{slides[i].content}</p>
+      {slides[i]?.content ? <p className="slider-desc">{slides[i].content}</p> : null}
 
       <div className="slider-dots">
         {slides.map((_, idx) => (
@@ -118,21 +151,18 @@ BannerSlider.propTypes = {
       })
     ),
   }),
+  banners: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      title: PropTypes.string,
+      text: PropTypes.string,
+      image: PropTypes.string,
+      image_url: PropTypes.string,
+    })
+  ),
 };
 
-// small UI styles used above
-const miniCardStyle = {
-  gridColumn: "span 3",
-  background: "#fff",
-  borderRadius: 12,
-  padding: 12,
-  boxShadow: "0 1px 4px rgba(0,0,0,.06)",
-};
-const miniLabel = { fontSize: 12, color: "#6b7280" };
-const miniValue = { fontSize: 22, fontWeight: 800, color: "#111827" };
-
-
-// ---------------- ProfileCard -----------------
+/* ---------------- ProfileCard ----------------- */
 const ProfileCard = ({ username }) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
@@ -206,7 +236,7 @@ ProfileCard.propTypes = {
   username: PropTypes.string.isRequired,
 };
 
-// ---------------- ActionCards -----------------
+/* ---------------- ActionCards ----------------- */
 const ActionCards = ({ activeQuizzes }) => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -399,8 +429,8 @@ ActionCards.propTypes = {
   ),
 };
 
-// ---------------- LeftContainer -----------------
-const LeftContainer = ({ data }) => {
+/* ---------------- LeftContainer ----------------- */
+const LeftContainer = ({ data, banners }) => {
   return (
     <div className="left-container">
       <h1>
@@ -409,7 +439,7 @@ const LeftContainer = ({ data }) => {
       </h1>
       <h6>Nice to have you back, what an exciting day!</h6>
       <h6>Get ready and continue your lessons today.</h6>
-      <BannerSlider data={data} />
+      <BannerSlider data={data} banners={banners} />
       <h2>Your Performance</h2>
       <PerformanceChart />
     </div>
@@ -426,57 +456,10 @@ LeftContainer.propTypes = {
     courses: PropTypes.arrayOf(PropTypes.object),
     certifications: PropTypes.arrayOf(PropTypes.object),
   }),
+  banners: PropTypes.array, // from API
 };
 
-// ---------------- UpdatesCard -----------------
-const UpdatesCard = ({ data }) => {
-  const updates = data?.admin_updates || [
-    { type: "Module", message: "New module 'Advanced Techniques' is now available.", endDate: "2025-10-01" },
-    { type: "Planner", message: "Updated weekly planner for September is live.", endDate: "2025-09-30" },
-    { type: "Assessment", message: "New assessment 'Mid-Term Review' is live.", endDate: "2025-09-15" },
-    { type: "Module", message: "New module 'Advanced Techniques' is now available.", endDate: "2025-10-01" },
-    { type: "Planner", message: "Updated weekly planner for September is live.", endDate: "2025-09-30" },
-    { type: "Assessment", message: "New assessment 'Mid-Term Review' is live.", endDate: "2025-09-15" },
-  ];
-
-  return (
-    <div className="updates-card" style={{
-      background:"#fff",
-      padding:"16px 18px",                    // match .mp-card
-      borderRadius:"14px",                    // match .mp-card
-      boxShadow:"0 6px 18px rgba(0,0,0,.06)", // match .mp-card
-      marginTop:"0",
-      maxHeight:"420px",
-      overflowY:"auto"
-    }}>
-      <h3 style={{ color:"#333", marginBottom:"12px" }}>Latest Updates</h3>
-      <ul>
-        {updates.map((update, index) => (
-          <li key={index} style={{ color:"black" }}>
-            <strong style={{ fontSize:"18px"}}>{update.type}:</strong> {update.message} <br />
-            <span style={{ fontSize:"14px", color:"#6b7280" }}>
-              Ends on: {formatDate(update.endDate)}
-            </span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-UpdatesCard.propTypes = {
-  data: PropTypes.shape({
-    admin_updates: PropTypes.arrayOf(
-      PropTypes.shape({
-        type: PropTypes.string,
-        message: PropTypes.string,
-        endDate: PropTypes.string,
-      })
-    ),
-  }),
-};
-
-// --- My Progress (summary only) ---
+/* --- My Progress (summary only) --- */
 const ProgressMiniCard = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -555,27 +538,41 @@ const ProgressMiniCard = () => {
   );
 };
 
-
-// ---------------- DashboardCard -----------------
+/* ---------------- DashboardCard ----------------- */
 const DashboardCard = () => {
   const username = localStorage.getItem("username") || "";
   const [data, setData] = useState(null);
+  const [banners, setBanners] = useState([]);
 
   useEffect(() => {
-    const loadDashboardData = async () => {
-      const response = await fetchTraineeDashboard(username);
-      if (response.success) {
-        setData(response.data);
+    const load = async () => {
+      try {
+        if (username) {
+          const response = await fetchTraineeDashboard(username);
+          if (response.success) setData(response.data);
+        }
+      } catch (e) {
+        console.error("Failed to load trainee dashboard", e);
+      }
+
+      // Load banners (active ones)
+      try {
+        const list = await fetchBanners({ is_active: true });
+        setBanners(list);
+      } catch (e) {
+        console.error("Failed to load banners", e);
+        setBanners([]);
       }
     };
-    if (username) loadDashboardData();
+
+    load();
   }, [username]);
 
   const activeQuizzes = data?.active_quizzes || [];
 
   return (
     <div className="dashboard-container">
-      <LeftContainer data={data} />
+      <LeftContainer data={data} banners={banners} />
       <div className="right-container">
         <div className="top-section">
           <ProfileCard username={username} />

@@ -264,3 +264,9 @@ export const reviewTraineeTask = async (id, { marks, feedback, review_file }) =>
     return { success: false, error: error?.response?.data || error };
   }
 };
+
+export async function fetchBanners(params = {}) {
+  const res = await apiClient.get("/banners/", { params }); // e.g., ?is_active=true
+  // Return plain array
+  return Array.isArray(res.data) ? res.data : [];
+}
