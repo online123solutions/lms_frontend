@@ -189,9 +189,25 @@ export default function EmployeeChat() {
           </div>
           <div className="qc-top-actions">
             {activeSection === "raise" && (
-              <button className="btn-outline" onClick={() => setSelectedQuery(null)}>
-                + New Query
-              </button>
+              <>
+                <button
+                  className="btn-back"
+                  onClick={() => {
+                    setActiveSection(null);
+                    setSelectedQuery(null);
+                    setFilter("");
+                    setError(null);
+                  }}
+                >
+                  ← Back
+                </button>
+                <button
+                  className="btn-outline"
+                  onClick={() => setSelectedQuery(null)}
+                >
+                  + New Query
+                </button>
+              </>
             )}
           </div>
         </div>
