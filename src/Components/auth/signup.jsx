@@ -5,8 +5,8 @@ import "./signup.css";
 import ParticleBackground from "../ParticleBackground"; // Assuming this is a custom or library component
 import { AuthContext } from "../../App";
 
-import logo from "../../assets/logo4.png"; // Adjust the path based on your structure
-import logo1 from "../../assets/logo1.png"; // Adjust the path based on your structure
+import logo from "../../assets/logo3.png"; // Adjust the path based on your structure
+import logo1 from "../../assets/logo3.png"; // Adjust the path based on your structure
 
 const Signup = () => {
   const { setIsAuthenticated, setRole, setIsSuperUser } = useContext(AuthContext);

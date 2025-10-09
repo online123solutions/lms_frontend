@@ -87,7 +87,7 @@ body .signup-wrapper {
 }
 
 .signup-logo {
-  max-width: 220px;
+  max-width: 300px;
   height: auto;
   object-fit: contain;
   transition: transform 0.3s ease;
@@ -102,7 +102,7 @@ body .signup-wrapper {
 .info-title {
   margin-bottom: 20px;
   font-weight: 700;
-  color: #2d3748;
+  color: white;
   text-align: center;
 }
 
@@ -145,7 +145,7 @@ body .signup-wrapper {
   width: 100%;
   padding: 12px;
   margin-top: 20px;
-  background: #393939;
+  background: #0ba3e6;
   color: white;
   border: none;
   border-radius: 8px;
@@ -209,7 +209,7 @@ body .signup-wrapper {
 .info-text {
   margin-bottom: 20px;
   font-size: 16px;
-  color: #e2e8f0;
+  color: white;
 }
 
 .toggle-button {
