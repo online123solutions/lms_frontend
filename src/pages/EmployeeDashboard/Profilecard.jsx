@@ -177,16 +177,12 @@ const ProfileCard = ({ username }) => {
   const profilePic = toImageUrl(profilePicRaw) || "https://via.placeholder.com/80";
 
   return (
-    <div className="profile-card">
-      <img
-        src="https://images.unsplash.com/photo-1723384747376-90f201a3bd55?q=80&w=1971&auto=format&fit=crop"
-        className="background-pic"
-        alt="Background"
-      />
-      <img src={profilePic} alt="Profile" className="profile-pic" />
-      <h4>{data?.profile?.name || "Employee"}</h4>
+    <div className="profile-card centered-profile">
+      <img src={profilePic} alt="Profile" className="profile-pic centered" />
+      <h4>{data?.profile?.name || "Trainee"}</h4>
       <p className="location">Department - {data?.profile?.department || "-"}</p>
       <p className="location">Designation - {data?.profile?.designation || "-"}</p>
+
       <div className="stats">
         <div className="stat">
           <p>{data?.subjects_count || 0}</p>
