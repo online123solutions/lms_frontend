@@ -87,7 +87,7 @@ const MacroPlanner = () => {
           <table className="table table-bordered table-hover align-middle shadow-sm macro-planner-table">
             <thead className="table-custom">
               <tr>
-                <th>Week</th>
+                {/* <th>Week</th> */}
                 <th>Duration</th>
                 <th>Department</th>
                 <th>Module</th>
@@ -98,7 +98,7 @@ const MacroPlanner = () => {
               {filteredPlanners.length > 0 ? (
                 filteredPlanners.map((planner) => (
                   <tr key={planner.id}>
-                    <td className="fw-medium">{prettyWeek(planner.week)}</td>
+                    {/* <td className="fw-medium">{prettyWeek(planner.week)}</td> */}
                     <td>{planner.duration}</td>
                     <td>{planner.department}</td>
                     <td>{planner.module}</td>

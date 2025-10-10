@@ -139,7 +139,7 @@ const MacroPlanner = () => {
           <table className="macro-planner-table">
             <thead>
               <tr>
-                <th>Week</th>
+                {/* <th>Week</th> */}
                 <th>Duration</th>
                 <th>Department</th>
                 <th>Module</th>
@@ -152,7 +152,7 @@ const MacroPlanner = () => {
               {filteredPlanners.length > 0 ? (
                 filteredPlanners.map((planner) => (
                   <tr key={planner.id}>
-                    <td className="fw-medium">{planner.week}</td>
+                    {/* <td className="fw-medium">{planner.week}</td> */}
                     <td>{planner.duration}</td>
                     <td>{planner.department}</td>
                     <td>{planner.module}</td>
