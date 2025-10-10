@@ -205,19 +205,15 @@ const ProfileCard = ({ username }) => {
     data?.profile?.user?.profile_picture ||
     "";
 
-  const profilePic = mediaUrl(profilePicRaw) || "https://via.placeholder.com/80";
+  const profilePic = mediaUrl(profilePicRaw) || "https://via.placeholder.com/100";
 
   return (
-    <div className="profile-card">
-      <img
-        src="https://images.unsplash.com/photo-1723384747376-90f201a3bd55?q=80&w=1971&auto=format&fit=crop"
-        className="background-pic"
-        alt="Background"
-      />
-      <img src={profilePic} alt="Profile" className="profile-pic" />
+    <div className="profile-card centered-profile">
+      <img src={profilePic} alt="Profile" className="profile-pic centered" />
       <h4>{data?.profile?.name || "Trainee"}</h4>
       <p className="location">Department - {data?.profile?.department || "-"}</p>
       <p className="location">Designation - {data?.profile?.designation || "-"}</p>
+
       <div className="stats">
         <div className="stat">
           <p>{data?.subjects_count || 0}</p>
@@ -437,7 +433,7 @@ const LeftContainer = ({ data, banners }) => {
         <b>Hello, </b>
         {data?.profile?.name || "Trainee"}
       </h1>
-      <h6>Nice to have you back, what an exciting day!</h6>
+      {/* <h6>Nice to have you back, what an exciting day!</h6> */}
       <h6>Get ready and continue your lessons today.</h6>
       <BannerSlider data={data} banners={banners} />
       <h2>Your Performance</h2>

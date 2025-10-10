@@ -378,7 +378,7 @@
 .updates-card ul{ margin: 0; }
 .updates-card li{ margin-bottom: 10px; }
 
-.mp-card{ min-height: 300px; display:flex; flex-direction:column; }
+.mp-card{ min-height: 320px; display:flex; flex-direction:column; }
 
 .mp-title{
   display:flex; align-items:center; gap:10px;
@@ -436,3 +436,56 @@
 /* linear meter (kept, slimmer & animated) */
 .mp-meter, .mp-meter-top, .mp-meter-track, .mp-meter-fill { display:none !important; }
 
+/* Centered Profile Card */
+.centered-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-card);
+  padding: 25px 15px;
+  border-radius: 15px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  height: 350px;
+}
+
+.centered-profile .profile-pic {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  object-fit: cover;
+  border: 3px solid #ddd;
+}
+
+.centered-profile h4 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  margin: 5px 0;
+}
+
+.centered-profile .location {
+  color: #374151;
+  font-size: 15px;
+  margin: 3px 0;
+}
+
+.centered-profile .stats {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-top: 15px;
+}
+
+.centered-profile .stat p {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.centered-profile .stat span {
+  font-size: 13px;
+  color: #6b7280;
+}
