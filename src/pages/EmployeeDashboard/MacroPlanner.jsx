@@ -62,7 +62,7 @@ const MacroPlanner = () => {
     <div className="macro-planner container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-4 header">
         <h2 className="fw-bold text-white">📅 Road Map</h2>
-        <Form.Select
+        {/* <Form.Select
           className="w-auto border-primary shadow-sm"
           onChange={(e) => setSelectedWeek(e.target.value)}
           value={selectedWeek}
@@ -73,7 +73,7 @@ const MacroPlanner = () => {
               {prettyWeek(w)}
             </option>
           ))}
-        </Form.Select>
+        </Form.Select> */}
       </div>
 
       {loading ? (

@@ -152,7 +152,7 @@ const MacroPlanner = () => {
             ))}
           </Form.Select>
 
-          <Form.Select
+          {/* <Form.Select
             className="mp-select"
             onChange={(e) => setSelectedWeek(e.target.value)}
             value={selectedWeek}
@@ -162,7 +162,7 @@ const MacroPlanner = () => {
             {weekOptions.map((w) => (
               <option key={w} value={w}>{w}</option>
             ))}
-          </Form.Select>
+          </Form.Select> */}
 
         </div>
       </div>

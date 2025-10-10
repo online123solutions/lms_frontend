@@ -60,18 +60,6 @@ const MacroPlanner = () => {
     <div className="macro-planner container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-4 header">
         <h2 className="fw-bold text-white">📅 Road Map</h2>
-        <Form.Select
-          className="w-auto border-primary shadow-sm"
-          onChange={(e) => setSelectedWeek(e.target.value)}
-          value={selectedWeek}
-        >
-          <option value="">All Weeks</option>
-          {weeks.map((week) => (
-            <option key={week} value={week}>
-              {week.replace(/^week\s/, (m) => m.charAt(0).toUpperCase() + m.slice(1))} {/* "Week 2" */}
-            </option>
-          ))}
-        </Form.Select>
       </div>
 
       {loading ? (
