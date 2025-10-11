@@ -509,7 +509,7 @@ const LeftContainer = ({ data, banners }) => {
         <b>Hello, </b>
         {data?.profile?.name || "Employee"}
       </h1>
-      <h6>Nice to have you back, what an exciting day!</h6>
+      {/* <h6>Nice to have you back, what an exciting day!</h6> */}
       <h6>Get ready and continue your lessons today.</h6>
 
       {/* Backend banners slider */}
