@@ -298,7 +298,7 @@ const Learning = () => {
           {[
             { label: "Content", icon: faBook, value: "content" },
             { label: "Video", icon: faVideo, value: "video" },
-            { label: "Simulator", icon: faLaptopCode, value: "simulator" },
+            // { label: "Simulator", icon: faLaptopCode, value: "simulator" },
             { label: "Quiz", icon: faQuestionCircle, value: "quiz" },
             // { label: "Hint", icon: faQuestion, value: "hint" },
           ].map(({ label, icon, value }) => (
