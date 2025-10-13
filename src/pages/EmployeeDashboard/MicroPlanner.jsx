@@ -84,6 +84,7 @@ const MicroPlanner = () => {
           <table className="table table-bordered table-hover align-middle shadow-sm macro-planner-table">
             <thead className="table-custom">
               <tr>
+                <th>Month</th>
                 <th>Week</th> {/* Updated from Month to Week */}
                 <th>Days & Modules</th>
                 <th>Department</th>
@@ -100,6 +101,7 @@ const MicroPlanner = () => {
                   const dayModuleList = days.map((day, index) => `${day}: ${modules[index] || "N/A"}`).join(", ");
                   return (
                     <tr key={planner.id}>
+                      <td>{planner.month}</td>
                       <td>{planner.week}</td> {/* Updated from Month to Week */}
                       <td>{dayModuleList || "N/A"}</td>
                       <td>{planner.department}</td>
