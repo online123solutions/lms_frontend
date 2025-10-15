@@ -4,7 +4,11 @@ import {
   createQuery,
   respondToQuery,
   submitFeedback,
-} from "../../api/traineeAPIservice"; // ✅ now importing real API
+  listConcerns,
+  createConcern,
+  addConcernComment,
+  mediaUrl,
+} from "../../api/traineeAPIservice";
 import "../../utils/css/Trainee CSS/chat.css";
 import "../../index.css";
 
@@ -23,16 +27,13 @@ const CATEGORIES = ["general", "training", "assessment", "technical"];
 export default function TraineeChat() {
   const [queries, setQueries] = useState([]);
   const [selectedQuery, setSelectedQuery] = useState(null);
-  // const [newDepartment, setNewDepartment] = useState(
-  //   localStorage.getItem("department") || ""
-  // );
   const [newCategory, setNewCategory] = useState("general");
   const [newQueryText, setNewQueryText] = useState("");
   const [replyText, setReplyText] = useState("");
   const [filter, setFilter] = useState("");
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [activeSection, setActiveSection] = useState(null); // null, "raise", "feedback", "concern"
+  const [activeSection, setActiveSection] = useState(null); // "raise" | "feedback" | "concern"
   const [feedback, setFeedback] = useState({
     communication: 0,
     subjectKnowledge: 0,
@@ -43,40 +44,25 @@ export default function TraineeChat() {
   const currentUsername = (localStorage.getItem("username") || "").trim();
   const listEndRef = useRef(null);
 
+  // --- Concern Section State ---
+  const [concerns, setConcerns] = useState([]);
+  const [selectedConcern, setSelectedConcern] = useState(null);
+  const [newConcern, setNewConcern] = useState({
+    title: "",
+    description: "",
+    category: "",
+    priority: "medium",
+    attachment: null,
+  });
+  const [cloading, setCLoading] = useState(false);
+  const [commentText, setCommentText] = useState("");
+
   const messageCount = useMemo(
     () => (selectedQuery?.responses?.length || 0) + (selectedQuery ? 1 : 0),
     [selectedQuery]
   );
 
-  useEffect(() => {
-    if (activeSection === "raise") {
-      fetchQueries();
-    }
-    const interval =
-      activeSection === "raise" ? setInterval(fetchQueries, 10000) : null;
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [activeSection]);
-
-  useEffect(() => {
-    if (listEndRef.current)
-      listEndRef.current.scrollIntoView({ behavior: "smooth" });
-  }, [selectedQuery, messageCount]);
-
-  useEffect(() => {
-    const onEsc = (e) => {
-      if (e.key === "Escape" && activeSection === "raise") {
-        setActiveSection(null);
-        setSelectedQuery(null);
-        setFilter("");
-        setError(null);
-      }
-    };
-    window.addEventListener("keydown", onEsc);
-    return () => window.removeEventListener("keydown", onEsc);
-  }, [activeSection]);
-
+  // --------------- Fetch Queries ---------------
   const fetchQueries = async () => {
     setIsLoading(true);
     try {
@@ -95,6 +81,35 @@ export default function TraineeChat() {
     }
   };
 
+  useEffect(() => {
+    if (activeSection === "raise") fetchQueries();
+    const interval =
+      activeSection === "raise" ? setInterval(fetchQueries, 10000) : null;
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [activeSection]);
+
+  // scroll to latest messages
+  useEffect(() => {
+    if (listEndRef.current)
+      listEndRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [selectedQuery, messageCount]);
+
+  // exit key listener
+  useEffect(() => {
+    const onEsc = (e) => {
+      if (e.key === "Escape" && activeSection === "raise") {
+        setActiveSection(null);
+        setSelectedQuery(null);
+        setFilter("");
+        setError(null);
+      }
+    };
+    window.addEventListener("keydown", onEsc);
+    return () => window.removeEventListener("keydown", onEsc);
+  }, [activeSection]);
+
   const whoForResponse = (resp, query) => {
     const type =
       resp.sender_type ||
@@ -112,16 +127,12 @@ export default function TraineeChat() {
   const handleNewQuery = async () => {
     const text = newQueryText.trim();
     if (!text) return;
-
     try {
       const fd = new FormData();
       fd.append("question", text);
-      // if (newDepartment) fd.append("department", newDepartment);
       if (newCategory) fd.append("category", newCategory);
-
       const created = await createQuery(fd);
       setNewQueryText("");
-      setFilter("");
       if (created && created.id)
         setSelectedQuery({ responses: [], ...created });
       await fetchQueries();
@@ -134,10 +145,6 @@ export default function TraineeChat() {
   const handleReply = async () => {
     const text = replyText.trim();
     if (!selectedQuery || !text) return;
-    if (!selectedQuery.id) {
-      setError("Cannot reply: query ID missing.");
-      return;
-    }
     try {
       const fd = new FormData();
       fd.append("response", text);
@@ -206,62 +213,74 @@ export default function TraineeChat() {
     }
   };
 
+  // ---------- Concern handlers ----------
+  const loadConcerns = async () => {
+    setCLoading(true);
+    const { success, data } = await listConcerns();
+    if (success) setConcerns(data);
+    setCLoading(false);
+  };
+
+  useEffect(() => {
+    if (activeSection === "concern") loadConcerns();
+  }, [activeSection]);
+
+  const handleCreateConcern = async () => {
+    if (!newConcern.title.trim() || !newConcern.description.trim()) {
+      alert("Please fill title and description.");
+      return;
+    }
+    const fd = new FormData();
+    fd.append("title", newConcern.title);
+    fd.append("description", newConcern.description);
+    if (newConcern.category) fd.append("category", newConcern.category);
+    if (newConcern.priority) fd.append("priority", newConcern.priority);
+    if (newConcern.attachment) fd.append("attachment", newConcern.attachment);
+    const { success } = await createConcern(fd);
+    if (success) {
+      setNewConcern({
+        title: "",
+        description: "",
+        category: "",
+        priority: "medium",
+        attachment: null,
+      });
+      await loadConcerns();
+    } else alert("Failed to submit concern.");
+  };
+
+  const handleAddComment = async (id) => {
+    if (!commentText.trim()) return;
+    const fd = new FormData();
+    fd.append("message", commentText);
+    const { success } = await addConcernComment(id, fd);
+    if (success) {
+      setCommentText("");
+      await loadConcerns();
+      const updated = await listConcerns();
+      const selected = updated.data.find((x) => x.id === id);
+      setSelectedConcern(selected);
+    }
+  };
+
+  // ------------------- RENDER -------------------
   return (
     <div className="qc-root">
       <div className="qc-shell">
-        {/* Top bar */}
+        {/* Top Bar */}
         <div className="qc-topbar">
           <div className="qc-top-left">
-            <h2>Trainee Queries</h2>
+            <h2>Trainee Queries & Feedback</h2>
             {error && <div className="error-message">{error}</div>}
             {submitSuccess && (
               <div className="success-message">
                 Feedback submitted successfully!
               </div>
             )}
-            {selectedQuery && activeSection === "raise" && (
-              <div className="qc-chips">
-                {selectedQuery.category && (
-                  <span className="chip">{selectedQuery.category}</span>
-                )}
-                {selectedQuery.department && (
-                  <span className="chip chip-outline">
-                    {selectedQuery.department}
-                  </span>
-                )}
-                {selectedQuery.created_at && (
-                  <span className="chip chip-light">
-                    Opened {timeAgo(selectedQuery.created_at)}
-                  </span>
-                )}
-              </div>
-            )}
-          </div>
-          <div className="qc-top-actions">
-            {activeSection === "raise" && (
-              <>
-                <button
-                  className="btn-back"
-                  onClick={() => {
-                    setActiveSection(null);
-                    setSelectedQuery(null);
-                    setFilter("");
-                    setError(null);
-                  }}
-                >
-                  ← Back
-                </button>
-                <button
-                  className="btn-outline"
-                  onClick={() => setSelectedQuery(null)}
-                >
-                  + New Query
-                </button>
-              </>
-            )}
           </div>
         </div>
 
+        {/* --- OPTIONS MENU --- */}
         {activeSection === null ? (
           <div className="query-options">
             <h3>Select an Option</h3>
@@ -282,12 +301,12 @@ export default function TraineeChat() {
                 className="btn-option"
                 onClick={() => setActiveSection("concern")}
               >
-                Concern
+                Concerns
               </button>
             </div>
           </div>
         ) : activeSection === "raise" ? (
-          // --- RAISE QUERIES SECTION ---
+          // --- QUERIES SECTION ---
           <div className="query-chat-container">
             <aside className="query-list">
               <div className="list-search">
@@ -325,12 +344,8 @@ export default function TraineeChat() {
                         {q.question || "No question"}
                       </div>
                       <div className="item-meta">
-                        <span className="meta-left">
-                          {q.category || "general"}
-                        </span>
-                        <span className="meta-right">
-                          {timeAgo(q.created_at)}
-                        </span>
+                        <span>{q.category || "general"}</span>
+                        <span>{timeAgo(q.created_at)}</span>
                       </div>
                     </li>
                   ))}
@@ -342,35 +357,18 @@ export default function TraineeChat() {
             <main className="chat-main">
               {!selectedQuery ? (
                 <div className="new-query-form card">
-                  <div className="form-grid">
-                    {/* <div className="form-group">
-                      <label>Department</label>
-                      <select
-                        value={newDepartment}
-                        onChange={(e) => setNewDepartment(e.target.value)}
-                      >
-                        <option value="">-- Select department --</option>
-                        {DEPARTMENTS.map((d) => (
-                          <option key={d} value={d}>
-                            {d}
-                          </option>
-                        ))}
-                      </select>
-                    </div> */}
-
-                    <div className="form-group">
-                      <label>Category</label>
-                      <select
-                        value={newCategory}
-                        onChange={(e) => setNewCategory(e.target.value)}
-                      >
-                        {CATEGORIES.map((c) => (
-                          <option key={c} value={c}>
-                            {c[0].toUpperCase() + c.slice(1)}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                  <div className="form-group">
+                    <label>Category</label>
+                    <select
+                      value={newCategory}
+                      onChange={(e) => setNewCategory(e.target.value)}
+                    >
+                      {CATEGORIES.map((c) => (
+                        <option key={c} value={c}>
+                          {c[0].toUpperCase() + c.slice(1)}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <label className="form-label">Write your query</label>
@@ -384,6 +382,12 @@ export default function TraineeChat() {
                     <button className="btn-primary" onClick={handleNewQuery}>
                       Send
                     </button>
+                    <button
+                      className="btn-back"
+                      onClick={() => setActiveSection(null)}
+                    >
+                      Back
+                    </button>
                   </div>
                 </div>
               ) : (
@@ -393,22 +397,11 @@ export default function TraineeChat() {
                       {selectedQuery.question?.slice(0, 120) ||
                         `Query #${selectedQuery.id}`}
                     </div>
-                    <div className="thread-sub">
-                      {selectedQuery.raised_by === currentUsername
-                        ? "You"
-                        : selectedQuery.raised_by}{" "}
-                      • {new Date(selectedQuery.created_at).toLocaleString()}
-                    </div>
                   </div>
 
                   <div className="message-area">
-                    <div className={`bubble-row left`}>
-                      <div className="avatar">
-                        {(selectedQuery.raised_by || "U")
-                          .slice(0, 1)
-                          .toUpperCase()}
-                      </div>
-                      <div className={`bubble trainee`}>
+                    <div className="bubble-row left">
+                      <div className="bubble trainee">
                         <div className="bubble-text">
                           {selectedQuery.question}
                         </div>
@@ -425,17 +418,11 @@ export default function TraineeChat() {
                       const who = whoForResponse(r, selectedQuery);
                       const side = who === "Trainer" ? "right" : "left";
                       const name = who === "You" ? currentUsername : who;
-                      const initials = (
-                        r.responder_username || name || "U"
-                      )
-                        .slice(0, 1)
-                        .toUpperCase();
                       return (
                         <div
-                          key={r.id || r.responded_at || idx}
+                          key={r.id || idx}
                           className={`bubble-row ${side}`}
                         >
-                          <div className="avatar">{initials}</div>
                           <div className={`bubble ${bubbleClass(who)}`}>
                             <div className="bubble-text">{r.response}</div>
                             <div className="bubble-meta">
@@ -476,12 +463,8 @@ export default function TraineeChat() {
                   max="5"
                   value={feedback.communication}
                   onChange={(e) =>
-                    handleFeedbackChange(
-                      "communication",
-                      Math.max(1, Math.min(5, e.target.value))
-                    )
+                    handleFeedbackChange("communication", e.target.value)
                   }
-                  placeholder="Rate 1-5"
                 />
               </div>
               <div className="form-group">
@@ -492,12 +475,8 @@ export default function TraineeChat() {
                   max="5"
                   value={feedback.subjectKnowledge}
                   onChange={(e) =>
-                    handleFeedbackChange(
-                      "subjectKnowledge",
-                      Math.max(1, Math.min(5, e.target.value))
-                    )
+                    handleFeedbackChange("subjectKnowledge", e.target.value)
                   }
-                  placeholder="Rate 1-5"
                 />
               </div>
               <div className="form-group">
@@ -508,60 +487,213 @@ export default function TraineeChat() {
                   max="5"
                   value={feedback.mentorship}
                   onChange={(e) =>
-                    handleFeedbackChange(
-                      "mentorship",
-                      Math.max(1, Math.min(5, e.target.value))
-                    )
+                    handleFeedbackChange("mentorship", e.target.value)
                   }
-                  placeholder="Rate 1-5"
                 />
               </div>
-
               <div className="form-group">
-                <label>Custom Feedback / Comments</label>
+                <label>Custom Feedback</label>
                 <textarea
+                  rows={3}
                   value={feedback.customFeedback}
                   onChange={(e) =>
                     handleFeedbackChange("customFeedback", e.target.value)
                   }
-                  placeholder="Write your comments or suggestions here..."
-                  rows={4}
+                  placeholder="Any suggestions?"
                 />
               </div>
-
               <div className="actions">
                 <button
                   className="btn-primary"
                   onClick={handleSubmitFeedback}
-                  disabled={Object.values(feedback).some(
-                    (val, key) => key !== "customFeedback" && (val < 1 || val > 5)
-                  )}
                 >
-                  Submit Feedback
+                  Submit
                 </button>
                 <button
                   className="btn-back"
                   onClick={() => setActiveSection(null)}
                 >
-                  Back to Options
+                  Back
                 </button>
               </div>
             </div>
           </div>
         ) : (
-          <div className="selected-section">
-            <h3>
-              {activeSection === "concern"
-                ? "Feedback/Concern"
-                : "Feedback/Concern"}{" "}
-              Section
-            </h3>
-            <p>This section is under development. Coming soon!</p>
-            <button
-              className="btn-back"
-              onClick={() => setActiveSection(null)}
-            >
-              Back to Options
+          // --- CONCERN SECTION ---
+          <div className="concern-section card">
+            <h3>Raise or Track a Concern</h3>
+
+            {/* New Concern Form */}
+            <div className="new-concern-form">
+              <div className="form-grid">
+                <div className="form-group">
+                  <label>Title</label>
+                  <input
+                    type="text"
+                    value={newConcern.title}
+                    placeholder="Enter concern title"
+                    onChange={(e) =>
+                      setNewConcern((p) => ({ ...p, title: e.target.value }))
+                    }
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Category</label>
+                  <select
+                    value={newConcern.category}
+                    onChange={(e) =>
+                      setNewConcern((p) => ({ ...p, category: e.target.value }))
+                    }
+                  >
+                    <option value="">Select category</option>
+                    <option value="HR">HR</option>
+                    <option value="Technical">Technical</option>
+                    <option value="Training">Training</option>
+                    <option value="General">General</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Priority</label>
+                  <select
+                    value={newConcern.priority}
+                    onChange={(e) =>
+                      setNewConcern((p) => ({ ...p, priority: e.target.value }))
+                    }
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Write your concern</label>
+                <textarea
+                  rows={3}
+                  placeholder="Describe your concern"
+                  value={newConcern.description}
+                  onChange={(e) =>
+                    setNewConcern((p) => ({
+                      ...p,
+                      description: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+
+              {/* <div className="form-group">
+                <label>Attachment (optional)</label>
+                <input
+                  type="file"
+                  onChange={(e) =>
+                    setNewConcern((p) => ({
+                      ...p,
+                      attachment: e.target.files[0],
+                    }))
+                  }
+                />
+              </div> */}
+
+              <div className="actions">
+                <button className="btn-primary" onClick={handleCreateConcern}>
+                  Submit Concern
+                </button>
+              </div>
+            </div>
+
+            <hr />
+
+            {/* Concern List */}
+            <h4>Your Raised Concerns</h4>
+            {cloading ? (
+              <div className="loading-state">Loading concerns...</div>
+            ) : concerns.length === 0 ? (
+              <div className="empty-state">
+                <div className="empty-emoji">📬</div>
+                <p>No concerns raised yet.</p>
+              </div>
+            ) : (
+              <div className="concern-list">
+                {concerns.map((c) => (
+                  <div
+                    key={c.id}
+                    className={`concern-card ${
+                      selectedConcern?.id === c.id ? "active" : ""
+                    }`}
+                    onClick={() => setSelectedConcern(c)}
+                  >
+                    <div className="concern-top">
+                      <div className="concern-title">{c.title}</div>
+                      <div className="chip">{c.status.toUpperCase()}</div>
+                    </div>
+                    <div className="concern-meta">
+                      {c.category} • {timeAgo(c.created_at)} •{" "}
+                      <span className="priority-chip">{c.priority}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Selected Concern Detail */}
+            {selectedConcern && (
+            <div className="concern-detail">
+              <div className="concern-detail-header">
+                <button
+                  className="btn-back-inline"
+                  onClick={() => setSelectedConcern(null)}
+                >
+                  ← Back to list
+                </button>
+
+                <h5>
+                  #{selectedConcern.id} — {selectedConcern.title}
+                </h5>
+
+                <span className={`chip status-${selectedConcern.status?.toLowerCase?.()}`}>
+                  {selectedConcern.status?.toUpperCase?.() || "OPEN"}
+                </span>
+              </div>
+
+              <p>{selectedConcern.description}</p>
+
+              {selectedConcern.attachment && (
+                <a href={mediaUrl(selectedConcern.attachment)} target="_blank" rel="noreferrer">
+                  View Attachment
+                </a>
+              )}
+
+              <h6>Comments</h6>
+              <div className="comments-box">
+                {selectedConcern.comments?.length ? (
+                  selectedConcern.comments.map((c) => (
+                    <div key={c.id} className="comment-item">
+                      <b>{c.author_username}:</b> {c.message}
+                    </div>
+                  ))
+                ) : (
+                  <div className="empty-state">No comments yet.</div>
+                )}
+              </div>
+
+              <div className="reply-box mt-3">
+                <input
+                  type="text"
+                  placeholder="Add a comment..."
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                />
+                <button className="btn-outline" onClick={() => handleAddComment(selectedConcern.id)}>
+                  Send
+                </button>
+              </div>
+            </div>
+          )}
+            <button className="btn-back" onClick={() => setActiveSection(null)}>
+              ← Back to Options
             </button>
           </div>
         )}

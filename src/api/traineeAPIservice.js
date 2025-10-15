@@ -331,3 +331,36 @@ export async function listAssignments(params = {}) {
     return { success: false, error: e?.response?.data || e.message };
   }
 }
+
+// ---------- Concern API ----------
+
+export async function listConcerns() {
+  try {
+    const res = await apiClient.get("/concerns/");
+    return { success: true, data: res.data };
+  } catch (err) {
+    return { success: false, error: err?.response?.data || err.message };
+  }
+}
+
+export async function createConcern(formData) {
+  try {
+    const res = await apiClient.post("/concerns/", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return { success: true, data: res.data };
+  } catch (err) {
+    return { success: false, error: err?.response?.data || err.message };
+  }
+}
+
+export async function addConcernComment(id, formData) {
+  try {
+    const res = await apiClient.post(`/concerns/${id}/comment/`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return { success: true, data: res.data };
+  } catch (err) {
+    return { success: false, error: err?.response?.data || err.message };
+  }
+}
