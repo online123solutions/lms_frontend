@@ -270,3 +270,64 @@ export async function fetchBanners(params = {}) {
   // Return plain array
   return Array.isArray(res.data) ? res.data : [];
 }
+
+
+export async function createTaskAssignment(formData) {
+  try {
+    // If your backend expects JSON, convert; here we assume multipart to allow file upload
+    const res = await apiClient.post("https://lms.steel.study/trainer/tasks/", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return { success: true, data: res.data };
+  } catch (err) {
+    const error = err?.response?.data || err.message || "Error";
+    return { success: false, error };
+  }
+}
+
+export async function listMyAssignments(params = {}) { // trainee/employee: only own
+  try {
+    const res = await defaultApiClient.get("https://lms.steel.study/trainer/tasks/", { params }); // backend uses request.user
+    return { success: true, data: res.data };
+  } catch (e) {
+    return { success: false, error: e?.response?.data || e.message };
+  }
+}
+
+export async function startAssignment(id) {
+  try {
+    const res = await defaultApiClient.post(`https://lms.steel.study/trainer/tasks/${id}/start/`);
+    return { success: true, data: res.data };
+  } catch (e) {
+    return { success: false, error: e?.response?.data || e.message };
+  }
+}
+
+export async function completeAssignment(id) {
+  try {
+    const res = await defaultApiClient.post(`https://lms.steel.study/trainer/tasks/${id}/complete/`);
+    return { success: true, data: res.data };
+  } catch (e) {
+    return { success: false, error: e?.response?.data || e.message };
+  }
+}
+
+export async function attachSubmissionToAssignment(id, submissionId) {
+  try {
+    const fd = new FormData();
+    fd.append("submission_id", String(submissionId));
+    const res = await defaultApiClient.post(`https://lms.steel.study/trainer/tasks/${id}/attach-submit/`, fd);
+    return { success: true, data: res.data };
+  } catch (e) {
+    return { success: false, error: e?.response?.data || e.message };
+  }
+}
+
+export async function listAssignments(params = {}) {
+  try {
+    const res = await defaultApiClient.get("https://lms.steel.study/trainer/tasks/", { params });
+    return { success: true, data: res.data };
+  } catch (e) {
+    return { success: false, error: e?.response?.data || e.message };
+  }
+}

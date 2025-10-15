@@ -5,7 +5,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import {
   listTraineeTasks,
   submitTraineeTask,
-  mediaUrl
+  mediaUrl,
+  listMyAssignments,
+  startAssignment
 } from "../../api/traineeAPIservice";
 import "../../utils/css/Trainer CSS/trainernotification.css"; // reuse grid/card styles
 
@@ -76,6 +78,19 @@ export default function TraineeTasks() {
       setLoading(false);
     }
   };
+
+  const [assignments, setAssignments] = useState([]);
+  const [aload, setALoad] = useState(false);
+  const [aerr, setAErr] = useState("");
+  const loadAssignments = async () => {
+    setALoad(true); setAErr("");
+    const { success, data, error } = await listMyAssignments({});
+    if (success) setAssignments(Array.isArray(data) ? data : (data?.results || []));
+    else setAErr(error);
+    setALoad(false);
+  };
+  useEffect(() => { loadAssignments(); }, []);
+
 
   useEffect(() => {
     load();
@@ -226,6 +241,52 @@ export default function TraineeTasks() {
           </div>
         </>
       )}
+
+      <h5 className="mb-2">Tasks Assigned to You</h5>
+{aerr && <div className="tn-alert tn-alert-error">{String(aerr)}</div>}
+{aload ? (
+  <div className="tn-grid">{Array.from({ length: 3 }).map((_,i)=><div key={i} className="tn-card skeleton" />)}</div>
+) : assignments.length === 0 ? (
+  <div className="tn-empty"><div className="emoji">📝</div><div>No tasks assigned.</div></div>
+) : (
+  <div className="tn-grid">
+    {assignments.map(a => (
+      <div key={a.id} className="tn-card">
+        <div className="tn-card-top">
+          <div className="tn-title">{a.title}</div>
+          <div className="tn-when">{a.due_at ? timeAgo(a.due_at) : "No due date"}</div>
+        </div>
+
+        {a.instructions && <div className="tn-body">{a.instructions}</div>}
+
+        <div className="tn-chips">
+          <span className="chip">{a.status}</span>
+          {a.priority && <span className="chip chip-type">{a.priority}</span>}
+          {a.max_marks != null && <span className="chip chip-type">Max: {a.max_marks}</span>}
+        </div>
+
+        <div className="d-flex gap-2 mt-2">
+          {a.status === "assigned" && (
+            <Button size="sm" variant="outline-primary" onClick={async () => {
+              const { success } = await startAssignment(a.id);
+              if (success) loadAssignments();
+            }}>
+              Mark Started
+            </Button>
+          )}
+          {/* Suggestion: after trainee submits, you can show an "Attach Last Submission" button */}
+        </div>
+
+        {a.attachment && (
+          <div className="mt-2">
+            <a href={mediaUrl(a.attachment)} target="_blank" rel="noreferrer">View attachment</a>
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+)}
+
 
       <Modal show={show} onHide={close} size="lg" centered>
         <Modal.Header closeButton>
