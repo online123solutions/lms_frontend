@@ -282,7 +282,7 @@ export default function TraineeChat() {
                 className="btn-option"
                 onClick={() => setActiveSection("concern")}
               >
-                Feedback/Concern
+                Concern
               </button>
             </div>
           </div>

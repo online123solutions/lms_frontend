@@ -476,7 +476,7 @@ const TraineeDashboard = () => {
                 quizzes: "Assessments",
                 assessment: "Assessment Report",
                 notifications: "Notifications",
-                queries: "Trainee Queries",
+                queries: "Queries",
                 loginActivity: "Login Activity",
                 sops: "SOPs",
                 progress: "Progress",
