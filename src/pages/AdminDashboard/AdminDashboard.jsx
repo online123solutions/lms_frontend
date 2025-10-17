@@ -18,6 +18,7 @@ import AdminNotification from './AdminNotification';
 import AdminFeedbackPage from './AdminFeedbackPage';
 import CourseProgress from './CourseProgress';
 import AdminUserImportCard from './AdminUserImportCard';
+// import AdminConcernBoard from './AdminConcernBoard';
 
 const MENU = [
   { label: 'Dashboard', key: 'dashboard', icon: 'bi-house' },
@@ -31,6 +32,7 @@ const MENU = [
   { label: 'Feedback', key: 'feedback', icon: 'bi-chat-dots' },
   { label: 'Course Progress', key: 'courseProgress', icon: 'bi-bar-chart' },
   { label: 'User Import', key: 'userImport', icon: 'bi-upload', component: AdminUserImportCard },  
+  // { label: 'Concerns', key: 'concerns', icon: 'bi-exclamation-circle', component: AdminConcernBoard },
 ];
 
 const AdminDashboard = () => {
@@ -298,6 +300,8 @@ const AdminDashboard = () => {
         return <CourseProgress />;
       case 'userImport':
         return <AdminUserImportCard />;
+      // case 'concerns':
+      //   return <AdminConcernBoard />;
 
       case "sops": {
         return (

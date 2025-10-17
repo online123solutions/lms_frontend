@@ -407,3 +407,70 @@ export const fetchAdminNotifications = async (params) => {
     return { success: false, error: error?.response?.data || error };
   }
 };
+
+const CONCERNS_CANDIDATES = [
+  "/trainee/concerns/",
+  "/api/trainee/concerns/",
+  "/custom_admin/trainee/concerns/",
+  "/custom_admin/api/trainee/concerns/",
+];
+
+// Cache the resolved base in sessionStorage (clears on tab close)
+const CONCERNS_CACHE_KEY = "concerns_base_v1";
+
+async function resolveConcernsBase() {
+  const cached = sessionStorage.getItem(CONCERNS_CACHE_KEY);
+  if (cached) return cached;
+
+  for (const cand of CONCERNS_CANDIDATES) {
+    try {
+      // GET the list endpoint (role-aware list). If it returns 200, lock it in.
+      const res = await apiClient.get(cand, { params: { _probe: 1 } });
+      if (res && (res.status === 200 || res.status === 204)) {
+        sessionStorage.setItem(CONCERNS_CACHE_KEY, cand);
+        console.log("[concerns] using base:", cand);
+        return cand;
+      }
+    } catch (e) {
+      // 404/403 just means wrong mount or no permission with this route — try next
+      // console.debug("[concerns] probe failed", cand, e?.response?.status);
+    }
+  }
+  // Fallback to the most likely (adjust if you know your deployment)
+  const fallback = "/trainee/concerns/";
+  console.warn("[concerns] no route matched, falling back to", fallback);
+  sessionStorage.setItem(CONCERNS_CACHE_KEY, fallback);
+  return fallback;
+}
+
+export const adminListConcerns = async (params = {}) => {
+  const base = await resolveConcernsBase();
+  const { data } = await apiClient.get(base, { params });
+  return data;
+};
+
+export const adminGetConcern = async (id) => {
+  const base = await resolveConcernsBase();
+  const { data } = await apiClient.get(`${base}${id}/`);
+  return data;
+};
+
+export const adminChangeStatus = async (id, status) => {
+  const base = await resolveConcernsBase();
+  const { data } = await apiClient.patch(`${base}${id}/status/`, { status });
+  return data;
+};
+
+export const adminAssignConcern = async (id, username) => {
+  const base = await resolveConcernsBase();
+  const { data } = await apiClient.patch(`${base}${id}/assign/`, { username });
+  return data;
+};
+
+export const adminAddComment = async (id, message) => {
+  const base = await resolveConcernsBase();
+  const fd = new FormData();
+  fd.append("message", message);
+  const { data } = await apiClient.post(`${base}${id}/comment/`, fd);
+  return data;
+};

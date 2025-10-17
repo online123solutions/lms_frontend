@@ -17,6 +17,28 @@ import DocumentViewer from "./hint";
 import Popup from "./popup";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
+const isSharePoint = (url) => /sharepoint\.com\/|1drv\.ms\//i.test(url) || /my\.sharepoint\.com/i.test(url);
+
+
+/** Build SharePoint WOPI embed view (works if tenant allows embedding) */
+const buildSharePointWopiEmbed = (rawUrl) => {
+  try {
+    // If already a WOPI frame embed, return as-is
+    if (/WopiFrame\.aspx/i.test(rawUrl) && /action=embedview/i.test(rawUrl)) return rawUrl;
+
+    // Use the same host and add the WOPI path; pass the file link in `sourcedoc`
+    const u = new URL(rawUrl);
+    const host = `${u.protocol}//${u.host}`;
+    return `${host}/_layouts/15/WopiFrame.aspx?sourcedoc=${encodeURIComponent(rawUrl)}&action=embedview`;
+  } catch {
+    return rawUrl;
+  }
+};
+
+/** Office Online viewer (requires publicly accessible file) */
+const buildOfficeOnlineEmbed = (rawUrl) =>
+  `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(rawUrl)}`;
+
 
 const Learning = () => {
   const [totalCircles, setTotalCircles] = useState(0);
@@ -221,6 +243,11 @@ const Learning = () => {
       const id = url.split("youtu.be/")[1].split("?")[0];
       return `https://www.youtube.com/embed/${id}`;
     }
+    if (isSharePoint(url)) {
+      // Try WOPI first, but fallback to Office Online
+      const wopiUrl = buildSharePointWopiEmbed(url);
+      return wopiUrl.includes('WopiFrame.aspx') ? wopiUrl : buildOfficeOnlineEmbed(url);
+    }
     return url;
   };
 
@@ -329,6 +356,7 @@ const Learning = () => {
                   title="Content Frame"
                   width="100%"
                   height="570px"
+                  onError={() => setError("Embed failed—check file permissions or try downloading.")}
                 />
               ) : selectedButton === "video" && sectionData.tutorial_video ? (
                 <iframe
