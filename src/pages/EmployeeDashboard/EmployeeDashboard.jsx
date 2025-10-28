@@ -20,6 +20,7 @@ import logoSO from "../../assets/logo4.png";
 import { Dropdown,Form,Button,Modal } from "react-bootstrap";
 import { requestPasswordReset, confirmPasswordReset } from "../../api/apiservice";
 import EmployeeProgress from "./EmployeeProgress";
+import logoS1 from "../../assets/sol_logo.png";
 
 const EmployeeDashboard = () => {
   const [data, setData] = useState(null);
@@ -428,13 +429,41 @@ const EmployeeDashboard = () => {
         >
           <div className="sidebar-content" style={{ marginTop: isCollapsed ? "60px" : "0" }}>
             {!isCollapsed && (
-              <div className="sidebar-header">
-                <img src={logoSO} alt="Structures Online" className="sidebar-logo" />
+              <div className="sidebar-header" style={{ background: 'transparent', border: 'none', padding: '0px 0' }}>
+                <img 
+                  src={logoS1} 
+                  alt="Structures Online" 
+                  className="sidebar-logo" 
+                  style={{ 
+                    width: '200px', 
+                    height: 'auto', 
+                    background: 'transparent', 
+                    border: 'none',
+                    boxShadow: 'none',
+                    filter: 'none',
+                    opacity: 1,
+                    display: 'block'
+                  }} 
+                />
               </div>
             )}
             {isCollapsed && (
-              <div className="sidebar-header sidebar-header--mini">
-                <img src={logoSO} alt="SO" className="sidebar-logo sidebar-logo--mini" />
+              <div className="sidebar-header sidebar-header--mini" style={{ background: 'transparent', border: 'none', padding: '0px 0' }}>
+                <img 
+                  src={logoS1} 
+                  alt="SO" 
+                  className="sidebar-logo sidebar-logo--mini" 
+                  style={{ 
+                    width: '50px', 
+                    height: 'auto', 
+                    background: 'transparent', 
+                    border: 'none',
+                    boxShadow: 'none',
+                    filter: 'none',
+                    opacity: 1,
+                    display: 'block'
+                  }} 
+                />
               </div>
             )}
             {[

@@ -84,7 +84,7 @@
 }
 
 .left-container h6 {
-  color: var(--color-secondary);
+  color: black;
   font-size: 18px;
 }
 
@@ -140,7 +140,7 @@
   text-align: left;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   flex: 1;
-  max-width: 245px;
+  max-width: 400px;
   max-height: 350px;
   height: 350px;
   width: 100%;
@@ -194,7 +194,7 @@
 
 .action-card {
   background-color: var(--bg-card);
-  border-radius: 8px;
+  border-radius: 15px;
   padding: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   min-width: fit-content;
@@ -366,6 +366,7 @@
   margin: 0 !important;
   width: 100% !important;
   box-sizing: border-box;
+  height: 100% !important;
 }
 
 /* Normalize Updates card inner spacing (same feel as mp-card) */
@@ -448,6 +449,7 @@
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   text-align: center;
   height: 350px;
+  border: 2px solid #FFD700; /* Yellow highlight border */
 }
 
 .centered-profile .profile-pic {
@@ -474,18 +476,28 @@
 
 .centered-profile .stats {
   display: flex;
-  justify-content: space-around;
+  flex-direction: column;
   width: 100%;
   margin-top: 15px;
+  gap: 8px;
 }
 
-.centered-profile .stat p {
-  font-size: 20px;
+.centered-profile .stat-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+}
+
+.centered-profile .stat-count {
+  font-size: 13px;
   font-weight: bold;
   margin: 0;
 }
 
-.centered-profile .stat span {
+.centered-profile .stat-label {
   font-size: 13px;
-  color: #6b7280;
+  margin: 0;
+  font-weight: bold;
 }

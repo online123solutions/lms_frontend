@@ -19,6 +19,7 @@ import AdminFeedbackPage from './AdminFeedbackPage';
 import CourseProgress from './CourseProgress';
 import AdminUserImportCard from './AdminUserImportCard';
 // import AdminConcernBoard from './AdminConcernBoard';
+import logoS1 from "../../assets/sol_logo.png";
 
 const MENU = [
   { label: 'Dashboard', key: 'dashboard', icon: 'bi-house' },
@@ -392,9 +393,42 @@ const AdminDashboard = () => {
         aria-label="Main navigation"
       >
         <div className="sidebar-content">
-          <div className="sidebar-header brand" title={name ? `Logged in as ${name}` : ''}>
+          <div className="sidebar-header brand" title={name ? `Logged in as ${name}` : ''} style={{ background: 'transparent', border: 'none', padding: '0px 0' }}>
             <div className="profile-chip">
-              {!isCollapsed && <img src={logoS} alt="SO" className="sidebar-logo" />}
+              {!isCollapsed && (
+                <img 
+                  src={logoS1} 
+                  alt="SO" 
+                  className="sidebar-logo" 
+                  style={{ 
+                    width: '220px', 
+                    height: 'auto', 
+                    background: 'transparent', 
+                    border: 'none',
+                    boxShadow: 'none',
+                    filter: 'none',
+                    opacity: 1,
+                    display: 'block'
+                  }} 
+                />
+              )}
+              {isCollapsed && (
+                <img 
+                  src={logoS1} 
+                  alt="SO" 
+                  className="sidebar-logo sidebar-logo--mini" 
+                  style={{ 
+                    width: '50px', 
+                    height: 'auto', 
+                    background: 'transparent', 
+                    border: 'none',
+                    boxShadow: 'none',
+                    filter: 'none',
+                    opacity: 1,
+                    display: 'block'
+                  }} 
+                />
+              )}
             </div>
           </div>
           <div className="sidebar-sep" />

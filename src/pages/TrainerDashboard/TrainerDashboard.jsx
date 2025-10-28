@@ -19,6 +19,8 @@ import TrainingReport from "./TrainingReport";
 import logoS from "../../assets/logo4.png";
 import TrainerProgress from "./TrainerProgress";
 import TrainerTaskReviews from "./TrainerTaskReviews";
+import logoS1 from "../../assets/sol_logo.png";
+
 
 const MENU = [
   { label: "Dashboard", key: "dashboard", icon: "bi-house" },
@@ -344,7 +346,7 @@ const TeacherDashboard = () => {
   if (error) return <div style={{ padding: 20 }}>{error}</div>;
 
   return (
-    <div className="dashboard">
+    <div className="dashboard" style={{ paddingTop: 0 }}>
       {/* Mobile hamburger */}
       <div className="mobile-sidebar-toggle" aria-hidden={isSidebarOpen}>
         <HamButton onClick={() => setIsSidebarOpen(true)} aria-label="Open sidebar" />
@@ -363,13 +365,47 @@ const TeacherDashboard = () => {
       <aside
         className={`sidebar ${isCollapsed ? "collapsed" : ""} ${isSidebarOpen ? "open" : ""}`}
         aria-label="Main navigation"
+        style={{ paddingTop: 0 }}
       >
         <div className="sidebar-content">
           {/* Profile chip (kept). Welcome pill with name is removed */}
-          <div className="sidebar-header brand" title={name ? `Logged in as ${name}` : ""}>
+          <div className="sidebar-header brand" title={name ? `Logged in as ${name}` : ""} style={{ background: 'transparent', border: 'none', padding: '0px 0' }}>
             <div className="profile-chip">
               {!isCollapsed && (
-                <img src={logoS} alt="SO" className="sidebar-logo " />
+                <img 
+                  src={logoS1} 
+                  alt="SO" 
+                  className="sidebar-logo" 
+                  style={{ 
+                    width: '220px', 
+                    height: 'auto', 
+                    background: 'transparent', 
+                    border: 'none',
+                    boxShadow: 'none',
+                    filter: 'none',
+                    opacity: 1,
+                    display: 'block',
+                    marginTop: 0
+                  }} 
+                />
+              )}
+              {isCollapsed && (
+                <img 
+                  src={logoS1} 
+                  alt="SO" 
+                  className="sidebar-logo sidebar-logo--mini" 
+                  style={{ 
+                    width: '50px', 
+                    height: 'auto', 
+                    background: 'transparent', 
+                    border: 'none',
+                    boxShadow: 'none',
+                    filter: 'none',
+                    opacity: 1,
+                    display: 'block',
+                    marginTop: 0
+                  }} 
+                />
               )}
             </div>
           </div>
@@ -502,7 +538,7 @@ const TeacherDashboard = () => {
           </Modal.Footer>
         </Modal>
 
-      <main className="content-panel" style={{ marginLeft: 0, paddingLeft: 0 }}>
+      <main className="content-panel" style={{ margin: 0, padding: 0 }}>
         {renderContent()}
       </main>
     </div>

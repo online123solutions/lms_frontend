@@ -763,6 +763,7 @@ const AdminDashboardContent = () => {
                     { text: "Push Notification", className: "purple", link: "#",     disabled: false },
                     { text: "Add Lesson",        className: "purple", link: "https://lms.steel.study/admin/",      disabled: false },
                     { text: "Add User",          className: "pink",   link: "https://lms.steel.study/admin/",        disabled: false },
+                    { text: "Add Quiz",         className: "cyan",   link: "https://lms.steel.study/admin/",         disabled: false },
                   ].map((item, i) => (
                     <div
                       key={i}

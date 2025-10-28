@@ -7,6 +7,7 @@ import { AuthContext } from "../../App";
 
 import logo from "../../assets/logo3.png"; // Adjust the path based on your structure
 import logo1 from "../../assets/logo3.png"; // Adjust the path based on your structure
+import logo2 from "../../assets/logo4.png"
 
 const Signup = () => {
   const { setIsAuthenticated, setRole, setIsSuperUser } = useContext(AuthContext);
@@ -236,7 +237,7 @@ const Signup = () => {
           <div className="info-panel">
             <div className="logo-container">
               {logo ? (
-                <img src={logo} alt="Company Logo" className="signup-logo" onError={(e) => console.log("Image load error:", e)} />
+                <img src={logo2} alt="Company Logo" className="signup-logo" onError={(e) => console.log("Image load error:", e)} />
               ) : (
                 <img src="/assets/logo.jpg" alt="Company Logo" className="signup-logo" onError={(e) => console.log("Image load error:", e)} />
               )}
