@@ -374,7 +374,7 @@ const AdminDashboard = () => {
   };
 
   // Sidebar width calculation
-  const sidebarWidth = isCollapsed ? 60 : 250;
+  const sidebarWidth = isCollapsed ? 60 : 280;
   const isMobile = window.innerWidth < 768; // Simple mobile check; adjust breakpoint as needed
 
   if (loading) return <Loader />;
@@ -425,7 +425,7 @@ const AdminDashboard = () => {
                 alt="SO" 
                 className="sidebar-logo" 
                 style={{ 
-                  width: '220px', 
+                  width: '240px', 
                   height: 'auto', 
                   background: 'transparent', 
                   border: 'none',
