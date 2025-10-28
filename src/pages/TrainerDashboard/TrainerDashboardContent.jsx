@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Dropdown, Button, Modal } from "react-bootstrap";
+import { Dropdown, Button, Modal, Form, Alert } from "react-bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../utils/css/Trainer CSS/TDContent.css";
 import { Line } from "react-chartjs-2";
@@ -17,6 +17,8 @@ import {
   fetchTrainerDashboard,
   fetchRecentActivity,
   fetchLMSEngagement,
+  sendTrainerNotification,
+  apiClient,
 } from "../../api/trainerAPIservice";
 import { logout } from "../../api/apiservice";
 import logoSO from "../../assets/logo1.png";
@@ -87,6 +89,23 @@ const TeacherDashboardContent = () => {
   const [showActiveLearnersPage, setShowActiveLearnersPage] = useState(false);
 
   const username = localStorage.getItem("username") || "";
+
+  // ---- Send modal state ----
+  const initialForm = {
+    subject: "",
+    message: "",
+    link: "",
+    notification_type: "info",
+    mode: "group",
+    audience: "both", // employee+trainee
+    department: "",
+    usernames: "",
+  };
+
+  const [showSendModal, setShowSendModal] = useState(false);
+  const [formData, setFormData] = useState(initialForm);
+  const [responseMsg, setResponseMsg] = useState(null);
+  const [sending, setSending] = useState(false);
 
   // Dashboard header info
   useEffect(() => {
@@ -208,6 +227,94 @@ const TeacherDashboardContent = () => {
       alert("An error occurred while logging out.");
     }
   };
+
+  // ---------- Send handlers ----------
+  const handleChange = (e) =>
+    setFormData((s) => ({ ...s, [e.target.name]: e.target.value }));
+
+  const closeAndReset = () => {
+    setShowSendModal(false);
+    setFormData(initialForm);
+    setResponseMsg(null);
+  };
+
+  const buildPayload = () => {
+    const payload = {
+      subject: formData.subject.trim(),
+      message: formData.message.trim(),
+      link: formData.link.trim() || undefined,
+      notification_type: formData.notification_type,
+      mode: formData.mode,
+    };
+
+    if (formData.mode === "group") {
+      payload.audience = formData.audience; // trainee | employee | trainer | both | all
+      // department only if employees are in scope
+      const includesEmployees = ["employee", "both", "all"].includes(formData.audience);
+      if (includesEmployees) {
+        payload.department = formData.department.trim() || undefined;
+      }
+    } else {
+      // individual mode
+      payload.usernames = (formData.usernames || "")
+        .split(",")
+        .map((u) => u.trim())
+        .filter(Boolean);
+    }
+    return payload;
+  };
+
+  const validate = () => {
+    if (!formData.subject.trim()) return "Subject is required.";
+    if (!formData.message.trim()) return "Message is required.";
+    if (formData.mode === "individual") {
+      const list = (formData.usernames || "")
+        .split(",")
+        .map((u) => u.trim())
+        .filter(Boolean);
+      if (!list.length) return "Provide at least one username for Individual mode.";
+    }
+    return null;
+  };
+
+  const firstError = (errObj) => {
+    if (!errObj || typeof errObj === "string") return errObj;
+    const parts = [];
+    Object.entries(errObj).forEach(([k, v]) => {
+      if (Array.isArray(v)) parts.push(`${k}: ${v.join(", ")}`);
+      else if (typeof v === "string") parts.push(`${k}: ${v}`);
+    });
+    return parts.join(" • ");
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setResponseMsg(null);
+    const v = validate();
+    if (v) {
+      setResponseMsg({ type: "danger", text: v });
+      return;
+    }
+    setSending(true);
+    try {
+      const { success, data, error } = await sendTrainerNotification(buildPayload());
+      if (success) {
+        setResponseMsg({ type: "success", text: data?.message || "Notification sent." });
+        setFormData(initialForm);
+      } else {
+        setResponseMsg({
+          type: "danger",
+          text: firstError(error) || "Failed to send notification.",
+        });
+      }
+    } finally {
+      setSending(false);
+    }
+  };
+
+  // department field enabled only if group mode and audience includes employees
+  const deptDisabled =
+    formData.mode !== "group" || !["employee", "both", "all"].includes(formData.audience);
 
   // Build chart series for selectedMonth
   const buildEngagementSeries = (rows = [], month = "") => {
@@ -503,29 +610,27 @@ const TeacherDashboardContent = () => {
 
           <div className="right-column1">
             <div className="quick-activities1">
-              <div className="quick-activities-circle1">
-                <span>Quick Activities</span>
+            <div className="quick-activities-grid1 three-col">
+              <div
+                className="quick-activity-card1 purple"
+                onClick={() => setShowSendModal(true)}
+              >
+                <div className="text1">Push Notification</div>
               </div>
-              <div className="quick-activities-grid1">
-                {[
-                  { text: "Add Courses", className: "pink", link: "#", disabled: false },
-                  { text: "Push Notification", className: "purple", link: "#", disabled: false },
-                  { text: "Add Lesson", className: "purple", link: "#", disabled: false },
-                  { text: "Add User", className: "pink", link: "#", disabled: false },
-                ].map((item, i) => (
-                  <div
-                    key={i}
-                    className={`quick-activity-card1 ${item.className} ${item.disabled ? "disabled" : ""}`}
-                    onClick={() => {
-                      if (!item.disabled) item.onClick ? item.onClick() : (window.location.href = item.link);
-                    }}
-                    style={{ cursor: item.disabled ? "not-allowed" : "pointer", opacity: item.disabled ? 0.5 : 1 }}
-                  >
-                    <div className="text1">{item.text}</div>
-                  </div>
-                ))}
+
+              {/* Circle in the middle column */}
+              <div className="quick-activities-circle1">
+                <span>Quick<br />Activities</span>
+              </div>
+
+              <div
+                className="quick-activity-card1 purple"
+                onClick={() => (window.location.href = "#")}
+              >
+                <div className="text1">Add Lesson</div>
               </div>
             </div>
+          </div>
 
             <div className="content-card1 lms-engagement-card1">
               <div className="lms-engagement-header1">
@@ -549,7 +654,7 @@ const TeacherDashboardContent = () => {
               </div>
 
               <div className="chart-container1">
-                <div style={{ height: 260 }}>
+                <div style={{ height: 460 }}>
                   <Line data={lineChartData} options={lineChartOptions} />
                 </div>
               </div>
@@ -557,6 +662,140 @@ const TeacherDashboardContent = () => {
           </div>
         </div>
       )}
+
+      {/* Send Modal */}
+      <Modal show={showSendModal} onHide={closeAndReset} size="lg" centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Trainer Notification</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {responseMsg && <Alert variant={responseMsg.type}>{responseMsg.text}</Alert>}
+
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Label>Subject</Form.Label>
+              <Form.Control
+                type="text"
+                name="subject"
+                value={formData.subject}
+                onChange={handleChange}
+                required
+                placeholder="e.g., Assessment Window"
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Message</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                required
+                placeholder="Write the notification message…"
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Link (optional)</Form.Label>
+              <Form.Control
+                type="url"
+                name="link"
+                value={formData.link}
+                onChange={handleChange}
+                placeholder="https://…"
+              />
+            </Form.Group>
+
+            <div className="row">
+              <div className="col-md-4">
+                <Form.Group className="mb-3">
+                  <Form.Label>Notification Type</Form.Label>
+                  <Form.Select
+                    name="notification_type"
+                    value={formData.notification_type}
+                    onChange={handleChange}
+                  >
+                    <option value="info">Info</option>
+                    <option value="module">Module</option>
+                    <option value="assessment">Assessment</option>
+                  </Form.Select>
+                </Form.Group>
+              </div>
+
+              <div className="col-md-4">
+                <Form.Group className="mb-3">
+                  <Form.Label>Mode</Form.Label>
+                  <Form.Select name="mode" value={formData.mode} onChange={handleChange}>
+                    <option value="group">Group</option>
+                    <option value="individual">Individual</option>
+                  </Form.Select>
+                </Form.Group>
+              </div>
+
+              <div className="col-md-4">
+                <Form.Group className="mb-3">
+                  <Form.Label>Audience</Form.Label>
+                  <Form.Select
+                    name="audience"
+                    value={formData.audience}
+                    onChange={handleChange}
+                    disabled={formData.mode !== "group"}
+                  >
+                    <option value="trainee">Trainee</option>
+                    <option value="employee">Employee</option>
+                    <option value="trainer">Trainer</option>
+                    <option value="both">Both (Emp+Trainee)</option>
+                    <option value="all">All (Emp+Trainee+Trainer)</option>
+                  </Form.Select>
+                </Form.Group>
+              </div>
+            </div>
+
+            {formData.mode === "group" && (
+              <Form.Group className="mb-3">
+                <Form.Label>Department (employees only, optional)</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="department"
+                  value={formData.department}
+                  onChange={handleChange}
+                  disabled={deptDisabled}
+                  placeholder={
+                    deptDisabled
+                      ? "Not applicable"
+                      : "Leave blank to use trainer's department"
+                  }
+                />
+              </Form.Group>
+            )}
+
+            {formData.mode === "individual" && (
+              <Form.Group className="mb-3">
+                <Form.Label>Usernames (comma-separated)</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="usernames"
+                  value={formData.usernames}
+                  onChange={handleChange}
+                  placeholder="e.g., emp_riya, shahnawaz_786"
+                  required
+                />
+              </Form.Group>
+            )}
+
+            <div className="d-flex justify-content-end">
+              <Button variant="secondary" onClick={closeAndReset}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="success" className="ms-2" disabled={sending}>
+                {sending ? "Sending..." : "Send"}
+              </Button>
+            </div>
+          </Form>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };
