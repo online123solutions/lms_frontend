@@ -373,6 +373,10 @@ const AdminDashboard = () => {
     }
   };
 
+  // Sidebar width calculation
+  const sidebarWidth = isCollapsed ? 60 : 250;
+  const isMobile = window.innerWidth < 768; // Simple mobile check; adjust breakpoint as needed
+
   if (loading) return <Loader />;
   if (error) return <div style={{ padding: 20 }}>Error: {error}</div>;
 
@@ -390,48 +394,75 @@ const AdminDashboard = () => {
       />
       <aside
         className={`sidebar ${isCollapsed ? 'collapsed' : ''} ${isSidebarOpen ? 'open' : ''}`}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: isMobile && !isSidebarOpen ? 0 : sidebarWidth,
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          zIndex: 1000,
+          transition: 'width 0.3s ease',
+          overflow: 'hidden',
+        }}
         aria-label="Main navigation"
       >
-        <div className="sidebar-content">
-          <div className="sidebar-header brand" title={name ? `Logged in as ${name}` : ''} style={{ background: 'transparent', border: 'none', padding: '0px 0' }}>
-            <div className="profile-chip">
-              {!isCollapsed && (
-                <img 
-                  src={logoS1} 
-                  alt="SO" 
-                  className="sidebar-logo" 
-                  style={{ 
-                    width: '220px', 
-                    height: 'auto', 
-                    background: 'transparent', 
-                    border: 'none',
-                    boxShadow: 'none',
-                    filter: 'none',
-                    opacity: 1,
-                    display: 'block'
-                  }} 
-                />
-              )}
-              {isCollapsed && (
-                <img 
-                  src={logoS1} 
-                  alt="SO" 
-                  className="sidebar-logo sidebar-logo--mini" 
-                  style={{ 
-                    width: '50px', 
-                    height: 'auto', 
-                    background: 'transparent', 
-                    border: 'none',
-                    boxShadow: 'none',
-                    filter: 'none',
-                    opacity: 1,
-                    display: 'block'
-                  }} 
-                />
-              )}
-            </div>
+        <div 
+          className="sidebar-header brand" 
+          title={name ? `Logged in as ${name}` : ''} 
+          style={{ 
+            background: 'transparent', 
+            border: 'none', 
+            padding: '0px 0',
+            flexShrink: 0,
+          }}
+        >
+          <div className="profile-chip">
+            {!isCollapsed && (
+              <img 
+                src={logoS1} 
+                alt="SO" 
+                className="sidebar-logo" 
+                style={{ 
+                  width: '220px', 
+                  height: 'auto', 
+                  background: 'transparent', 
+                  border: 'none',
+                  boxShadow: 'none',
+                  filter: 'none',
+                  opacity: 1,
+                  display: 'block'
+                }} 
+              />
+            )}
+            {isCollapsed && (
+              <img 
+                src={logoS1} 
+                alt="SO" 
+                className="sidebar-logo sidebar-logo--mini" 
+                style={{ 
+                  width: '50px', 
+                  height: 'auto', 
+                  background: 'transparent', 
+                  border: 'none',
+                  boxShadow: 'none',
+                  filter: 'none',
+                  opacity: 1,
+                  display: 'block'
+                }} 
+              />
+            )}
           </div>
-          <div className="sidebar-sep" />
+        </div>
+        <div className="sidebar-sep" style={{ flexShrink: 0 }} />
+        <div 
+          style={{ 
+            flex: 1, 
+            overflowY: 'auto',
+            padding: '10px 0',
+          }}
+        >
           {MENU.map((item) => (
             <div
               key={item.key}
@@ -458,7 +489,7 @@ const AdminDashboard = () => {
             </div>
           ))}
         </div>
-        <div className="sidebar-bottom-section">
+        <div className="sidebar-bottom-section" style={{ flexShrink: 0, marginTop: 'auto' }}>
           <div className="sidebar-item" onClick={() => setShowDropdown(!showDropdown)}>
             <i className="bi bi-gear sidebar-icon"></i>
             {!isCollapsed && <span className="sidebar-text">Settings</span>}
@@ -557,7 +588,16 @@ const AdminDashboard = () => {
           </Modal.Footer>
         </Modal>
 
-      <main className="content-panel" style={{ marginLeft: 0, paddingLeft: 0 }}>
+      <main 
+        className="content-panel" 
+        style={{ 
+          marginLeft: isMobile && !isSidebarOpen ? 0 : sidebarWidth,
+          padding: '20px',
+          minHeight: '100vh',
+          transition: 'margin-left 0.3s ease',
+          overflowY: 'auto',
+        }}
+      >
         {renderContent()}
       </main>
     </div>
