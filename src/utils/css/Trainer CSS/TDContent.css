@@ -847,3 +847,28 @@ html, body, #root {
 @media (max-width: 768px) {
   .chart-inner1 { height: 160px !important; }
 }
+/* --- Trainer Progress Mini Card --- */
+.trainer-progress-mini-card1 { padding: 12px 14px; }
+.trainer-progress-mini-header1 {
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;
+}
+.trainer-progress-mini-card1 .overall-chip1 {
+  background:#f4f6ff; border:1px solid rgba(0,0,0,.06);
+  padding:4px 10px; border-radius:999px; font-size:13px;
+}
+
+.tp-mini-list1 { display:grid; gap:10px; }
+.tp-mini-row1 { display:grid; grid-template-columns: 1fr; gap:6px; }
+.tp-mini-title1 { font-weight:600; display:flex; align-items:center; gap:4px; }
+.tp-mini-title1 .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-weight:700; }
+
+.tp-mini-barwrap1 {
+  height:8px; border-radius:999px; background: #eef0f5; overflow:hidden;
+  border:1px solid rgba(0,0,0,.06);
+}
+.tp-mini-bar1 {
+  height:100%;
+  background: linear-gradient(90deg, rgba(99,102,241,1) 0%, rgba(56,189,248,1) 100%);
+}
+
+.tp-mini-meta1 { display:flex; justify-content:space-between; font-size:12px; }

@@ -19,6 +19,7 @@ import {
   fetchLMSEngagement,
   sendTrainerNotification,
   apiClient,
+  fetchTrainerCourseProgress
 } from "../../api/trainerAPIservice";
 import { logout } from "../../api/apiservice";
 import logoSO from "../../assets/logo1.png";
@@ -31,6 +32,7 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 const getISO = (row) => row?.login_datetime || row?.login_date || "";
 const toYyyyMm = (iso) => (iso ? (iso.split("T")[0] || "").slice(0, 7) : "");
 const toYyyyMmDd = (iso) => (iso ? (iso.split("T")[0] || iso).slice(0, 10) : "");
+
 
 const normalizeRows = (payload) => {
   if (Array.isArray(payload)) return payload;
@@ -77,6 +79,13 @@ const TeacherDashboardContent = () => {
   const [courses, setCourses] = useState([]);
   const [teacherName, setTeacherName] = useState("");
   const [profilePic, setProfilePic] = useState(""); // final resolved URL via mediaUrl
+
+  // --- mini trainer progress state ---
+  const [tpLoading, setTpLoading] = useState(true);
+  const [tpError, setTpError] = useState("");
+  const [tpOverall, setTpOverall] = useState({ total: 0, done: 0, pct: 0 });
+  const [tpCourses, setTpCourses] = useState([]); // [{id, code, name, percent, total_lessons, completed_lessons}]
+
 
   const [recentActivityData, setRecentActivityData] = useState({
     recent_logins: [],
@@ -155,6 +164,52 @@ const TeacherDashboardContent = () => {
     };
     if (username) loadDashboard();
   }, [username]);
+
+  useEffect(() => {
+    const loadMiniProgress = async () => {
+      try {
+        setTpLoading(true);
+        setTpError("");
+        const res = await fetchTrainerCourseProgress();
+        if (!res.success) throw new Error(res.error || "Failed to load");
+        const rows = Array.isArray(res.data?.results)
+          ? res.data.results
+          : Array.isArray(res.data?.data)
+          ? res.data.data
+          : Array.isArray(res.data)
+          ? res.data
+          : [];
+
+        // Normalize a bit
+        const mapped = rows.map((r) => ({
+          id: r.course_id ?? r.id,
+          code: r.course_code ?? r.code ?? "",
+          name: r.course_name ?? r.name ?? "—",
+          percent: Math.round(r.percent ?? r.completion ?? 0),
+          total: r.total_lessons ?? r.total ?? 0,
+          done: r.completed_lessons ?? r.done ?? 0,
+        }));
+
+        // Overall
+        const total = mapped.reduce((a, c) => a + (c.total || 0), 0);
+        const done = mapped.reduce((a, c) => a + (c.done || 0), 0);
+        const pct = total ? Math.round((done / total) * 100) : 0;
+
+        // Sort by percent desc
+        mapped.sort((a, b) => (b.percent - a.percent) || String(a.name).localeCompare(String(b.name)));
+
+        setTpOverall({ total, done, pct });
+        setTpCourses(mapped);
+      } catch (e) {
+        setTpError("Could not load trainer progress.");
+        console.error(e);
+      } finally {
+        setTpLoading(false);
+      }
+    };
+    loadMiniProgress();
+  }, []);
+
 
   const CHART_HEIGHT = 180; // tune: 150–220
 
@@ -643,33 +698,83 @@ const TeacherDashboardContent = () => {
           </div>
 
             <div className="content-card1 lms-engagement-card1">
-  <div className="lms-engagement-header1">
-    <h3>LMS Engagement</h3>
-    <Dropdown>
-      <Dropdown.Toggle className="grey" id="dropdown-basic">
-        {selectedMonth || "Select month"}
-      </Dropdown.Toggle>
-      <Dropdown.Menu>
-        {availableMonths.length ? (
-          availableMonths.map((m) => (
-            <Dropdown.Item key={m} onClick={() => setSelectedMonth(m)}>
-              {m}
-            </Dropdown.Item>
-          ))
-        ) : (
-          <Dropdown.Item disabled>No data</Dropdown.Item>
-        )}
-      </Dropdown.Menu>
-    </Dropdown>
-  </div>
+              <div className="lms-engagement-header1">
+                <h3>LMS Engagement</h3>
+                <Dropdown>
+                  <Dropdown.Toggle className="grey" id="dropdown-basic">
+                    {selectedMonth || "Select month"}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {availableMonths.length ? (
+                      availableMonths.map((m) => (
+                        <Dropdown.Item key={m} onClick={() => setSelectedMonth(m)}>
+                          {m}
+                        </Dropdown.Item>
+                      ))
+                    ) : (
+                      <Dropdown.Item disabled>No data</Dropdown.Item>
+                    )}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
 
-  <div className="chart-container1">
-    {/* Height is controlled here */}
-    <div className="chart-inner1" style={{ height: CHART_HEIGHT }}>
-      <Line data={lineChartData} options={lineChartOptions} />
-    </div>
-  </div>
-</div>
+              <div className="chart-container1">
+                {/* Height is controlled here */}
+                <div className="chart-inner1" style={{ height: CHART_HEIGHT }}>
+                  <Line data={lineChartData} options={lineChartOptions} />
+                </div>
+              </div>
+            </div>
+
+
+            {/* ------- Trainer Course Progress (mini card) ------- */}
+            <div className="content-card1 trainer-progress-mini-card1">
+              <div className="trainer-progress-mini-header1">
+                <h3>Trainer Course Progress</h3>
+                <div className="overall-chip1" title={`${tpOverall.done} of ${tpOverall.total} lessons`}>
+                  Overall: <strong>{tpOverall.pct}%</strong>
+                </div>
+              </div>
+
+              {tpLoading ? (
+                <div className="text-muted small">Loading…</div>
+              ) : tpError ? (
+                <div className="text-danger small">{tpError}</div>
+              ) : !tpCourses.length ? (
+                <div className="text-muted small">No course progress found.</div>
+              ) : (
+                <div className="tp-mini-list1">
+                  {tpCourses.slice(0, 3).map((c) => (
+                    <div key={c.id} className="tp-mini-row1">
+                      <div className="tp-mini-title1">
+                        <span className="mono">{c.code || "—"}</span>
+                        <span className="ms-2">{c.name}</span>
+                      </div>
+                      <div className="tp-mini-barwrap1">
+                        <div className="tp-mini-bar1" style={{ width: `${c.percent}%` }} />
+                      </div>
+                      <div className="tp-mini-meta1">
+                        <span>{c.percent}%</span>
+                        <span className="text-muted">{c.done}/{c.total} lessons</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="d-flex justify-content-end mt-2">
+                <button
+                  className="btn btn-sm btn-outline-primary"
+                  onClick={() => {
+                    // open full TrainerProgress tab
+                    localStorage.setItem("activeContent", "trainerProgress");
+                    window.location.reload(); // simplest way to switch to the tab in your current setup
+                  }}
+                >
+                  View full progress
+                </button>
+              </div>
+            </div>
 
           </div>
         </div>
