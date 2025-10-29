@@ -1398,3 +1398,28 @@ html, body, #root {
 .quick-activities-circle1,
 .quick-activities-grid1,
 .quick-activity-card1{ display:none !important; }
+/* Equal-width columns + allow shrinking */
+
+
+.left-column1,
+.right-column1{
+  flex:1 1 0;            /* equal distribution */
+  min-width:0;           /* CRITICAL: allow columns to shrink equally */
+}
+
+/* make inner cards respect the column width */
+.left-column1 .content-card1,
+.right-column1 .content-card1{
+  width:100%;
+  overflow:hidden;       /* avoid accidental horizontal growth */
+}
+/* Alternative: exact 50/50 using Grid */
+.cards-container1{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:20px;
+  align-items:start;
+}
+@media (max-width: 992px){
+  .cards-container1{ grid-template-columns: 1fr; }
+}
