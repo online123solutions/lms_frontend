@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import Card from "../../UIcomponents/dashboard/card";
@@ -7,9 +7,9 @@ import {
   mediaUrl,
   fetchTraineeNotifications,
   fetchSOP,
-  fetchStandardLibrary, // ✅ NEW
+  fetchStandardLibrary,
 } from "../../api/traineeAPIservice";
-import { logout } from "../../api/apiservice";
+import { logout, requestPasswordReset, confirmPasswordReset } from "../../api/apiservice";
 import "../../utils/css/sidebar.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Loader from "../../UIcomponents/dashboard/loader";
@@ -22,33 +22,56 @@ import AssessmentReport from "../../UIcomponents/dashboard/AssessmentReport";
 import MacroPlanner from "./MacroPlanner";
 import MicroPlanner from "./MicroPlanner";
 import TraineeNotificationPage from "./TraineeNotification";
-import logoSO from "../../assets/logo4.png";
 import { Dropdown, Form, Button, Modal } from "react-bootstrap";
-import { requestPasswordReset, confirmPasswordReset } from "../../api/apiservice";
 import TraineeProgress from "./TraineeProgress";
 import TraineeTasks from "./TraineeTasks";
 import logoS1 from "../../assets/sol_logo.png";
 
+/* ---------------- MENU to mirror Trainer ---------------- */
+const MENU = [
+  { label: "Dashboard", key: "dashboard", icon: "bi-house" },
+  { label: "Subjects", key: "subjects", icon: "bi-book" },
+  { label: "Road Map", key: "macroplanner", icon: "bi-calendar" },
+  { label: "Planner", key: "microplanner", icon: "bi-calendar-check" },
+  { label: "Assessments", key: "quizzes", icon: "bi-question-circle" },
+  { label: "Assessment Report", key: "assessment", icon: "bi-graph-up" },
+  { label: "Notifications", key: "notifications", icon: "bi-bell" },
+  { label: "Queries", key: "queries", icon: "bi-chat-left-text" },
+  { label: "Login Activity", key: "loginActivity", icon: "bi-clock-history" },
+  { label: "SOP", key: "sops", icon: "bi-file-earmark-text" },
+  { label: "Progress", key: "progress", icon: "bi-bar-chart" },
+  { label: "Tasks", key: "tasks", icon: "bi-list-check" },
+];
+
 const TraineeDashboard = () => {
+  const navigate = useNavigate();
+
+  // ---------- core state ----------
   const [data, setData] = useState(null);
+  const [activeContent, setActiveContent] = useState(
+    () => localStorage.getItem("activeContent") || "dashboard"
+  );
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // sidebar layout (mirror Trainer)
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [sidebarVisible, setSidebarVisible] = useState(false);
-  const navigate = useNavigate();
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // mobile
   const [showDropdown, setShowDropdown] = useState(false);
 
-  // SOPs + Standard Library
+  // unread badge (kept)
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  // SOP + Library
   const [sops, setSops] = useState([]);
   const [sopsLoading, setSopsLoading] = useState(false);
   const [sopsError, setSopsError] = useState("");
-  const [library, setLibrary] = useState([]);                 // ✅ NEW
-  const [libraryLoading, setLibraryLoading] = useState(false); // ✅ NEW
-  const [libraryError, setLibraryError] = useState("");        // ✅ NEW
-  const [sopsTab, setSopsTab] = useState(() => localStorage.getItem("sopsTab") || "sops"); // ✅ NEW
+  const [library, setLibrary] = useState([]);
+  const [libraryLoading, setLibraryLoading] = useState(false);
+  const [libraryError, setLibraryError] = useState("");
+  const [sopsTab, setSopsTab] = useState(() => localStorage.getItem("sopsTab") || "sops");
 
-  // Password reset modals
+  // Password reset modals (kept)
   const [showResetRequestModal, setShowResetRequestModal] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [resetRequestMessage, setResetRequestMessage] = useState("");
@@ -61,59 +84,73 @@ const TraineeDashboard = () => {
 
   const username = localStorage.getItem("username") || "";
   const isAuthenticated = localStorage.getItem("isAuthenticated");
+  const name = data?.profile?.name || (username || "Trainee");
+  const initial = useMemo(() => (username ? username[0].toUpperCase() : "T"), [username]);
 
-  const [activeContent, setActiveContent] = useState(() => {
-    return localStorage.getItem("activeContent") || "dashboard";
-  });
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
+  // persist active tab + sopsTab
   useEffect(() => {
     localStorage.setItem("activeContent", activeContent);
   }, [activeContent]);
-
-  // keep sops tab persistent
   useEffect(() => {
     localStorage.setItem("sopsTab", sopsTab);
   }, [sopsTab]);
 
-  // unread badge
+  // lock body scroll when mobile sidebar open (mirror Trainer)
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    if (isSidebarOpen) {
+      html.style.overflow = "hidden";
+      body.style.overflow = "hidden";
+    } else {
+      html.style.overflow = "";
+      body.style.overflow = "";
+    }
+    return () => {
+      html.style.overflow = "";
+      body.style.overflow = "";
+    };
+  }, [isSidebarOpen]);
+
+  // ESC to close mobile sidebar
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") setIsSidebarOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // unread badge loader (kept)
   const reloadBadge = useCallback(async () => {
     try {
       const res = await fetchTraineeNotifications({ unread: true });
       if (res.success) setUnreadCount(Array.isArray(res.data) ? res.data.length : 0);
-    } catch {
-      /* silent */
-    }
+    } catch { /* silent */ }
   }, []);
 
+  // auth + profile load
   useEffect(() => {
     if (isAuthenticated !== "true") {
       navigate("/login");
       return;
     }
-
     const fetchData = async () => {
       try {
         const result = await fetchTraineeDashboard(username);
-        if (result.success) {
-          setData(result.data);
-        } else {
-          setError("An error occurred while fetching dashboard data.");
-        }
-      } catch (error) {
+        if (result.success) setData(result.data);
+        else setError("An error occurred while fetching dashboard data.");
+      } catch {
         setError("An error occurred while fetching data.");
       } finally {
         setLoading(false);
       }
     };
-
     if (username) {
       fetchData();
       reloadBadge();
     }
   }, [username, navigate, isAuthenticated, reloadBadge]);
 
-  // Load SOPs when SOPs tab opens (or stays default)
+  // SOPs load when SOP tab visible and tab is "sops"
   useEffect(() => {
     const loadSOPs = async () => {
       setSopsLoading(true);
@@ -126,12 +163,12 @@ const TraineeDashboard = () => {
     if (activeContent === "sops" && sopsTab === "sops") loadSOPs();
   }, [activeContent, sopsTab]);
 
-  // Load Standard Library when Library tab opens
+  // Library load when "library" tab visible
   useEffect(() => {
     const loadLibrary = async () => {
       setLibraryLoading(true);
       setLibraryError("");
-      const res = await fetchStandardLibrary(); // backend should filter by user role
+      const res = await fetchStandardLibrary(); // role-filtered backend
       if (res.success) setLibrary(res.data || []);
       else setLibraryError(res.error || "Failed to load Standard Library.");
       setLibraryLoading(false);
@@ -139,16 +176,29 @@ const TraineeDashboard = () => {
     if (activeContent === "sops" && sopsTab === "library") loadLibrary();
   }, [activeContent, sopsTab]);
 
-  // Password Reset Handlers
-  const handleLogout = async () => {
+  // password reset: read params and open confirm modal
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const uid = urlParams.get("uidb64");
+    const tok = urlParams.get("token");
+    if (uid && tok) {
+      setUidb64(uid);
+      setToken(tok);
+      setShowResetConfirmModal(true);
+    }
+  }, []);
+
+  // handlers
+  const handleLogout = useCallback(async () => {
     const result = await logout();
     if (result.success) {
       localStorage.clear();
+      localStorage.setItem("activeContent", "dashboard");
       navigate("/login");
     } else {
       setError("Logout failed.");
     }
-  };
+  }, [navigate]);
 
   const handleResetRequest = async (e) => {
     e.preventDefault();
@@ -159,8 +209,8 @@ const TraineeDashboard = () => {
       } else {
         setResetRequestMessage(`Error: ${result.error || "Failed to send reset email."}`);
       }
-    } catch (e) {
-      setResetRequestMessage(`Error: ${e.message || "Failed to send reset email."}`);
+    } catch (e2) {
+      setResetRequestMessage(`Error: ${e2.message || "Failed to send reset email."}`);
     }
   };
 
@@ -174,43 +224,18 @@ const TraineeDashboard = () => {
       const result = await confirmPasswordReset({ uidb64, token, new_password: newPassword });
       if (result.success) {
         setResetConfirmMessage("Password reset successfully. You can now log in.");
-        setTimeout(() => {
-          window.location.href = "/login";
-        }, 2000);
+        setTimeout(() => { window.location.href = "/login"; }, 2000);
       } else {
         setResetConfirmMessage(`Error: ${result.error || "Failed to reset password."}`);
       }
-    } catch (e) {
-      setResetConfirmMessage(`Error: ${e.message || "Failed to reset password."}`);
+    } catch (e2) {
+      setResetConfirmMessage(`Error: ${e2.message || "Failed to reset password."}`);
     }
   };
-  
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const uid = urlParams.get("uidb64");
-    const tok = urlParams.get("token");
-    if (uid && tok) {
-      setUidb64(uid);
-      setToken(tok);
-      setShowResetConfirmModal(true);
-    }
-  }, []);
 
   // ---- renderers -------------------------------------------------
-
   const renderSOPItem = (sop) => (
-    <div
-      key={sop.id}
-      style={{
-        background: "#fff",
-        borderRadius: 12,
-        boxShadow: "0 1px 4px rgba(0,0,0,.08)",
-        padding: 16,
-        display: "grid",
-        gap: 6,
-      }}
-    >
+    <div key={sop.id} style={{ background: "#fff", borderRadius: 12, boxShadow: "0 1px 4px rgba(0,0,0,.08)", padding: 16, display: "grid", gap: 6 }}>
       <div style={{ fontWeight: 700 }}>{sop.title}</div>
       {sop.note && <div style={{ opacity: 0.8, fontSize: 14 }}>{sop.note}</div>}
       <div style={{ fontSize: 12, opacity: 0.7 }}>
@@ -220,12 +245,7 @@ const TraineeDashboard = () => {
       </div>
       {sop.file && (
         <div style={{ marginTop: 6 }}>
-          <a
-            href={mediaUrl ? mediaUrl(sop.file) : sop.file}
-            target="_blank"
-            rel="noreferrer"
-            className="btn btn-sm btn-primary"
-          >
+          <a href={mediaUrl ? mediaUrl(sop.file) : sop.file} target="_blank" rel="noreferrer" className="btn btn-sm btn-primary">
             View PDF
           </a>
         </div>
@@ -234,35 +254,18 @@ const TraineeDashboard = () => {
   );
 
   const renderLibraryItem = (item) => (
-    <div
-      key={item.id}
-      style={{
-        background: "#fff",
-        borderRadius: 12,
-        boxShadow: "0 1px 4px rgba(0,0,0,.08)",
-        padding: 16,
-        display: "grid",
-        gap: 6,
-      }}
-    >
+    <div key={item.id} style={{ background: "#fff", borderRadius: 12, boxShadow: "0 1px 4px rgba(0,0,0,.08)", padding: 16, display: "grid", gap: 6 }}>
       <div style={{ fontWeight: 700 }}>{item.title}</div>
       {item.note && <div style={{ opacity: 0.8, fontSize: 14 }}>{item.note}</div>}
       <div style={{ fontSize: 12, opacity: 0.7 }}>
         {item.department ? <>Dept: {item.department} · </> : null}
         {item.target_role ? <>Role: {item.target_role}</> : null}
-        {Array.isArray(item.tags) && item.tags.length ? (
-          <> · Tags: {item.tags.join(", ")}</>
-        ) : null}
+        {Array.isArray(item.tags) && item.tags.length ? <> · Tags: {item.tags.join(", ")}</> : null}
         {item.created_at ? <> · {new Date(item.created_at).toLocaleString()}</> : null}
       </div>
       {item.file && (
         <div style={{ marginTop: 6 }}>
-          <a
-            href={mediaUrl ? mediaUrl(item.file) : item.file}
-            target="_blank"
-            rel="noreferrer"
-            className="btn btn-sm btn-primary"
-          >
+          <a href={mediaUrl ? mediaUrl(item.file) : item.file} target="_blank" rel="noreferrer" className="btn btn-sm btn-primary">
             View File
           </a>
         </div>
@@ -326,43 +329,26 @@ const TraineeDashboard = () => {
         return <TraineeProgress />;
       case "tasks":
         return <TraineeTasks />;
-
-      // Combined SOPs + Standard Library view with tabs
       case "sops": {
         return (
           <div style={{ padding: 16 }}>
-            <div
-              style={{
-                display: "flex",
-                gap: 8,
-                marginBottom: 16,
-                alignItems: "center",
-                flexWrap: "wrap",
-              }}
-            >
+            <div style={{ display: "flex", gap: 8, marginBottom: 16, alignItems: "center", flexWrap: "wrap" }}>
               <div className="segmented" role="tablist" aria-label="SOPs and Library">
                 <button
                   type="button"
                   className={`seg-btn ${sopsTab === "sops" ? "active" : ""}`}
                   role="tab"
                   aria-selected={sopsTab === "sops"}
-                  onClick={() => {
-                    setSopsTab("sops");
-                    localStorage.setItem("sopsTab", "sops");
-                  }}
+                  onClick={() => { setSopsTab("sops"); localStorage.setItem("sopsTab", "sops"); }}
                 >
                   SOPs
                 </button>
-
                 <button
                   type="button"
                   className={`seg-btn ${sopsTab === "library" ? "active" : ""}`}
                   role="tab"
                   aria-selected={sopsTab === "library"}
-                  onClick={() => {
-                    setSopsTab("library");
-                    localStorage.setItem("sopsTab", "library");
-                  }}
+                  onClick={() => { setSopsTab("library"); localStorage.setItem("sopsTab", "library"); }}
                 >
                   Standard Library
                 </button>
@@ -391,321 +377,255 @@ const TraineeDashboard = () => {
           </div>
         );
       }
-
       default:
         return <div>Select an option</div>;
     }
   };
 
+  // ----- Layout parity with Trainer -----
+  const sidebarWidth = isCollapsed ? 60 : 280;
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+
   if (loading) return <Loader />;
-  if (error) return <div>{error}</div>;
+  if (error) return <div style={{ padding: 20 }}>{error}</div>;
 
   return (
-    <>
-      {/* Backdrop for mobile */}
-      {sidebarVisible && (
-        <div
-          onClick={() => setSidebarVisible(false)}
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            height: "100vh",
-            width: "100vw",
-            backgroundColor: "rgba(0,0,0,0.3)",
-            zIndex: 998,
-          }}
-        />
-      )}
+    <div className="dashboard">
+      {/* Mobile hamburger */}
+      <div className="mobile-sidebar-toggle" aria-hidden={isSidebarOpen}>
+        <HamButton onClick={() => setIsSidebarOpen(true)} aria-label="Open sidebar" />
+      </div>
 
-      <div className="dashboard" style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
+      {/* Mobile backdrop */}
+      <div
+        className={`mobile-backdrop ${isSidebarOpen ? "show" : ""}`}
+        onClick={() => setIsSidebarOpen(false)}
+        role="button"
+        aria-label="Close sidebar backdrop"
+        tabIndex={-1}
+      />
+
+      {/* Sidebar — fixed like Trainer */}
+      <aside
+        className={`sidebar ${isCollapsed ? "collapsed" : ""} ${isSidebarOpen ? "open" : ""}`}
+        aria-label="Main navigation"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: isMobile && !isSidebarOpen ? 0 : sidebarWidth,
+          height: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          zIndex: 1000,
+          transition: "width 0.3s ease",
+          overflow: "hidden",
+          paddingTop: 0,
+        }}
+      >
+        {/* Brand */}
         <div
-          className="mobile-sidebar-toggle"
-          style={{
-            position: "fixed",
-            top: 20,
-            left: 20,
-            zIndex: 1101,
-            display: "block",
-          }}
+          className="sidebar-header brand"
+          title={name ? `Logged in as ${name}` : ""}
+          style={{ background: "transparent", border: "none", padding: "0px 0 0 0", marginTop: 0, flexShrink: 0 }}
         >
-          <HamButton onClick={() => setIsSidebarOpen((prev) => !prev)} />
+          <div className="profile-chip" style={{ margin: 0, padding: 0 }}>
+            {!isCollapsed ? (
+              <img
+                src={logoS1}
+                alt="SO"
+                className="sidebar-logo"
+                style={{ width: "220px", height: "auto", background: "transparent", border: "none", boxShadow: "none", filter: "none", opacity: 1, display: "block", margin: 0, padding: 0 }}
+              />
+            ) : (
+              <img
+                src={logoS1}
+                alt="SO"
+                className="sidebar-logo sidebar-logo--mini"
+                style={{ width: "50px", height: "auto", background: "transparent", border: "none", boxShadow: "none", filter: "none", opacity: 1, display: "block", margin: 0, padding: 0 }}
+              />
+            )}
+          </div>
         </div>
 
-        {/* SIDEBAR */}
-        <div
-          className={`sidebar ${isCollapsed ? "collapsed" : ""} ${isSidebarOpen ? "open" : ""}`}
-          style={{
-            flex: isCollapsed ? "0 0 60px" : "0 0 250px",
-            overflowY: "scroll",
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-            transition: "flex 0.3s ease",
-            paddingTop: "10px"
-          }}
-        >
-          <div className="sidebar-content">
-            {!isCollapsed && (
-              <div className="sidebar-header" style={{ background: 'transparent', border: 'none', padding: '0px 0' }}>
-                <img 
-                  src={logoS1} 
-                  alt="Structures Online" 
-                  className="sidebar-logo" 
-                  style={{ 
-                    width: '200px', 
-                    height: 'auto', 
-                    background: 'transparent', 
-                    border: 'none',
-                    boxShadow: 'none',
-                    filter: 'none',
-                    opacity: 1,
-                    display: 'block'
-                  }} 
-                />
-              </div>
-            )}
-            {isCollapsed && (
-              <div className="sidebar-header sidebar-header--mini" style={{ background: 'transparent', border: 'none', padding: '0px 0' }}>
-                <img 
-                  src={logoS1} 
-                  alt="SO" 
-                  className="sidebar-logo sidebar-logo--mini" 
-                  style={{ 
-                    width: '50px', 
-                    height: 'auto', 
-                    background: 'transparent', 
-                    border: 'none',
-                    boxShadow: 'none',
-                    filter: 'none',
-                    opacity: 1,
-                    display: 'block'
-                  }} 
-                />
-              </div>
-            )}
+        <div className="sidebar-sep" style={{ flexShrink: 0 }} />
 
-            {[
-              "dashboard",
-              "subjects",
-              "macroplanner",
-              "microplanner",
-              "quizzes",
-              "assessment",
-              "notifications",
-              "queries",
-              "loginActivity",
-              "sops",
-              "progress",
-              "tasks", // ✅ NEW
-            ].map((key) => {
-              const labelMap = {
-                dashboard: "Dashboard",
-                subjects: "Subjects",
-                macroplanner: "Road Map",
-                microplanner: "Planner",
-                quizzes: "Assessments",
-                assessment: "Assessment Report",
-                notifications: "Notifications",
-                queries: "Queries",
-                loginActivity: "Login Activity",
-                sops: "SOPs",
-                progress: "Progress",
-                tasks: "Tasks",
-              };
-              const iconMap = {
-                dashboard: "bi-house",
-                subjects: "bi-book",
-                macroplanner: "bi-calendar",
-                microplanner: "bi-calendar",
-                quizzes: "bi-question-circle",
-                assessment: "bi-check2-square",
-                leaderboard: "bi-trophy",
-                projects: "bi-lightbulb",
-                notifications: "bi-bell",
-                queries: "bi-chat-left-dots",
-                loginActivity: "bi-clock-history",
-                sops: "bi-file-earmark-text",
-                progress: "bi-bar-chart",
-                tasks: "bi-list-check", // ✅ NEW
-              };
-
-              const onClick = () => {
-                // If user clicks actual "SOPs" set tab to SOPs view
-                if (key === "sops") setSopsTab("sops");
-                // If user clicks "Standard Library" we deep-link to SOPs page with Library tab
-                if (key === "standardlibrary") {
-                  setSopsTab("library");
-                  localStorage.setItem("sopsTab", "library");
-                  key = "sops"; // show the same combined page
-                }
-                setActiveContent(key === "standardlibrary" ? "sops" : key);
-                localStorage.setItem("activeContent", key === "standardlibrary" ? "sops" : key);
-                setSidebarVisible(false);
-                setIsSidebarOpen(false);
-              };
-
-              return (
-                <div
-                  key={key}
-                  className={`sidebar-item ${
-                    (activeContent === key) ||
-                    (key === "standardlibrary" && activeContent === "sops" && sopsTab === "library")
-                      ? "active"
-                      : ""
-                  }`}
-                  onClick={onClick}
-                >
-                  <i className={`bi ${iconMap[key]} sidebar-icon`}></i>
-                  {!isCollapsed && <span className="sidebar-text">{labelMap[key]}</span>}
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="sidebar-bottom-section">
-            <div className="sidebar-item" onClick={() => setShowDropdown(!showDropdown)}>
-              <i className="bi bi-gear sidebar-icon"></i>
-              {!isCollapsed && <span className="sidebar-text">Settings</span>}
-              <Dropdown
-                show={showDropdown}
-                onToggle={() => setShowDropdown(!showDropdown)}
-                className="settings-dropdown"
-              >
-                <Dropdown.Menu align="end" className="bg-gray-800 text-white rounded-lg shadow-lg">
-                  <Dropdown.Item as={Link} to="#/profile" className="hover:bg-gray-700 py-2 px-4">
-                    Profile
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={() => setShowResetRequestModal(true)}>
-                    Reset Password
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
-
+        {/* Menu */}
+        <div style={{ flex: 1, overflowY: "auto", padding: "10px 0" }}>
+          {MENU.map((item) => (
             <div
-              className="sidebar-item"
-              onClick={handleLogout}
+              key={item.key}
+              className={`sidebar-item ${activeContent === item.key ? "active" : ""}`}
+              onClick={() => {
+                if (item.key === "sops") setSopsTab("sops");
+                setActiveContent(item.key);
+                localStorage.setItem("activeContent", item.key);
+                setIsSidebarOpen(false);
+              }}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") handleLogout();
+                if (e.key === "Enter" || e.key === " ") {
+                  if (item.key === "sops") setSopsTab("sops");
+                  setActiveContent(item.key);
+                  localStorage.setItem("activeContent", item.key);
+                  setIsSidebarOpen(false);
+                }
               }}
+              title={isCollapsed ? item.label : undefined}
             >
-              <i className="bi bi-box-arrow-right sidebar-icon"></i>
-              {!isCollapsed && <span className="sidebar-text">Logout</span>}
+              <i className={`bi ${item.icon} sidebar-icon`} />
+              {!isCollapsed && (
+                <span className="sidebar-text">
+                  {item.label}
+                  {item.key === "notifications" && unreadCount > 0 ? (
+                    <span className="badge rounded-pill bg-danger ms-2">{unreadCount}</span>
+                  ) : null}
+                </span>
+              )}
+              {activeContent === item.key && <span className="active-glow" aria-hidden="true" />}
             </div>
+          ))}
+        </div>
+
+        {/* Bottom settings / logout */}
+        <div className="sidebar-bottom-section" style={{ flexShrink: 0, marginTop: "auto" }}>
+          <div className="sidebar-item" onClick={() => setShowDropdown(!showDropdown)}>
+            <i className="bi bi-gear sidebar-icon"></i>
+            {!isCollapsed && <span className="sidebar-text">Settings</span>}
+            <Dropdown show={showDropdown} onToggle={() => setShowDropdown(!showDropdown)} className="settings-dropdown">
+              <Dropdown.Menu align="end" className="bg-gray-800 text-white rounded-lg shadow-lg">
+                <Dropdown.Item as={Link} to="#/profile" className="hover:bg-gray-700 py-2 px-4">
+                  Profile
+                </Dropdown.Item>
+                <Dropdown.Item onClick={() => setShowResetRequestModal(true)}>
+                  Reset Password
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
+
+          <div
+            className="sidebar-item"
+            onClick={handleLogout}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleLogout(); }}
+          >
+            <i className="bi bi-box-arrow-right sidebar-icon"></i>
+            {!isCollapsed && <span className="sidebar-text">Logout</span>}
           </div>
         </div>
+      </aside>
 
-        {/* CONTENT */}
-        <div
-          className={`content-panel ${activeContent === "curriculum" ? "curriculum-panel" : ""}`}
-          style={{
-            flex: "1",
-            overflowY: "scroll",
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-            transition: "flex 0.3s ease",
-          }}
-        >
-          {renderContent()}
-        </div>
+      {/* Content panel (respects sidebar width) */}
+      <main
+        className={`content-panel ${activeContent === "curriculum" ? "curriculum-panel" : ""}`}
+        style={{
+          marginLeft: isMobile && !isSidebarOpen ? 0 : sidebarWidth,
+          padding: "20px",
+          minHeight: "100vh",
+          transition: "margin-left 0.3s ease",
+          overflowY: "auto",
+        }}
+      >
+        {renderContent()}
+      </main>
 
-        {/* Password Reset Request Modal */}
-        <Modal show={showResetRequestModal} onHide={() => setShowResetRequestModal(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title>Request Password Reset</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form onSubmit={handleResetRequest}>
-              <Form.Group controlId="resetEmail">
-                <Form.Label>Email Address</Form.Label>
-                <Form.Control
-                  type="email"
-                  value={resetEmail}
-                  onChange={(e) => setResetEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  required
-                />
-              </Form.Group>
-              <Button variant="primary" type="submit" className="mt-3">
-                Send Reset Email
-              </Button>
-            </Form>
-            {resetRequestMessage && (
-              <p className={resetRequestMessage.includes("Error") ? "text-danger" : "text-success"}>
-                {resetRequestMessage}
-              </p>
-            )}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowResetRequestModal(false)}>
-              Close
+      {/* Password Reset Request Modal */}
+      <Modal show={showResetRequestModal} onHide={() => setShowResetRequestModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Request Password Reset</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleResetRequest}>
+            <Form.Group controlId="resetEmail">
+              <Form.Label>Email Address</Form.Label>
+              <Form.Control
+                type="email"
+                value={resetEmail}
+                onChange={(e) => setResetEmail(e.target.value)}
+                placeholder="Enter your email"
+                required
+              />
+            </Form.Group>
+            <Button variant="primary" type="submit" className="mt-3">
+              Send Reset Email
             </Button>
-          </Modal.Footer>
-        </Modal>
+          </Form>
+          {resetRequestMessage && (
+            <p className={resetRequestMessage.includes("Error") ? "text-danger" : "text-success"}>
+              {resetRequestMessage}
+            </p>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowResetRequestModal(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
-        {/* Password Reset Confirmation Modal */}
-        <Modal show={showResetConfirmModal} onHide={() => setShowResetConfirmModal(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title>Reset Your Password</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form onSubmit={handleResetConfirm}>
-              <Form.Group controlId="newPassword">
-                <Form.Label>New Password</Form.Label>
-                <Form.Control
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Enter new password"
-                  required
-                />
-              </Form.Group>
-              <Form.Group controlId="confirmPassword" className="mt-3">
-                <Form.Label>Confirm Password</Form.Label>
-                <Form.Control
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm new password"
-                  required
-                />
-              </Form.Group>
-              <Button variant="primary" type="submit" className="mt-3">
-                Reset Password
-              </Button>
-            </Form>
-            {resetConfirmMessage && (
-              <p className={resetConfirmMessage.includes("Error") ? "text-danger" : "text-success"}>
-                {resetConfirmMessage}
-              </p>
-            )}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowResetConfirmModal(false)}>
-              Close
+      {/* Password Reset Confirmation Modal */}
+      <Modal show={showResetConfirmModal} onHide={() => setShowResetConfirmModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Reset Your Password</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleResetConfirm}>
+            <Form.Group controlId="newPassword">
+              <Form.Label>New Password</Form.Label>
+              <Form.Control
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Enter new password"
+                required
+              />
+            </Form.Group>
+            <Form.Group controlId="confirmPassword" className="mt-3">
+              <Form.Label>Confirm Password</Form.Label>
+              <Form.Control
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm new password"
+                required
+              />
+            </Form.Group>
+            <Button variant="primary" type="submit" className="mt-3">
+              Reset Password
             </Button>
-          </Modal.Footer>
-        </Modal>
-      </div>
-    </>
+          </Form>
+          {resetConfirmMessage && (
+            <p className={resetConfirmMessage.includes("Error") ? "text-danger" : "text-success"}>
+              {resetConfirmMessage}
+            </p>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowResetConfirmModal(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
   );
 };
 
 TraineeDashboard.propTypes = {
   data: PropTypes.shape({
     profile: PropTypes.shape({
-      grade: PropTypes.string.isRequired,
+      grade: PropTypes.string,
       name: PropTypes.string,
       profile_pic: PropTypes.string,
       user: PropTypes.shape({
-        username: PropTypes.string.isRequired,
+        username: PropTypes.string,
       }),
     }),
     subjects: PropTypes.arrayOf(
       PropTypes.shape({
-        name: PropTypes.string.isRequired,
+        name: PropTypes.string,
         image: PropTypes.string,
         description: PropTypes.string,
         slug: PropTypes.string,
