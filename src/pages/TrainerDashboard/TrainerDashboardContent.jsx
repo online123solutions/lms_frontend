@@ -460,6 +460,12 @@ const TeacherDashboardContent = () => {
     }
   };
 
+  useEffect(() => {
+    const t = setTimeout(() => window.dispatchEvent(new Event("resize")), 0);
+    return () => clearTimeout(t);
+  }, []);
+
+
   // department field enabled only if group mode and audience includes employees
   const deptDisabled =
     formData.mode !== "group" || !["employee", "both", "all"].includes(formData.audience);
