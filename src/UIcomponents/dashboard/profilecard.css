@@ -676,3 +676,190 @@
 .top-section{ grid-template-columns: clamp(220px, 18vw, 280px) minmax(0,1fr); }
 .centered-profile{ max-height: 260px; }
 */
+/* --- 1) Grid/row behavior: remove forced heights and prevent stretch --- */
+.top-section{
+  display: grid;
+  grid-template-columns: clamp(240px, 22vw, 300px) minmax(0,1fr);
+  gap: 20px;
+  align-items: start;          /* <<< important: no equal-height stretch */
+}
+
+/* Profile card should size to content; no white band inside */
+.centered-profile{
+  height: auto;                /* don't fix to 500/300 */
+  max-height: none;            /* allow natural height */
+  padding: 14px;
+  gap: 8px;
+}
+.centered-profile .profile-pic{ width: 96px; height: 96px; margin-bottom: 8px; }
+.centered-profile h4{ font-size: 18px; margin: 2px 0; }
+.centered-profile .location{ font-size: 14px; margin: 1px 0; }
+.centered-profile .stats{ gap: 6px; margin-top: 10px; }
+
+/* Right-column cards should also be auto height (no fixed 150px) */
+.action-card{ height: auto; min-width: 0; }
+
+/* If you still see a visual “gap”, it’s just the taller Notifications card.
+   That’s expected in a 2-column grid. To visually balance, you can stack cards
+   under the profile by reducing the min column width a bit: */
+/* .top-section{ grid-template-columns: clamp(220px, 19vw, 280px) minmax(0,1fr); } */
+
+
+/* --- 2) Notifications list: stable 2-col layout + no wrapping of the button --- */
+.header-con1 ul{ list-style: none; margin: 0; padding: 0 0 6px 0; }
+.header-con1 li{
+  display: grid;
+  grid-template-columns: 1fr auto;   /* title/desc | actions */
+  gap: 6px 10px;
+  align-items: start;
+  padding: 6px 0;
+  border-bottom: 1px solid #f1f2f6;
+}
+.header-con1 li:last-child{ border-bottom: none; }
+
+.notif-head{
+  display: flex; align-items: center; gap: 8px;
+  min-width: 0;                     /* allow ellipsis */
+}
+.notif-head strong{
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 100%;
+}
+.notif-meta{ font-size: 12px; color: #6b7280; margin-left: auto; white-space: nowrap; }
+
+.notif-actions{
+  display: flex; align-items: center; gap: 8px;
+  white-space: nowrap;               /* keep button on one line */
+}
+.btn-mark-read{
+  background: #e5e7eb; border: 0; border-radius: 6px;
+  padding: 4px 8px; cursor: pointer; font-size: 12px;
+}
+
+/* Keep scrollbar space reserved so Linux doesn’t shift layout */
+.header-con1{ max-height: 260px; overflow: auto; scrollbar-gutter: stable both-edges; }
+/* Right column spacing & card sizing */
+.right-container { gap: 14px; }
+
+/* Top row: slightly narrower profile column */
+.top-section{
+  grid-template-columns: clamp(230px, 20vw, 280px) minmax(0,1fr);
+  align-items: start;
+}
+
+/* Profile card: compact */
+.centered-profile{
+  padding: 12px 14px;
+  height: auto;
+}
+.centered-profile .profile-pic{ width: 150px; height: 150px; }
+
+/* Notifications: stable layout + capped height with scroll */
+.header-con1{
+  max-height: 220px;          /* shorter card; scrolls when long */
+  overflow: auto;
+  scrollbar-gutter: stable both-edges;
+}
+.header-con1 ul{ list-style:none; margin:0; padding:0; }
+.header-con1 li{
+  display:grid;
+  grid-template-columns: 1fr auto;   /* text | actions */
+  gap: 8px 10px;
+  align-items:flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f2f6;
+}
+.header-con1 li:last-child{ border-bottom:none; }
+
+.notif-head{ display:flex; align-items:center; gap:8px; min-width:0; }
+.notif-head strong{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.notif-meta{ margin-left:auto; font-size:12px; color:#6b7280; white-space:nowrap; }
+
+.notif-actions{ display:flex; align-items:center; gap:8px; white-space:nowrap; }
+.btn-mark-read{
+  padding: 4px 8px; border:0; border-radius:6px; cursor:pointer; font-size:12px;
+  background:#e5e7eb;
+}
+
+/* Active Quizzes: keep card slim */
+.action-card.set-target{ padding: 16px; }
+
+/* Make both columns in the top row stretch to the same row height */
+.top-section{
+  grid-template-columns: clamp(230px, 20vw, 280px) minmax(0,1fr);
+  align-items: stretch;                 /* <- key */
+}
+
+/* Left column: profile card fills the whole row height */
+.profile-card,
+.centered-profile{
+  height: 100%;                         /* fill row height */
+  max-height: none;                     /* no internal cap */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Right column: turn the wrapper into a 2-row grid that also fills the row */
+.action-cards{
+  display: grid;
+  grid-template-rows: 1fr 1fr;          /* Notifications (top), Active Quizzes (bottom) = equal height */
+  gap: 20px;
+  height: 100%;                         /* match profile-card height */
+  width: auto;                          /* no fixed 60% */
+}
+
+/* Each action-card must be a flex column so its content can scroll inside */
+.action-card{
+  display: flex;
+  flex-direction: column;
+  min-height: 0;                        /* allow inner scroll areas to size correctly */
+}
+
+/* The scrollable bodies take remaining space inside each card */
+.header-con1,
+.header-con{
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-gutter: stable both-edges;  /* Linux scrollbar stability */
+}
+
+/* Optional: keep Notifications title line tidy and button on the right */
+.header-con1 ul{ list-style:none; margin:0; padding:0; }
+.header-con1 li{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 10px;
+  align-items: start;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f2f6;
+}
+.header-con1 li:last-child{ border-bottom:none; }
+.notif-actions{ white-space: nowrap; }
+/* --- NO-EXTRA-SPACE MODE (content-based heights) --- */
+.top-section{
+  /* keep your two columns, but don't stretch row height */
+  grid-template-columns: clamp(230px, 20vw, 280px) minmax(0,1fr);
+  align-items: start;              /* was: stretch */
+}
+
+/* let both sides size to their content */
+.profile-card,
+.centered-profile{ height: 460px; max-height: none; }
+
+.action-cards{
+  display: grid;
+  grid-template-rows: auto auto;   /* Notifications then Quizzes by content */
+  height: auto;                    /* was: 100% */
+  gap: 20px;
+}
+
+/* cards stay flexible; bodies can scroll if long */
+.action-card{ display: flex; flex-direction: column; min-height: 0; }
+.header-con1,
+.header-con{
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;                  /* keeps long lists tidy without pushing row height */
+  scrollbar-gutter: stable both-edges;
+}
