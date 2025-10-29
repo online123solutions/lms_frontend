@@ -1423,3 +1423,50 @@ html, body, #root {
 @media (max-width: 992px){
   .cards-container1{ grid-template-columns: 1fr; }
 }
+
+/* 1) Use the full available width, tighten side padding */
+.teacher-dashboard-content1 {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: none;       /* in case any parent sets a max-width */
+  margin: 0;             /* kill accidental outer margins */
+  padding: 12px 12px 20px;   /* was 20px all around */
+}
+
+/* 2) Top bar should touch the same side padding as the page */
+.top-bar1 {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* 3) Make the two columns truly equal and allow them to stretch edge-to-edge */
+.cards-container1 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); /* equal width, no intrinsic min */
+  gap: 16px;                                            /* tighten gap if you like */
+}
+
+/* 4) Prevent intrinsic widths from creating side space */
+.left-column1,
+.right-column1 {
+  min-width: 0;          /* important for flex/grid children */
+  align-self: stretch;
+}
+
+/* 5) Ensure cards don’t introduce extra width */
+.content-card1,
+.overview-card1,
+.recent-activities-card1,
+.notice-board-card1,
+.lms-engagement-card1,
+.trainer-progress-mini-card1,
+.quick-activities1,
+.qa-card {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Optional: slightly reduce the global border-radius shadow padding look */
+.content-card1 { padding: 16px; border-radius: 14px; }
+
