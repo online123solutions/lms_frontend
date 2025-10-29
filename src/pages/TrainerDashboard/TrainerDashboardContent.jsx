@@ -737,27 +737,67 @@ const TeacherDashboardContent = () => {
               </div>
             </div>
 
+            {/* --- Recent Activities (same as Admin) --- */}
             <div className="content-card1 recent-activities-card1">
               <h3>Recent Activities</h3>
               <div className="recent-activities-content1">
                 <div className="recent-activities-scroll1">
                   <h4>Logins</h4>
                   <ul>
-                    {(recentActivityData?.recent_logins || []).map((l, i) => (
-                      <li key={i}>{l.login_username}</li>
-                    ))}
+                    {(recentActivityData?.recent_logins || []).length ? (
+                      recentActivityData.recent_logins.map((l, i) => (
+                        <li key={`login-${i}`}>
+                          {l.login_username || "User"} (Date: {l.login_date || "N/A"})
+                        </li>
+                      ))
+                    ) : (
+                      <li>No recent logins</li>
+                    )}
                   </ul>
 
-                  <h4>Homework Submissions</h4>
+                  <h4>Assessment Submissions</h4>
                   <ul>
-                    {(recentActivityData?.recent_homework_submissions || []).map((h, i) => (
-                      <li key={i}>{h.quiz__quiz_name}</li>
-                    ))}
+                    {(recentActivityData?.recent_homework_submissions || []).length ? (
+                      recentActivityData.recent_homework_submissions.map((h, i) => (
+                        <li key={`hw-${i}`}>
+                          {(h.username || h.user || "Unknown")}: {h.quiz_name || h.quiz__quiz_name || "N/A"} (Date: {h.submission_date || h.last_updated?.split?.("T")[0] || "N/A"})
+                        </li>
+                      ))
+                    ) : (
+                      <li>No recent submissions</li>
+                    )}
+                  </ul>
+
+                  <h4>Lesson Completions</h4>
+                  <ul>
+                    {(recentActivityData?.recent_completions || []).length ? (
+                      recentActivityData.recent_completions.map((c, i) => (
+                        <li key={`comp-${i}`}>
+                          {(c.username || c.user || "Unknown")} completed {c.lesson_name || "N/A"} (Date: {c.completed_date || "N/A"})
+                        </li>
+                      ))
+                    ) : (
+                      <li>No recent completions</li>
+                    )}
+                  </ul>
+
+                  <h4>Queries Raised</h4>
+                  <ul>
+                    {(recentActivityData?.recent_queries || []).length ? (
+                      recentActivityData.recent_queries.map((q, i) => (
+                        <li key={`qry-${i}`}>
+                          {(q.username || q.user || "Unknown")}: {(q.question ? `${q.question.slice(0, 30)}…` : "N/A")} (Date: {q.created_date || "N/A"})
+                        </li>
+                      ))
+                    ) : (
+                      <li>No recent queries</li>
+                    )}
                   </ul>
                 </div>
               </div>
             </div>
 
+            {/* --- Notice Board (same as Admin) --- */}
             <div className="content-card1 notice-board-card1">
               <h3>Notice Board</h3>
               <div className="notice-board-content1">
