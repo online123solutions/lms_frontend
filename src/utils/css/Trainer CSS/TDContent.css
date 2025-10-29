@@ -797,3 +797,143 @@
   grid-template-rows: 1fr 1.5fr;          /* quick activities / lms */
   gap: 20px;
 }
+/* ===== LAYOUT STABILIZER (override) ===== */
+
+/* 1) Container should be able to grow; don’t force 100vh everywhere */
+.teacher-dashboard-content1{
+  min-height:100vh;
+  height:auto;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;   /* no big vertical gaps */
+}
+
+/* 2) Main cards area: let it size naturally */
+.cards-container1{
+  display:flex;
+  gap:20px;
+  height:auto;                  /* was calc(100vh - 180px) */
+  align-items:stretch;
+}
+
+/* 3) Columns: allow inner flex children to shrink/scroll */
+.left-column1,
+.right-column1{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  min-height:0;
+}
+
+/* 4) Cards: stop auto-stretching every card */
+.left-column1 .content-card1,
+.right-column1 .content-card1{
+  flex:0 0 auto;                /* was flex-grow:1 */
+}
+
+/* 5) Target sensible heights per card (tweak to taste) */
+.overview-card1{                /* top-left small row */
+  height:120px;
+}
+.recent-activities-card1{      /* middle-left */
+  min-height:260px;
+  max-height:360px;
+  overflow:auto;
+}
+.notice-board-card1{            /* bottom-left */
+  min-height:220px;
+}
+
+/* 6) Right column split: small quick-activities + taller LMS */
+.right-column1{
+  display:grid;                 /* stable two rows on large screens */
+  grid-template-rows: 170px 420px;
+  gap:20px;
+}
+
+/* Ensure the two right-side cards fill the grid rows */
+.quick-activities1{ height:100%; }
+.lms-engagement-card1{ height:100%; min-height:380px; }
+
+/* 7) Chart stack: let canvas fill remaining space */
+.content-card1.lms-engagement-card1{
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  min-height:0;
+}
+.chart-container1{
+  flex:1;
+  min-height:0;                 /* critical for nested flex */
+  height:100%;
+  padding-top:10px;
+}
+
+/* 8) Kill duplicate/conflicting quick-activities styles */
+.quick-activities1{
+  position:relative;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#fff;
+  border-radius:15px;
+  box-shadow:0 0 10px rgba(0,0,0,.1);
+  padding:20px;
+}
+.quick-activities-grid1{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items:center;
+  gap:20px;
+  width:100%;
+  max-width:600px;
+  height:100%;
+}
+.quick-activities-circle1{
+  width:120px; height:120px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:#fafafa; border:6px solid #fff; font-weight:700;
+  box-shadow:0 2px 6px rgba(0,0,0,.1);
+}
+
+/* 9) Flex/overflow safety everywhere */
+.content-card1{ min-height:0; }
+
+/* 10) Responsive: stack columns on small screens */
+@media (max-width: 992px){
+  .cards-container1{ flex-direction:column; }
+  .right-column1{ display:flex; }          /* drop grid when stacked */
+  .lms-engagement-card1{ min-height:320px; }
+}
+
+/* === FIX: stop cards from stretching full height === */
+.left-column1 .content-card1,
+.right-column1 .content-card1 {
+  height: auto !important;        /* overrides earlier height:100% */
+  flex: 0 0 auto;                  /* don't auto-grow */
+}
+
+/* Overview card: compact, two tiles side-by-side */
+.overview-card1 {
+  height: auto !important;
+  padding-bottom: 16px;
+}
+.overview-row1 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.overview-card-item1 {
+  height: 140px;                   /* tweak to taste: 120–180px */
+}
+
+/* Right column stays stable: small Quick Activities + taller LMS */
+.right-column1 {
+  display: grid;
+  grid-template-rows: 170px 420px;
+  gap: 20px;
+}
+
+/* Chart area (keep these from earlier patch) */
+.content-card1.lms-engagement-card1 { display:flex; flex-direction:column; min-height:0; }
+.chart-container1 { flex:1; min-height:0; height:100%; padding-top:10px; }
