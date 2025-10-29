@@ -59,7 +59,7 @@ const MicroPlanner = () => {
     <div className="micro-planner container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-4 header">
         <h2 className="fw-bold text-white">
-          <i className="bi bi-book me-2"></i>
+          <i className="bi bi-calendar-check me-2"></i>
           Planner
         </h2>
         <Form.Select
