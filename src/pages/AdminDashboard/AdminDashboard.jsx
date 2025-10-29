@@ -414,11 +414,12 @@ const AdminDashboard = () => {
           style={{ 
             background: 'transparent', 
             border: 'none', 
-            padding: '0px 0',
+            padding: '0px 0 0 0',
+            marginTop: 0,
             flexShrink: 0,
           }}
         >
-          <div className="profile-chip">
+          <div className="profile-chip" style={{ margin: 0, padding: 0 }}>
             {!isCollapsed && (
               <img 
                 src={logoS1} 
@@ -432,7 +433,9 @@ const AdminDashboard = () => {
                   boxShadow: 'none',
                   filter: 'none',
                   opacity: 1,
-                  display: 'block'
+                  display: 'block',
+                  margin: 0,
+                  padding: 0,
                 }} 
               />
             )}
@@ -449,7 +452,9 @@ const AdminDashboard = () => {
                   boxShadow: 'none',
                   filter: 'none',
                   opacity: 1,
-                  display: 'block'
+                  display: 'block',
+                  margin: 0,
+                  padding: 0,
                 }} 
               />
             )}
