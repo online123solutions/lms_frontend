@@ -845,7 +845,7 @@
 
 /* let both sides size to their content */
 .profile-card,
-.centered-profile{ height: 460px; max-height: none; }
+.centered-profile{ height: 470px; max-height: none; }
 
 .action-cards{
   display: grid;

@@ -657,7 +657,7 @@ const TeacherDashboardContent = () => {
               </div>
 
               <div className="chart-container1">
-                <div style={{ height: 460 }}>
+                <div className="chart-inner1">
                   <Line data={lineChartData} options={lineChartOptions} />
                 </div>
               </div>

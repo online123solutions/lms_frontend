@@ -750,3 +750,50 @@
   }
 }
 
+/* Let the page grow if needed; don't hard-cap to viewport */
+.teacher-dashboard-content1 {
+  min-height: 100vh;
+  height: auto;
+  justify-content: flex-start; /* was space-between; prevents odd gaps */
+}
+
+/* Give the cards area room but don't hard-lock it */
+.cards-container1 {
+  min-height: calc(100vh - 180px);
+  height: auto;                /* was fixed height */
+  align-items: stretch;
+}
+
+/* Critical for nested flex layouts: allow children to shrink/scroll */
+.left-column1,
+.right-column1,
+.content-card1,
+.content-card1.lms-engagement-card1,
+.chart-container1 {
+  min-height: 0;  /* enables flex children to use available height */
+}
+
+/* The chart section should take all remaining height inside the card */
+.chart-container1 {
+  flex: 1;         /* already present, keep it */
+  height: 100%;    /* make the container truly fill */
+  padding-top: 10px;
+}
+
+/* New: inner wrapper to replace the old 460px inline style */
+.chart-inner1 {
+  height: 100%;           /* let Chart.js auto-resize */
+  width: 100%;
+}
+
+/* On very large screens, guarantee a sensible min height for readability */
+.content-card1.lms-engagement-card1 {
+  min-height: 420px;                      /* baseline */
+}
+
+/* Optional: if you want the right column to split space 40/60 */
+.right-column1 { 
+  display: grid;
+  grid-template-rows: 1fr 1.5fr;          /* quick activities / lms */
+  gap: 20px;
+}
