@@ -10,6 +10,7 @@ import { mediaUrl, fetchBanners } from "../../api/traineeAPIservice"; // <-- reu
 import "../../UIcomponents/dashboard/profilecard.css";
 import PerformanceChart from "./PerformanceChart";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import traineeLogo from "../../assets/sol_log1.png";
 
 /* ---------------- small helpers ---------------- */
 const formatDate = (iso) => {
@@ -505,10 +506,31 @@ UpdatesCard.propTypes = {
 const LeftContainer = ({ data, banners }) => {
   return (
     <div className="left-container">
-      <h1>
+    <h1
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "10px",
+        flexWrap: "nowrap",
+      }}
+    >
+      <span>
         <b>Hello, </b>
-        {data?.profile?.name || "Employee"}
-      </h1>
+        {data?.profile?.name || "Trainee"}
+      </span>
+
+      {/* logo at the END of the same line */}
+      <img
+        src={traineeLogo}
+        alt="Trainee Logo"
+        style={{
+          height: "48px",
+          width: "auto",
+          marginLeft: "468px",
+          verticalAlign: "middle",
+        }}
+      />
+    </h1>
       {/* <h6>Nice to have you back, what an exciting day!</h6> */}
       <h6>Get ready and continue your lessons today.</h6>
 

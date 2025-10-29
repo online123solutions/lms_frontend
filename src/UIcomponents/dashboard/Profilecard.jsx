@@ -14,6 +14,7 @@ import PerformanceChart from "./PerformanceChart";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../index.css";
 import UpdatesCard from "../../pages/TraineeDashboard/UpdatesCard";
+import traineeLogo from "../../assets/sol_log1.png";
 
 /* ---------------- small helpers ---------------- */
 const formatDate = (iso) => {
@@ -432,10 +433,31 @@ ActionCards.propTypes = {
 const LeftContainer = ({ data, banners }) => {
   return (
     <div className="left-container">
-      <h1>
+    <h1
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "10px",
+        flexWrap: "nowrap",
+      }}
+    >
+      <span>
         <b>Hello, </b>
         {data?.profile?.name || "Trainee"}
-      </h1>
+      </span>
+
+      {/* logo at the END of the same line */}
+      <img
+        src={traineeLogo}
+        alt="Trainee Logo"
+        style={{
+          height: "48px",
+          width: "auto",
+          marginLeft: "468px",
+          verticalAlign: "middle",
+        }}
+      />
+    </h1>
       {/* <h6>Nice to have you back, what an exciting day!</h6> */}
       <h6>Nice to have you back, what an exciting day!</h6>
       <BannerSlider data={data} banners={banners} />
