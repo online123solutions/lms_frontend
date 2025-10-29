@@ -19,7 +19,9 @@ import {
   fetchLMSEngagement,
   sendTrainerNotification,
   apiClient,
-  fetchTrainerCourseProgress
+  fetchTrainerCourseProgress,
+  fetchLessons,
+  fetchTrainerLessonProgress
 } from "../../api/trainerAPIservice";
 import { logout } from "../../api/apiservice";
 import logoSO from "../../assets/logo1.png";
@@ -116,6 +118,26 @@ const TeacherDashboardContent = () => {
   const [responseMsg, setResponseMsg] = useState(null);
   const [sending, setSending] = useState(false);
 
+  const toArray = (d) =>
+  Array.isArray(d) ? d :
+  Array.isArray(d?.results) ? d.results :
+  Array.isArray(d?.data) ? d.data : [];
+
+  const toInt = (v) => {
+    const n = Number(v);
+    return Number.isInteger(n) ? n : null;
+  };
+
+  const getLessonPk = (obj) =>
+    toInt(obj?.lessonId) ??
+    toInt(obj?.lesson_id) ??
+    toInt(obj?.lesson) ??
+    toInt(obj?.db_id) ??
+    toInt(obj?.id);
+
+  const getCourseIdFromLesson = (l) =>
+    toInt(l?.courseId) ?? toInt(l?.course) ?? toInt(l?.course_id);
+
   // Dashboard header info
   useEffect(() => {
     const loadDashboard = async () => {
@@ -170,43 +192,112 @@ const TeacherDashboardContent = () => {
       try {
         setTpLoading(true);
         setTpError("");
+
+        // Step 1: Try getting the direct per-course summary
         const res = await fetchTrainerCourseProgress();
-        if (!res.success) throw new Error(res.error || "Failed to load");
-        const rows = Array.isArray(res.data?.results)
-          ? res.data.results
-          : Array.isArray(res.data?.data)
-          ? res.data.data
-          : Array.isArray(res.data)
-          ? res.data
+        const rows = res.success
+          ? Array.isArray(res.data?.results)
+            ? res.data.results
+            : Array.isArray(res.data?.data)
+            ? res.data.data
+            : Array.isArray(res.data)
+            ? res.data
+            : []
           : [];
 
-        // Normalize a bit
-        const mapped = rows.map((r) => ({
-          id: r.course_id ?? r.id,
-          code: r.course_code ?? r.code ?? "",
-          name: r.course_name ?? r.name ?? "—",
-          percent: Math.round(r.percent ?? r.completion ?? 0),
-          total: r.total_lessons ?? r.total ?? 0,
-          done: r.completed_lessons ?? r.done ?? 0,
-        }));
+        let mapped = rows
+          .map((r) => ({
+            id: r.course_id ?? r.id,
+            code: r.course_code ?? r.code ?? "",
+            name: r.course_name ?? r.name ?? "—",
+            percent: Math.round(r.percent ?? r.completion ?? 0),
+            total: r.total_lessons ?? r.total ?? 0,
+            done: r.completed_lessons ?? r.done ?? 0,
+          }))
+          .filter((r) => r.id != null);
 
-        // Overall
+        // Step 2: Fallback — derive progress if API returned empty or missing data
+        if (!mapped.length) {
+          const [lessonsRes, progressRes] = await Promise.all([
+            fetchLessons(),
+            fetchTrainerLessonProgress(),
+          ]);
+
+          const toArray = (d) =>
+            Array.isArray(d)
+              ? d
+              : Array.isArray(d?.results)
+              ? d.results
+              : Array.isArray(d?.data)
+              ? d.data
+              : [];
+
+          const lessons = lessonsRes.success ? toArray(lessonsRes.data) : [];
+          const progress = progressRes.success ? toArray(progressRes.data) : [];
+
+          // Map: lessonId → status
+          const getLessonPk = (obj) =>
+            Number(obj?.lessonId) ||
+            Number(obj?.lesson_id) ||
+            Number(obj?.lesson) ||
+            Number(obj?.db_id) ||
+            Number(obj?.id);
+          const getCourseIdFromLesson = (l) =>
+            Number(l?.courseId) || Number(l?.course) || Number(l?.course_id);
+
+          const pByLesson = new Map();
+          for (const p of progress) {
+            const lid = getLessonPk(p);
+            if (lid) pByLesson.set(lid, (p.status || "").toLowerCase());
+          }
+
+          // Group lessons by course
+          const byCourse = new Map();
+          for (const L of lessons) {
+            const cid = getCourseIdFromLesson(L);
+            if (!cid) continue;
+            const lid = getLessonPk(L);
+            const status = pByLesson.get(lid) || "not_started";
+
+            const rec = byCourse.get(cid) || {
+              id: cid,
+              code: L.course_code || "",
+              name: L.courseName || L.course_name || "—",
+              total: 0,
+              done: 0,
+            };
+            rec.total += 1;
+            if (status === "completed") rec.done += 1;
+            byCourse.set(cid, rec);
+          }
+
+          mapped = Array.from(byCourse.values()).map((c) => ({
+            ...c,
+            percent: c.total ? Math.round((c.done / c.total) * 100) : 0,
+          }));
+        }
+
+        // Step 3: Compute overall stats
         const total = mapped.reduce((a, c) => a + (c.total || 0), 0);
         const done = mapped.reduce((a, c) => a + (c.done || 0), 0);
         const pct = total ? Math.round((done / total) * 100) : 0;
 
-        // Sort by percent desc
-        mapped.sort((a, b) => (b.percent - a.percent) || String(a.name).localeCompare(String(b.name)));
+        mapped.sort(
+          (a, b) =>
+            b.percent - a.percent ||
+            String(a.name).localeCompare(String(b.name))
+        );
 
         setTpOverall({ total, done, pct });
         setTpCourses(mapped);
       } catch (e) {
-        setTpError("Could not load trainer progress.");
         console.error(e);
+        setTpError("Could not load trainer progress.");
       } finally {
         setTpLoading(false);
       }
     };
+
     loadMiniProgress();
   }, []);
 
