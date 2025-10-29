@@ -462,6 +462,9 @@ const AdminDashboardContent = () => {
           </div>
 
           <div className="top-bar-right1">
+            <div className="greeting" style={{ marginRight: "15px", display: "flex", alignItems: "center" }}>
+              <span style={{ color: "#333", fontSize: "16px", fontWeight: "500" }}>Hi, {teacherName}</span>
+            </div>
           <div className="profile-pic-frame">
             {profilePic ? (
               <img
