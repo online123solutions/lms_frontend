@@ -1026,3 +1026,375 @@ html, body, #root {
 .lms-engagement-card1 .chart-inner1 { min-height: 0 !important; }
 .chart-inner1 { position: relative; height: 200px !important; }
 .chart-inner1 > canvas { width:100% !important; height:100% !important; display:block; }
+
+/* ========= Big-screen fixes: layout, notice board, trainer progress ========= */
+
+/* Make two true columns that stretch nicely on wide screens */
+.cards-container1 {
+  display: grid !important;
+  grid-template-columns: 1.35fr 1fr !important; /* left wider than right */
+  gap: 16px !important;
+  height: auto !important;
+  min-height: 0 !important;
+  align-items: stretch !important;
+}
+
+/* Turn columns into independent vertical stacks that don't force equal heights */
+.left-column1,
+.right-column1 {
+  display: grid !important;
+  gap: 16px !important;
+  min-height: 0 !important;
+}
+
+/* Left can grow naturally; right stays compact */
+.left-column1 { grid-auto-rows: minmax(0, auto) !important; }
+.right-column1 { grid-auto-rows: min-content !important; align-content: start !important; }
+
+/* Cards should NOT try to fill the full column height */
+.left-column1 .content-card1,
+.right-column1 .content-card1,
+.content-card1 {
+  height: auto !important;
+  min-height: 0 !important;
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* ---------------- Notice Board: make inner list take remaining space and scroll --------------- */
+.notice-board-card1 {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+}
+.notice-board-content1 {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+}
+.notice-board-scroll1 {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: auto !important;     /* replaces fixed 200px cap */
+  max-height: none !important;
+  padding-right: 6px !important; /* room for scrollbar */
+}
+
+/* ---------------- Trainer Course Progress: tidy list, fixed bar area, scroll if long --------- */
+.trainer-progress-mini-card1 {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+}
+
+.trainer-progress-mini-header1 {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+}
+
+.overall-chip1 {
+  background: #f2f4f7 !important;
+  border-radius: 999px !important;
+  padding: 4px 10px !important;
+  font-size: 12px !important;
+}
+
+/* Show up to a few rows, then scroll cleanly */
+.tp-mini-list1 {
+  display: grid !important;
+  gap: 10px !important;
+  min-height: 0 !important;
+  max-height: 260px !important;     /* adjust to your taste (200–300) */
+  overflow: auto !important;
+  padding-right: 6px !important;
+}
+
+/* Title | progress bar | meta (percent & counts) */
+.tp-mini-row1 {
+  display: grid !important;
+  grid-template-columns: 1fr minmax(140px, 1.2fr) auto !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+.tp-mini-title1 {
+  display: flex !important;
+  gap: 6px !important;
+  align-items: center !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+.tp-mini-title1 .mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace !important;
+  font-size: 12px !important;
+  opacity: 0.8 !important;
+}
+.tp-mini-barwrap1 {
+  height: 8px !important;
+  background: #eef1f6 !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+}
+.tp-mini-bar1 {
+  height: 100% !important;
+  background: #5cb85c !important; /* swap to brand color if needed */
+}
+.tp-mini-meta1 {
+  display: flex !important;
+  gap: 10px !important;
+  justify-content: flex-end !important;
+  font-size: 12px !important;
+  white-space: nowrap !important;
+}
+
+/* ---------------- Chart sizing: prevent squish and scale on large screens -------------------- */
+.chart-container1 { min-height: 0 !important; }
+.chart-inner1 {
+  position: relative !important;
+  height: 200px !important;      /* base height */
+  min-height: 160px !important;
+}
+.chart-inner1 > canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+}
+
+/* Larger monitors get a taller chart */
+@media (min-width: 1440px) {
+  .cards-container1 { grid-template-columns: 1.5fr 1fr !important; gap: 20px !important; }
+  .chart-inner1 { height: 260px !important; }
+}
+
+/* ---------------- Overview & Recent Activities: keep scroll areas tidy ----------------------- */
+.recent-activities-card1 { min-height: 0 !important; }
+.recent-activities-content1 {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+}
+.recent-activities-scroll1 {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: auto !important;
+  padding-right: 6px !important;
+}
+
+/* ---------------- Mobile keeps your current stacking ---------------------------------------- */
+@media (max-width: 768px) {
+  .cards-container1 {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+}
+/* ==== Recent Activities: fixed-height card with scrollable body ==== */
+.recent-activities-card1 {
+  /* lock the card height; tweak the numbers to taste */
+  height: clamp(300px, 36vh, 420px) !important;
+  flex: 0 0 auto !important;        /* don't grow to fill column */
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;         /* allow inner scroll */
+}
+
+.recent-activities-card1 h3 {
+  margin-bottom: 10px;              /* compact header */
+}
+
+/* body wrapper fills the rest of the fixed card height */
+.recent-activities-content1 {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+}
+
+/* the actual scroll area */
+.recent-activities-scroll1 {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding-right: 8px;               /* space for scrollbar */
+}
+
+/* optional: smaller on mobile */
+@media (max-width: 768px) {
+  .recent-activities-card1 {
+    height: 280px !important;
+  }
+}
+.notice-board-card1 {
+  height: clamp(220px, 28vh, 340px) !important;
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+}
+.notice-board-content1 { flex: 1 1 auto !important; min-height: 0 !important; display: flex !important; }
+.notice-board-scroll1  { flex: 1 1 auto !important; min-height: 0 !important; overflow-y: auto !important; padding-right: 8px; }
+/* === Force Recent Activities to be a fixed-height card with inner scroll === */
+/* kill the "all cards are 100% height" rule just for this card */
+.left-column1 .content-card1.recent-activities-card1,
+.right-column1 .content-card1.recent-activities-card1,
+.content-card1.recent-activities-card1 {
+  height: clamp(320px, 36vh, 440px) !important; /* pick your range */
+  flex: 0 0 auto !important;                    /* do NOT grow */
+  align-self: start !important;                 /* don't stretch to column height */
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* header spacing */
+.content-card1.recent-activities-card1 > h3 {
+  margin-bottom: 10px !important;
+}
+
+/* body fills the fixed card; list scrolls */
+.recent-activities-content1 {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+}
+.recent-activities-scroll1 {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding-right: 8px !important;  /* room for scrollbar */
+}
+
+/* make sure the column lets children shrink/scroll */
+.left-column1,
+.right-column1 {
+  min-height: 0 !important;
+}
+
+/* optional: slightly shorter on mobile */
+@media (max-width: 768px) {
+  .content-card1.recent-activities-card1 {
+    height: 280px !important;
+  }
+}
+/* === FIXED HEIGHT: RECENT ACTIVITIES (no visible scrollbar) === */
+.content-card1.recent-activities-card1 {
+  height: clamp(320px, 36vh, 440px) !important; /* fixed range */
+  flex: 0 0 auto !important;                   /* no flex-grow */
+  align-self: start !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  overflow: hidden !important;                 /* hide any outer overflow */
+}
+
+.content-card1.recent-activities-card1 h3 {
+  margin-bottom: 10px !important;
+}
+
+/* wrapper that fills the rest of card height */
+.recent-activities-content1 {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+}
+
+/* internal scroll with scrollbar hidden */
+.recent-activities-scroll1 {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: scroll !important;
+  padding-right: 8px;
+  scrollbar-width: none;           /* Firefox */
+  -ms-overflow-style: none;        /* Edge, IE */
+}
+.recent-activities-scroll1::-webkit-scrollbar {
+  width: 0;                        /* Chrome, Safari */
+  background: transparent;
+}
+
+/* optional: smoother scrolling */
+.recent-activities-scroll1 {
+  scroll-behavior: smooth;
+}
+
+/* keep column flexible */
+.left-column1, .right-column1 {
+  min-height: 0 !important;
+}
+
+/* === OPTIONAL: HIDE scrollbar globally if needed === */
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+  background: transparent;
+}
+/* ---- Quick Activities (redesign) ------------------------------------- */
+.qa-card{
+  background:#fff;
+  border-radius:15px;
+  box-shadow:0 0 10px rgba(0,0,0,.08);
+  padding:16px 16px 18px;
+}
+
+.qa-header{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:10px;
+}
+.qa-header h3{ margin:0; text-align:left; }
+
+.qa-grid{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0,1fr)); /* 3 across on desktop */
+  gap:12px;
+}
+
+/* pill-like action buttons */
+.qa-btn{
+  appearance:none; border:0; outline:0;
+  display:flex; align-items:center; gap:10px;
+  width:100%;
+  padding:14px 16px;
+  border-radius:14px;
+  font-weight:700;
+  font-size:15px;
+  color:#111;
+  background:#f7f7fb;                     /* default bg (overridden by color classes) */
+  box-shadow:0 1px 3px rgba(0,0,0,.06);
+  cursor:pointer;
+  transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+  will-change: transform;
+}
+.qa-btn i{
+  font-size:20px;
+  line-height:0;
+}
+.qa-btn:hover{
+  transform: translateY(-2px);
+  box-shadow:0 6px 16px rgba(0,0,0,.12);
+  filter:saturate(1.05);
+}
+
+/* existing palette re-used */
+.qa-btn.pink   { background:#f78da7; }
+.qa-btn.purple { background:#b497d6; }
+.qa-btn.cyan   { background:#0ba3e6; }
+
+/* keep text readable on colored pills */
+.qa-btn.pink span,
+.qa-btn.purple span,
+.qa-btn.cyan span{ color:#111; }
+
+/* Responsive: 2 columns on tablets, 1 on phones */
+@media (max-width: 992px){
+  .qa-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 600px){
+  .qa-grid{ grid-template-columns: 1fr; }
+}
+
+/* Remove the old circle/box if still present */
+.quick-activities1,
+.quick-activities-circle1,
+.quick-activities-grid1,
+.quick-activity-card1{ display:none !important; }

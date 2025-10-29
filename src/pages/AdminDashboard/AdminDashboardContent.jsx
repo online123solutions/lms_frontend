@@ -757,28 +757,31 @@ const AdminDashboardContent = () => {
             </div>
 
             <div className="right-column1">
-              <div className="quick-activities1">
-                <div className="quick-activities-circle1">
-                  <span>Quick Activities</span>
+              {/* --- Quick Activities (Redesigned) --- */}
+              <div className="qa-card">
+                <div className="qa-header">
+                  <h3>Quick Activities</h3>
                 </div>
-                <div className="quick-activities-grid1">
+
+                <div className="qa-grid">
                   {[
-                    { text: "Add Courses",       className: "pink",   link: "https://lms.steel.study/admin/",      disabled: false },
-                    { text: "Push Notification", className: "purple", link: "#",     disabled: false },
-                    { text: "Add Lesson",        className: "purple", link: "https://lms.steel.study/admin/",      disabled: false },
-                    { text: "Add User",          className: "pink",   link: "https://lms.steel.study/admin/",        disabled: false },
-                    { text: "Add Quiz",         className: "cyan",   link: "https://lms.steel.study/admin/",         disabled: false },
+                    { text: "Add Courses",       icon: "bi-journal-plus",  className: "pink",   link: "https://lms.steel.study/admin/" },
+                    { text: "Push Notification", icon: "bi-megaphone",     className: "purple", link: "#", onClick: () => alert("Open notification modal") },
+                    { text: "Add Lesson",        icon: "bi-file-earmark-plus", className: "purple", link: "https://lms.steel.study/admin/" },
+                    { text: "Add User",          icon: "bi-person-plus",   className: "pink",   link: "https://lms.steel.study/admin/" },
+                    { text: "Add Quiz",          icon: "bi-patch-question",className: "cyan",   link: "https://lms.steel.study/admin/" },
                   ].map((item, i) => (
-                    <div
+                    <button
                       key={i}
-                      className={`quick-activity-card1 ${item.className} ${item.disabled ? "disabled" : ""}`}
-                      onClick={() => {
-                        if (!item.disabled) item.onClick ? item.onClick() : (window.location.href = item.link);
-                      }}
-                      style={{ cursor: item.disabled ? "not-allowed" : "pointer", opacity: item.disabled ? 0.5 : 1 }}
+                      type="button"
+                      className={`qa-btn ${item.className}`}
+                      onClick={() => (item.onClick ? item.onClick() : (window.location.href = item.link))}
+                      aria-label={item.text}
+                      title={item.text}
                     >
-                      <div className="text1">{item.text}</div>
-                    </div>
+                      <i className={`bi ${item.icon}`} />
+                      <span>{item.text}</span>
+                    </button>
                   ))}
                 </div>
               </div>
