@@ -894,3 +894,40 @@ html, body, #root {
   height: 100% !important;
   display: block;                     /* avoid inline-canvas baseline gap */
 }
+/* The right column that holds LMS + mini progress */
+.right-column1 {
+  display: grid;
+  gap: 12px;
+  grid-auto-rows: min-content;   /* don't force equal heights */
+  align-content: start;           /* keep items compact at the top */
+}
+
+/* Make the LMS card behave inside grid/flex parents */
+.lms-engagement-card1 {
+  align-self: start;              /* do not stretch */
+  min-height: 0 !important;       /* allow child to control height */
+}
+
+/* Chart wrappers must be allowed to shrink */
+.chart-container1,
+.chart-inner1 {
+  min-height: 0 !important;
+}
+
+/* Base chart height */
+.chart-inner1 {
+  position: relative;
+  height: 180px;                  /* change to your taste */
+}
+
+/* Ensure the canvas fills the wrapper */
+.chart-inner1 > canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* On larger screens, re-assert height (in case any layout overrides it) */
+@media (min-width: 992px) {
+  .chart-inner1 { height: 200px !important; }
+}
