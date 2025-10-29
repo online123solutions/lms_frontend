@@ -931,3 +931,29 @@ html, body, #root {
 @media (min-width: 992px) {
   .chart-inner1 { height: 200px !important; }
 }
+/* 1) Let the main content area scroll */
+.content-panel {
+  height: 100dvh;          /* fills viewport */
+  overflow-y: auto;        /* <-- adds scroll */
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 2) Kill fixed-height on the inner dashboard, allow it to grow naturally */
+.teacher-dashboard-content1 {
+  height: auto !important;    /* was 100vh in earlier CSS */
+  min-height: 100%;           /* optional; keeps it tall when short */
+  display: block;             /* if it was flex, you don't need it here */
+}
+
+/* (already recommended) keep right column compact so cards stack naturally */
+.right-column1 {
+  display: grid;
+  gap: 12px;
+  grid-auto-rows: min-content;
+  align-content: start;
+}
+
+/* LMS chart still controlled height (from previous step) */
+.chart-inner1 { position: relative; height: 200px; }
+.chart-inner1 > canvas { width: 100% !important; height: 100% !important; display: block; }
