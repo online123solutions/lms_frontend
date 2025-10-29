@@ -636,3 +636,43 @@
 /* 12) Keep donut & chips as-is; just guard against overflow */
 .mp-card{ min-height: 320px; display:flex; flex-direction:column; min-width:0; }
 .mp-progress{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
+
+/* === Compact Profile Card & Column === */
+
+/* Make the left column for the profile adaptive and narrower */
+.top-section{
+  /* column 1 auto-scales between 240–320px; column 2 gets the rest */
+  grid-template-columns: clamp(240px, 22vw, 300px) minmax(0, 1fr);
+}
+
+/* Slim the profile card */
+.centered-profile{
+  padding: 16px;
+  border: 1px solid #e5e7eb;     /* was 2px yellow; looks bulky */
+  height: auto;                   /* avoid forcing tall box */
+  max-height: 500px;              /* cap it so it never balloons */
+  gap: 8px;
+}
+
+/* Smaller avatar */
+.centered-profile .profile-pic{
+  width: 96px;
+  height: 96px;
+  margin-bottom: 8px;
+  border: 2px solid #ddd;
+}
+
+/* Tighter text */
+.centered-profile h4{ font-size: 18px; margin: 2px 0; }
+.centered-profile .location{ font-size: 14px; }
+
+/* Compact stats */
+.centered-profile .stats{ gap: 6px; margin-top: 10px; }
+.centered-profile .stat-row{ gap: 6px; }
+.centered-profile .stat-count,
+.centered-profile .stat-label{ font-size: 12px; }
+
+/* If you still need it smaller, uncomment one of these:
+.top-section{ grid-template-columns: clamp(220px, 18vw, 280px) minmax(0,1fr); }
+.centered-profile{ max-height: 260px; }
+*/
