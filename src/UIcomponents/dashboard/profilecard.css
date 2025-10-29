@@ -501,3 +501,138 @@
   margin: 0;
   font-weight: bold;
 }
+
+/* 1) Make sizing predictable everywhere */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+/* 2) Use Grid for the page columns (prevents wrap jitter) */
+.dashboard-container{
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+  min-height: calc(100dvh - 80px); /* avoid 90vh cutoffs on some DEs */
+  width: 100%;
+}
+
+@media (max-width: 1024px){
+  .dashboard-container{
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 3) Left & Right containers no margins that push line-breaks */
+.left-container{
+  background: var(--bg-card);
+  display:flex; flex-direction:column;
+  justify-content:space-between;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 20px;
+}
+
+.right-container{
+  display: grid;
+  grid-auto-rows: auto;
+  gap: 16px;
+  padding: 20px;
+  background: #f6f6fc;
+  border-radius: 15px;
+  /* remove margin-right which caused overflow on some Linux distros */
+  margin-right: 0;
+}
+
+/* 4) Top row uses Grid with fixed profile column */
+.top-section{
+  display: grid;
+  grid-template-columns: 360px minmax(0, 1fr);
+  gap: 20px;
+  margin-bottom: 0;
+}
+
+@media (max-width: 1200px){
+  .top-section{ grid-template-columns: 320px minmax(0,1fr); }
+}
+@media (max-width: 900px){
+  .top-section{ grid-template-columns: 1fr; }
+}
+
+/* 5) Profile card keeps a sane max, but no overflow forcing */
+.profile-card{
+  background: var(--bg-card);
+  padding: 10px;
+  border-radius: 15px;
+  text-align: left;
+  box-shadow: 0 4px 12px rgba(0,0,0,.1);
+  height: auto;            /* was 350px */
+  max-height: none;        /* prevent clipping */
+}
+
+/* 6) Action cards column: let Grid decide width */
+.action-cards{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  width: auto;             /* was 60% -> caused wrap on Linux */
+  max-height: none;
+  justify-content:unset;
+}
+
+/* 7) Card heights should be auto; avoid fixed heights */
+.action-card{
+  background: var(--bg-card);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  min-width: 0;            /* important in grid/flex to avoid overflow */
+  height: auto;            /* was 150px */
+  overflow: hidden;
+  position: relative;
+}
+
+/* keep your colors */
+.set-target  { background:#f78da7; }
+.set-target1 { background:#b497d6; }
+
+/* 8) Scrollbars: reserve space so Linux doesn’t shift content */
+.header-con1,
+.header-con{
+  margin-top: 10px;
+  max-height: 220px;       /* optional, keeps list tidy */
+  overflow: auto;
+  padding-right: 8px;
+  scrollbar-gutter: stable both-edges; /* prevents layout jump on Linux */
+}
+
+/* 9) Banner slider keeps aspect and never stretches layout */
+.slider-viewport{
+  position:relative; width:100%;
+  height: clamp(180px, 24vw, 240px);  /* responsive height */
+  border-radius:8px; overflow:hidden; margin-top:12px;
+}
+
+.slide{
+  position:absolute; inset:0;
+  background-size:cover; background-position:center;
+  opacity:0; transform:scale(1.02);
+  transition:opacity .5s ease, transform .5s ease;
+}
+.slide.active{ opacity:1; transform:scale(1); }
+
+/* 10) Progress & Updates cards stay equal width and height naturally */
+.right-container > .updates-card,
+.right-container > .mp-card{
+  margin:0 !important;
+  width:100% !important;
+  box-sizing:border-box;
+  height:auto !important;
+}
+
+/* 11) Minor: ensure icons/labels don’t wrap awkwardly */
+.icon-heading h4{ white-space: nowrap; overflow:hidden; text-overflow: ellipsis; }
+
+/* 12) Keep donut & chips as-is; just guard against overflow */
+.mp-card{ min-height: 320px; display:flex; flex-direction:column; min-width:0; }
+.mp-progress{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
