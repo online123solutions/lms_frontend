@@ -872,3 +872,25 @@ html, body, #root {
 }
 
 .tp-mini-meta1 { display:flex; justify-content:space-between; font-size:12px; }
+/* --- LMS Engagement: ensure the card + chart have height --- */
+.lms-engagement-card1,
+.lms-engagement-card1 .chart-container1 {
+  min-height: 0 !important;          /* kill any old min-heights */
+}
+
+.chart-container1 {                   /* parent can be anything; no constraints */
+  padding-top: 6px;                   /* optional */
+}
+
+.chart-inner1 {
+  position: relative;
+  height: 180px;                      /* <- set the chart height here */
+  /* you can change to 160–220px as you like */
+}
+
+/* Make the Chart.js canvas fill the wrapper height */
+.chart-inner1 > canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;                     /* avoid inline-canvas baseline gap */
+}

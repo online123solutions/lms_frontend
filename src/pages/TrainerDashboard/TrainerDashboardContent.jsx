@@ -811,7 +811,7 @@ const TeacherDashboardContent = () => {
 
               <div className="chart-container1">
                 {/* Height is controlled here */}
-                <div className="chart-inner1" style={{ height: CHART_HEIGHT }}>
+                <div className="chart-inner1">
                   <Line data={lineChartData} options={lineChartOptions} />
                 </div>
               </div>
