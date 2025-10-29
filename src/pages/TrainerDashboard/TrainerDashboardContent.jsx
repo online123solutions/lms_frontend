@@ -27,6 +27,7 @@ import { logout } from "../../api/apiservice";
 import logoSO from "../../assets/logo1.png";
 import "../../index.css";
 import { mediaUrl } from "../../api/traineeAPIservice";
+import logoS1 from "../../assets/sol_log1.png";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -465,6 +466,13 @@ const TeacherDashboardContent = () => {
     return () => clearTimeout(t);
   }, []);
 
+  useEffect(() => {
+    // reflow once the grid/sidebars finish sizing
+    const t1 = setTimeout(() => window.dispatchEvent(new Event("resize")), 50);
+    const t2 = setTimeout(() => window.dispatchEvent(new Event("resize")), 300);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []);
+
 
   // department field enabled only if group mode and audience includes employees
   const deptDisabled =
@@ -604,9 +612,9 @@ const TeacherDashboardContent = () => {
 
         <div className="top-bar-middle1">
           <img
-            src={logoSO}
+            src={logoS1}
             alt="Trainer Logo"
-            style={{ height: "60px", width: "auto", objectFit: "contain", borderRadius: "8px" }}
+            style={{ height: "80px", width: "auto", objectFit: "contain", borderRadius: "8px" }}
           />
         </div>
 

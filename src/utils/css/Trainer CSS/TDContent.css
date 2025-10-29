@@ -958,3 +958,71 @@ html, body, #root {
 .chart-inner1 { position: relative; height: 200px; }
 .chart-inner1 > canvas { width: 100% !important; height: 100% !important; display: block; }
 
+/* The right column should not force equal heights */
+.right-column1{
+  display:grid;
+  gap:12px;
+  grid-auto-rows:min-content;
+  align-content:start;
+  min-height:0;     /* allow children to size themselves */
+}
+
+/* Make sure no ancestor blocks growth */
+.content-card1,
+.lms-engagement-card1,
+.lms-engagement-card1 .chart-container1,
+.lms-engagement-card1 .chart-inner1{
+  min-height:0 !important;
+}
+
+/* Force the actual chart height (works on all screens) */
+.lms-engagement-card1 .chart-inner1{
+  position:relative;
+  height:200px !important;    /* adjust to taste: 160–240 */
+}
+.lms-engagement-card1 .chart-inner1 > canvas{
+  width:100% !important;
+  height:100% !important;
+  display:block;
+}
+
+/* Ensure the center panel can scroll when needed */
+.content-panel{
+  height:100dvh;
+  overflow-y:auto;
+  overflow-x:hidden;
+}
+/* Let the whole block grow naturally; scrolling is already on .content-panel */
+.cards-container1 {
+  height: auto !important;
+  min-height: 0;
+  align-items: flex-start;  /* no equal-height stretching */
+}
+
+/* Columns are just vertical stacks */
+.left-column1,
+.right-column1 {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Stop forcing cards to fill the column height */
+.left-column1 .content-card1,
+.right-column1 .content-card1,
+.content-card1 {
+  height: auto !important;
+  flex: 0 0 auto !important;   /* no flex-grow */
+}
+
+/* Overview should be only as tall as its content */
+.overview-card1 {
+  flex: 0 0 auto !important;
+}
+
+/* (keep the chart sizing you already added) */
+.lms-engagement-card1,
+.lms-engagement-card1 .chart-container1,
+.lms-engagement-card1 .chart-inner1 { min-height: 0 !important; }
+.chart-inner1 { position: relative; height: 200px !important; }
+.chart-inner1 > canvas { width:100% !important; height:100% !important; display:block; }

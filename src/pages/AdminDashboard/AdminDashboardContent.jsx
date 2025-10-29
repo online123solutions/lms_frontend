@@ -18,6 +18,7 @@ import { fetchAdminDashboard, fetchLMSEngagement, fetchRecentActivity } from "..
 import { logout, requestPasswordReset, confirmPasswordReset } from "../../api/apiservice"; // Updated API calls
 import logoSO from "../../assets/logo1.png";
 import { mediaUrl } from "../../api/traineeAPIservice";
+import logoS1 from "../../assets/sol_log1.png";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend,Filler);
 
@@ -450,10 +451,10 @@ const AdminDashboardContent = () => {
 
           <div className="top-bar-middle1">
             <img
-              src={logoSO}
+              src={logoS1}
               alt="Trainer Logo"
               style={{
-                height: "60px",
+                height: "80px",
                 width: "auto",
                 objectFit: "contain",
                 borderRadius: "8px",
