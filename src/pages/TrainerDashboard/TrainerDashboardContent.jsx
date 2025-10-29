@@ -156,6 +156,8 @@ const TeacherDashboardContent = () => {
     if (username) loadDashboard();
   }, [username]);
 
+  const CHART_HEIGHT = 180; // tune: 150–220
+
   // LMS Engagement
   useEffect(() => {
     const loadAll = async () => {
@@ -349,11 +351,16 @@ const TeacherDashboardContent = () => {
 
   const lineChartOptions = {
     responsive: true,
-    maintainAspectRatio: false,
-    plugins: { legend: { position: "top" } },
+    maintainAspectRatio: false,           // <-- critical
+    layout: { padding: 0 },
+    plugins: {
+      legend: { display: true, labels: { boxWidth: 12, usePointStyle: true } },
+      tooltip: { mode: "index", intersect: false },
+    },
+    elements: { line: { tension: 0.35 }, point: { radius: 0 } },
     scales: {
-      x: { title: { display: true, text: "Date" } },
-      y: { title: { display: true, text: "Count" }, beginAtZero: true, precision: 0 },
+      x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 8 }, title: { display: true, text: "Date" } },
+      y: { beginAtZero: true, ticks: { maxTicksLimit: 4 }, title: { display: true, text: "Count" } },
     },
   };
 
@@ -636,32 +643,34 @@ const TeacherDashboardContent = () => {
           </div>
 
             <div className="content-card1 lms-engagement-card1">
-              <div className="lms-engagement-header1">
-                <h3>LMS Engagement</h3>
-                <Dropdown>
-                  <Dropdown.Toggle className="grey" id="dropdown-basic">
-                    {selectedMonth || "Select month"}
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    {availableMonths.length ? (
-                      availableMonths.map((m) => (
-                        <Dropdown.Item key={m} onClick={() => setSelectedMonth(m)}>
-                          {m}
-                        </Dropdown.Item>
-                      ))
-                    ) : (
-                      <Dropdown.Item disabled>No data</Dropdown.Item>
-                    )}
-                  </Dropdown.Menu>
-                </Dropdown>
-              </div>
+  <div className="lms-engagement-header1">
+    <h3>LMS Engagement</h3>
+    <Dropdown>
+      <Dropdown.Toggle className="grey" id="dropdown-basic">
+        {selectedMonth || "Select month"}
+      </Dropdown.Toggle>
+      <Dropdown.Menu>
+        {availableMonths.length ? (
+          availableMonths.map((m) => (
+            <Dropdown.Item key={m} onClick={() => setSelectedMonth(m)}>
+              {m}
+            </Dropdown.Item>
+          ))
+        ) : (
+          <Dropdown.Item disabled>No data</Dropdown.Item>
+        )}
+      </Dropdown.Menu>
+    </Dropdown>
+  </div>
 
-              <div className="chart-container1">
-                <div className="chart-inner1">
-                  <Line data={lineChartData} options={lineChartOptions} />
-                </div>
-              </div>
-            </div>
+  <div className="chart-container1">
+    {/* Height is controlled here */}
+    <div className="chart-inner1" style={{ height: CHART_HEIGHT }}>
+      <Line data={lineChartData} options={lineChartOptions} />
+    </div>
+  </div>
+</div>
+
           </div>
         </div>
       )}

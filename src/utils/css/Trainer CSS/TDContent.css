@@ -750,3 +750,100 @@
   }
 }
 
+/* 🔧 Ensure the app can fill the viewport */
+html, body, #root {
+  height: 100%;
+}
+
+/* 🔧 Dashboard layout */
+.dashboard {
+  display: grid;
+  grid-template-columns: 260px 1fr;   /* collapsed state handled below */
+  min-height: 100dvh;                 /* better on mobile than 100vh */
+  background: #f6f7fb;                /* optional */
+}
+
+/* 🔧 Sidebar fills full height and stays pinned */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  position: sticky;  /* pins to the top while page scrolls */
+  top: 0;
+  left: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #111;  /* your theme */
+  z-index: 100;      /* above content but below modal/backdrop */
+  border-right: 1px solid rgba(0,0,0,.06);
+}
+
+/* collapsed width */
+.sidebar.collapsed {
+  width: 76px;
+}
+
+/* When collapsed, adjust grid to match width */
+.sidebar.collapsed ~ .content-panel {
+  grid-column: 2 / -1;
+}
+
+/* Mobile: slide-in drawer */
+@media (max-width: 992px) {
+  .dashboard {
+    grid-template-columns: 1fr;       /* content only; sidebar overlays */
+  }
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;                /* left drawer */
+    width: 280px;
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .mobile-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
+  }
+  .mobile-backdrop.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+/* 🔧 Content area */
+.content-panel {
+  grid-column: 2 / -1;
+  min-height: 100dvh;
+  overflow: auto;
+  background: transparent;
+}
+
+/* Optional: make the glow/active item visible on dark bg */
+.sidebar-item.active .active-glow {
+  box-shadow: 0 0 0 2px rgba(255,255,255,.12) inset;
+}
+/* LMS card should not force tall space */
+.lms-engagement-card1,
+.lms-engagement-card1 .card-body,
+.chart-container1 {
+  min-height: 0 !important;
+}
+
+/* Tighten padding a bit */
+.lms-engagement-card1 { padding: 12px 14px; }
+.lms-engagement-header1 { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+
+/* The chart fills only the height we set inline (CHART_HEIGHT) */
+.chart-inner1 { position: relative; }
+
+/* Optional: slightly smaller on mobile */
+@media (max-width: 768px) {
+  .chart-inner1 { height: 160px !important; }
+}
