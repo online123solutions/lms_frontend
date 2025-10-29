@@ -957,3 +957,4 @@ html, body, #root {
 /* LMS chart still controlled height (from previous step) */
 .chart-inner1 { position: relative; height: 200px; }
 .chart-inner1 > canvas { width: 100% !important; height: 100% !important; display: block; }
+

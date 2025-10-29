@@ -863,3 +863,240 @@
   overflow: auto;                  /* keeps long lists tidy without pushing row height */
   scrollbar-gutter: stable both-edges;
 }
+/* --- 1) PROFILE CARD: make it compact --- */
+.top-section{
+  /* a bit narrower profile column also helps reduce the overall row height */
+  grid-template-columns: clamp(220px, 18vw, 260px) minmax(0,1fr);
+}
+
+.profile-card,
+.centered-profile{
+  height: auto !important;     /* stop any fixed heights */
+  max-height: 320px !important;/* reduce overall size */
+  padding: 12px 14px;
+}
+
+.centered-profile .profile-pic{
+  width: 96px !important;
+  height: 96px !important;
+  margin-bottom: 8px;
+  border: 2px solid #ddd;
+}
+
+.centered-profile h4{ font-size: 18px; margin: 2px 0; }
+.centered-profile .location{ font-size: 14px; }
+
+/* --- 2) NOTIFICATIONS CARD: shorter card with internal scroll --- */
+/* If Notifications is the first action-card in the right column */
+.action-cards > .action-card:nth-child(1){
+  height: auto !important;
+  max-height: 220px !important;     /* target overall card height */
+  padding: 14px 16px;
+}
+
+/* Scroll just the list/body so title line stays visible */
+.action-cards > .action-card:nth-child(1) .header-con1{
+  max-height: 150px !important;     /* shrink list area */
+  overflow: auto;
+  scrollbar-gutter: stable both-edges;
+}
+
+/* Keep the “Mark as read” button on one line */
+.header-con1 li{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 10px;
+  align-items: start;
+  padding: 6px 0;
+}
+
+/* --- 3) Optional: make the Active Quizzes card slim too (second card) --- */
+.action-cards > .action-card:nth-child(2){
+  height: auto;
+  max-height: 220px;
+  padding: 14px 16px;
+}
+
+/* Small screens: let them breathe a bit more */
+@media (max-width: 900px){
+  .profile-card, .centered-profile{ max-height: 360px !important; }
+  .action-cards > .action-card:nth-child(1){ max-height: 260px !important; }
+  .action-cards > .action-card:nth-child(1) .header-con1{ max-height: 180px !important; }
+}
+/* --- Match Profile Card Height with Notifications & Quizzes --- */
+.top-section {
+  grid-template-columns: clamp(230px, 20vw, 280px) minmax(0, 1fr);
+  align-items: stretch; /* makes both columns align in height */
+}
+
+.centered-profile,
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 400px !important;      /* increased height */
+  max-height: 420px !important;  /* cap slightly above */
+  padding: 18px 14px;
+}
+
+.centered-profile .profile-pic {
+  width: 110px !important;
+  height: 110px !important;
+  margin-bottom: 10px;
+}
+/* --- Compact & Balanced Dashboard Layout --- */
+
+/* Reduce the notifications card height */
+.action-cards > .action-card:nth-child(1) {
+  height: auto !important;
+  max-height: 180px !important;   /* smaller than before */
+  padding: 12px 14px;
+}
+
+/* Notifications list area scrolls properly */
+.action-cards > .action-card:nth-child(1) .header-con1 {
+  max-height: 120px !important;   /* limit scroll area */
+  overflow: auto;
+  scrollbar-gutter: stable both-edges;
+}
+
+/* Slightly reduce Active Quizzes height for balance */
+.action-cards > .action-card:nth-child(2) {
+  height: auto;
+  max-height: 180px;
+  padding: 12px 14px;
+}
+
+/* Reduce profile card height to align with right column */
+.centered-profile,
+.profile-card {
+  height: 360px !important;       /* reduced from 400+ */
+  max-height: 370px !important;
+  padding: 12px 10px;
+}
+
+/* Smaller profile picture */
+.centered-profile .profile-pic {
+  width: 90px !important;
+  height: 90px !important;
+  margin-bottom: 6px;
+  border: 2px solid #ddd;
+}
+
+/* Compact text styling */
+.centered-profile h4 {
+  font-size: 17px;
+  margin: 2px 0;
+}
+.centered-profile .location {
+  font-size: 13px;
+  margin: 1px 0;
+}
+
+/* Adjust grid alignment */
+.top-section {
+  grid-template-columns: clamp(230px, 20vw, 270px) minmax(0, 1fr);
+  align-items: stretch; /* both sides align vertically */
+}
+/* --- Final Compact & Auto-Aligned Dashboard Layout --- */
+
+/* Make both columns equal height */
+.top-section {
+  display: grid;
+  grid-template-columns: clamp(230px, 20vw, 270px) minmax(0, 1fr);
+  align-items: stretch; /* ensures left & right columns align */
+  gap: 20px;
+}
+
+/* --- Profile Card --- */
+.centered-profile,
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 340px !important;       /* reduced slightly */
+  max-height: 350px !important;
+  padding: 12px 10px;
+}
+
+/* Smaller profile picture */
+.centered-profile .profile-pic {
+  width: 80px !important;
+  height: 80px !important;
+  margin-bottom: 6px;
+  border: 2px solid #ddd;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Compact text */
+.centered-profile h4 {
+  font-size: 16px;
+  margin: 2px 0;
+}
+.centered-profile .location {
+  font-size: 13px;
+  color: #555;
+  margin: 1px 0;
+}
+
+/* --- Notifications Card --- */
+.action-cards > .action-card:nth-child(1) {
+  height: auto !important;
+  max-height: 160px !important;   /* further reduced */
+  padding: 12px 14px;
+}
+
+/* Scrollable notifications list */
+.action-cards > .action-card:nth-child(1) .header-con1 {
+  max-height: 100px !important;
+  overflow-y: auto;
+  scrollbar-gutter: stable both-edges;
+}
+
+/* --- Active Quizzes Card --- */
+.action-cards > .action-card:nth-child(2) {
+  height: auto;
+  max-height: 160px;
+  padding: 12px 14px;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 900px) {
+  .centered-profile, .profile-card {
+    max-height: 360px !important;
+  }
+  .action-cards > .action-card:nth-child(1) {
+    max-height: 180px !important;
+  }
+}
+/* --- Remove space between Notification & Active Quiz cards --- */
+
+/* Make both cards stack without gap */
+.action-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10 !important;           /* remove vertical gap completely */
+  height: 100%;
+}
+
+/* Optional: slightly round bottom corners so they appear as one block visually */
+.action-cards > .action-card:nth-child(1) {
+  margin-bottom: 0;
+}
+
+.action-cards > .action-card:nth-child(2) {
+  margin-top: 0;
+}
+
+/* Small tweak: add subtle border between them for separation */
+.action-cards > .action-card:nth-child(2)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10px;
+  right: 10px;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.08);
+}
