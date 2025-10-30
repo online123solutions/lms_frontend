@@ -590,7 +590,6 @@ const TeacherDashboardContent = () => {
   };
 
   return (
-    <div className="dashboard-shell">
     <div className="teacher-dashboard-content1">
       <div className="top-bar1">
         <div className="top-bar-left1">
@@ -1059,7 +1058,6 @@ const TeacherDashboardContent = () => {
           </Form>
         </Modal.Body>
       </Modal>
-    </div>
     </div>
   );
 };
