@@ -1,7 +1,6 @@
 .teacher-dashboard-content1 {
   padding: 20px;
   border-radius: 15px;
-  height: 100vh; /* Keep dashboard height static */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -942,7 +941,7 @@ html, body, #root {
 /* 2) Kill fixed-height on the inner dashboard, allow it to grow naturally */
 .teacher-dashboard-content1 {
   height: auto !important;    /* was 100vh in earlier CSS */
-  min-height: 100%;           /* optional; keeps it tall when short */
+  min-height: calc(100vh - 40px);         /* optional; keeps it tall when short */
   display: block;             /* if it was flex, you don't need it here */
 }
 
