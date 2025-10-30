@@ -451,9 +451,9 @@ const LeftContainer = ({ data, banners }) => {
         src={traineeLogo}
         alt="Trainee Logo"
         style={{
-          height: "48px",
+          height: "78px",
           width: "auto",
-          marginLeft: "400px",
+          marginLeft: "350px",
           verticalAlign: "middle",
         }}
       />
