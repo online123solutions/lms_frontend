@@ -453,7 +453,7 @@ const LeftContainer = ({ data, banners }) => {
         style={{
           height: "78px",
           width: "auto",
-          marginLeft: "350px",
+          marginLeft: "300px",
           verticalAlign: "middle",
         }}
       />

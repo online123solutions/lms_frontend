@@ -176,6 +176,8 @@ const ProfileCard = ({ username }) => {
     "";
 
   const profilePic = toImageUrl(profilePicRaw) || "https://via.placeholder.com/80";
+  const courseCount = data?.subjects_count || 0;
+  const certCount = data?.certifications?.length || 0;
 
   return (
     <div className="profile-card centered-profile">
@@ -185,13 +187,13 @@ const ProfileCard = ({ username }) => {
       <p className="location">Designation - {data?.profile?.designation || "-"}</p>
 
       <div className="stats">
-        <div className="stat">
-          <p>{data?.subjects_count || 0}</p>
-          <span>Course</span>
+        <div className="stat-row">
+          <p className="stat-count">{courseCount}</p>
+          <p className="stat-label">Course</p>
         </div>
-        <div className="stat">
-          <p>{data?.certifications?.length || 0}</p>
-          <span>Certification</span>
+        <div className="stat-row">
+          <p className="stat-count">{certCount}</p>
+          <p className="stat-label">Certification</p>
         </div>
       </div>
     </div>
@@ -524,9 +526,9 @@ const LeftContainer = ({ data, banners }) => {
         src={traineeLogo}
         alt="Trainee Logo"
         style={{
-          height: "48px",
+          height: "78px",
           width: "auto",
-          marginLeft: "400px",
+          marginLeft: "300px",
           verticalAlign: "middle",
         }}
       />
