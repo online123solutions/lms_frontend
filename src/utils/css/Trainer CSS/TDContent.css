@@ -1468,3 +1468,7 @@ html, body, #root {
 
 /* Optional: slightly reduce the global border-radius shadow padding look */
 .content-card1 { padding: 16px; border-radius: 14px; }
+
+@media (min-width: 1600px){
+  :root{ --page-max: 1440px; }
+}
