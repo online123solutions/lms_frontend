@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Dropdown, Button, Modal, Form, Alert } from "react-bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../utils/css/Trainer CSS/TDContent.css";
@@ -70,6 +71,7 @@ const CourseModal = ({ show, handleClose, courses }) => (
 );
 
 const TeacherDashboardContent = () => {
+  const navigate = useNavigate();
   const [selectedMonth, setSelectedMonth] = useState("");
   const [availableMonths, setAvailableMonths] = useState([]);
   const [lmsEngagementData, setLmsEngagementData] = useState([]);
@@ -819,28 +821,33 @@ const TeacherDashboardContent = () => {
           </div>
 
           <div className="right-column1">
-            <div className="quick-activities1">
-            <div className="quick-activities-grid1 three-col">
-              <div
-                className="quick-activity-card1 purple"
-                onClick={() => setShowSendModal(true)}
-              >
-                <div className="text1">Push Notification</div>
+            {/* ------- Quick Activities (two cards) ------- */}
+            <div className="qa-card">
+              <div className="qa-header">
+                <h3>Quick Activities</h3>
               </div>
 
-              {/* Circle in the middle column */}
-              <div className="quick-activities-circle1">
-                <span>Quick<br />Activities</span>
-              </div>
+              <div className="qa-grid">
+                <button
+                  type="button"
+                  className="qa-btn purple"
+                  onClick={() => setShowSendModal(true)}
+                  aria-label="Push Notification"
+                >
+                  <i className="bi bi-megaphone"></i>
+                  <span>Push Notification</span>
+                </button>
 
-              <div
-                className="quick-activity-card1 purple"
-                onClick={() => (window.location.href = "#")}
-              >
-                <div className="text1">Add Lesson</div>
+                <button
+                  type="button"
+                  className="qa-btn cyan"
+                  onClick={() => { window.location.href = "https://lms.steel.study/admin/"; }}
+                >
+                  <i className="bi bi-journal-plus"></i>
+                  <span>Add Lesson</span>
+                </button>
               </div>
             </div>
-          </div>
 
             <div className="content-card1 lms-engagement-card1">
               <div className="lms-engagement-header1">
