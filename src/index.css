@@ -1,39 +1,113 @@
+/* index.css (improved) */
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
 
 :root {
   --sidebar-w: 280px;
   --sidebar-w-collapsed: 70px;
-  --page-max: 1620px;
+  --page-max: 1480px;     /* was 1280px → biggest visual impact */
   --page-padding: 28px;
   --gap: 28px;
-  --base-font: 16.5px;
+  --base-font: 16px;
 }
 
-* { box-sizing: border-box; }
+/* sensible defaults */
+*,
+*::before,
+*::after { box-sizing: border-box; }
 
 html {
-  font-size: var(--base-font);
   -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  font-size: var(--base-font); /* use rem units from here */
 }
 
 body {
   margin: 0;
-  font-family: 'Lato', system-ui, sans-serif;
-  background: #f5f5f5;
+  padding: 0;
+  font-family: 'Lato', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background-color: #F5F5F5;
   color: #111;
+  line-height: 1.45;
 }
 
-.dashboard-shell {
-  width: min(94vw, var(--page-max));
+/* Responsive, fluid typography for headings */
+h1 { font-weight:800; font-size: clamp(1.4rem, 2.2vw, 2.25rem); margin: 0 0 0.5rem 0; }
+h2 { font-weight:800; font-size: clamp(1.2rem, 1.8vw, 1.75rem); margin: 0 0 0.5rem 0; }
+h3, h4, h5, h6 { font-weight:700; margin: 0 0 0.4rem 0; }
+
+p, span, li, a { font-weight: 400; font-size: clamp(0.9rem, 1vw, 1rem); margin: 0 0 0.75rem 0; }
+
+/* Page shell centered */
+.dashboard-shell{
+  width: 100%;
   max-width: var(--page-max);
   margin-inline: auto;
   padding: var(--page-padding);
+  box-sizing: border-box;
 }
 
-/* Large screens */
+/* Top-level layout: sidebar + main content */
+.dashboard-layout{
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  gap: var(--gap);
+  align-items: start;
+  min-height: calc(100vh - 40px);
+}
+
+/* Sidebar styles (simple example) */
+.sidebar {
+  width: 100%;
+  max-width: var(--sidebar-w);
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(20,20,40,0.06);
+}
+
+/* Main content area */
+.main {
+  min-height: 400px;
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(20,20,40,0.04);
+}
+
+/* ensure charts/images are responsive */
+img, canvas, iframe, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* smaller screens: collapse sidebar into single-column layout */
+@media (max-width: 900px) {
+  :root { --sidebar-w: var(--sidebar-w-collapsed); } /* optional */
+  .dashboard-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    order: 2; /* show below main if you prefer */
+    max-width: 100%;
+    padding: 12px;
+  }
+
+  .main { order: 1; }
+  .dashboard-shell { padding: 12px; }
+}
+
+/* very large screens: increase padding and allow wider page */
+@media (min-width: 1600px) {
+  .dashboard-shell { padding: 28px; }
+  :root { --page-max: 1600px; }
+}
+
+
 @media (min-width: 1700px) {
   :root {
-    --page-max: 1780px;
+    --page-max: 1620px;
     --page-padding: 36px;
     --gap: 36px;
     --base-font: 17px;
@@ -41,12 +115,7 @@ body {
   html { font-size: 17px; }
 }
 
-@media (min-width: 2400px) {
-  :root { --page-max: 1920px; }
-}
-
-/* Mobile collapse */
-@media (max-width: 900px) {
-  :root { --sidebar-w: 0px; }
-  .dashboard-layout { grid-template-columns: 1fr; }
+.dashboard-shell {
+  width: min(92vw, var(--page-max));   /* modern fluid behavior */
+  margin-inline: auto;
 }
