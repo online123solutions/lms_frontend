@@ -73,6 +73,15 @@ const TrainerDashboard = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [resetConfirmMessage, setResetConfirmMessage] = useState("");
 
+  // near the top of the component (after hooks)
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   // --- persist the active tab like Admin ---
   useEffect(() => {
     localStorage.setItem("activeContent", activeContent);
@@ -293,8 +302,7 @@ const TrainerDashboard = () => {
   };
 
   // ----- Align with Admin: sidebar width + fixed layout -----
-  const sidebarWidth = isCollapsed ? 60 : 280;
-  const isMobile = window.innerWidth < 768;
+    const sidebarWidth = isCollapsed ? 60 : 280;
 
   if (loading) return <Loader />;
   if (error) return <div style={{ padding: 20 }}>{error}</div>;
