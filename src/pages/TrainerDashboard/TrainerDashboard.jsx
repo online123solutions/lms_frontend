@@ -82,6 +82,11 @@ const TrainerDashboard = () => {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  // Force no collapse in mobile (overlay mode)
+  useEffect(() => {
+    if (isMobile) setIsCollapsed(false);
+  }, [isMobile]);
+
   // --- persist the active tab like Admin ---
   useEffect(() => {
     localStorage.setItem("activeContent", activeContent);
@@ -206,7 +211,7 @@ const TrainerDashboard = () => {
     }
   }, []);
 
-  // --- Renderers ---
+  // --- Renderers (unchanged) ---
   const renderSOPItem = (sop) => (
     <div key={sop.id} style={{ background: "#fff", borderRadius: 12, boxShadow: "0 1px 4px rgba(0,0,0,.08)", padding: 16, display: "grid", gap: 6 }}>
       <div style={{ fontWeight: 700 }}>{sop.title}</div>
@@ -301,8 +306,10 @@ const TrainerDashboard = () => {
     }
   };
 
-  // ----- Align with Admin: sidebar width + fixed layout -----
-    const sidebarWidth = isCollapsed ? 60 : 280;
+  // Updated: Consistent sidebar width (no conditional shrink)
+  const sidebarWidth = isCollapsed ? 60 : 280;
+  // Updated: Mobile uses transform transition; desktop uses width
+  const sidebarTransition = isMobile ? "transform 0.25s ease" : "width 0.4s ease-in-out";
 
   if (loading) return <Loader />;
   if (error) return <div style={{ padding: 20 }}>{error}</div>;
@@ -323,7 +330,7 @@ const TrainerDashboard = () => {
         tabIndex={-1}
       />
 
-      {/* Sidebar — same structure/style approach as Admin */}
+      {/* Updated: Sidebar styles for consistent width/animation */}
       <aside
         className={`sidebar ${isCollapsed ? "collapsed" : ""} ${isSidebarOpen ? "open" : ""}`}
         aria-label="Main navigation"
@@ -331,14 +338,16 @@ const TrainerDashboard = () => {
           position: "fixed",
           top: 0,
           left: 0,
-          width: isMobile && !isSidebarOpen ? 0 : sidebarWidth,
+          width: sidebarWidth,  // Always full width; slide handles visibility
           height: "100vh",
           display: "flex",
           flexDirection: "column",
-          zIndex: 1000,
-          transition: "width 0.3s ease",
+          zIndex: 2000,
+          transition: sidebarTransition,  // Mobile: transform; Desktop: width
           overflow: "hidden",
-          paddingTop: 0,
+          paddingTop: 50,  // Consistent with CSS
+          margin: 10,
+          backgroundColor: "#393939",  // Inline for reliability
         }}
       >
         <div className="sidebar-header brand" title={name ? `Logged in as ${name}` : ""} style={{ background: "transparent", border: "none", padding: "0px 0 0 0", marginTop: 0, flexShrink: 0 }}>
@@ -369,20 +378,29 @@ const TrainerDashboard = () => {
               key={item.key}
               className={`sidebar-item ${activeContent === item.key ? "active" : ""}`}
               onClick={() => {
-                setActiveContent(item.key);
-                localStorage.setItem("activeContent", item.key);
-                setIsSidebarOpen(false);
+                const newContent = item.key;
+                setActiveContent(newContent);
+                localStorage.setItem("activeContent", newContent);
+                // Updated: Delay close in mobile to allow content switch to render
+                if (isMobile && isSidebarOpen) {
+                  setTimeout(() => setIsSidebarOpen(false), 150);
+                }
               }}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
-                  setActiveContent(item.key);
-                  localStorage.setItem("activeContent", item.key);
-                  setIsSidebarOpen(false);
+                  const newContent = item.key;
+                  setActiveContent(newContent);
+                  localStorage.setItem("activeContent", newContent);
+                  if (isMobile && isSidebarOpen) {
+                    setTimeout(() => setIsSidebarOpen(false), 150);
+                  }
+                  e.preventDefault();  // Prevent scroll jump
                 }
               }}
               title={isCollapsed ? item.label : undefined}
+              style={{ pointerEvents: "auto" }}  // Explicit for mobile
             >
               <i className={`bi ${item.icon} sidebar-icon`} />
               {!isCollapsed && <span className="sidebar-text">{item.label}</span>}
@@ -417,7 +435,7 @@ const TrainerDashboard = () => {
         </div>
       </aside>
 
-      {/* Password Reset Request Modal */}
+      {/* Password Reset Modals (unchanged) */}
       <Modal show={showResetRequestModal} onHide={() => setShowResetRequestModal(false)}>
         <Modal.Header closeButton><Modal.Title>Request Password Reset</Modal.Title></Modal.Header>
         <Modal.Body>
@@ -433,7 +451,6 @@ const TrainerDashboard = () => {
         <Modal.Footer><Button variant="secondary" onClick={() => setShowResetRequestModal(false)}>Close</Button></Modal.Footer>
       </Modal>
 
-      {/* Password Reset Confirmation Modal */}
       <Modal show={showResetConfirmModal} onHide={() => setShowResetConfirmModal(false)}>
         <Modal.Header closeButton><Modal.Title>Reset Your Password</Modal.Title></Modal.Header>
         <Modal.Body>
@@ -453,12 +470,15 @@ const TrainerDashboard = () => {
         <Modal.Footer><Button variant="secondary" onClick={() => setShowResetConfirmModal(false)}>Close</Button></Modal.Footer>
       </Modal>
 
-      {/* Content panel aligned with Admin (margin-left respects sidebar width) */}
+      {/* Updated: Main content margin only for desktop */}
       <main
         className="content-panel"
         style={{
-          marginLeft: isMobile && !isSidebarOpen ? 0 : sidebarWidth,
+          marginLeft: isMobile ? 20 : sidebarWidth + 20,  // Mobile: small left margin; Desktop: full sidebar offset
           padding: "20px",
+          backgroundColor: "#ffffff",
+          borderRadius: "25px",
+          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)",
           minHeight: "100vh",
           transition: "margin-left 0.3s ease",
           overflowY: "auto",

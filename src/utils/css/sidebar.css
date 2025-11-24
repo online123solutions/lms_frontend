@@ -370,3 +370,30 @@
   }
 }
 
+/* Enhanced mobile sidebar consistency */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 280px !important; /* Override any inline conflicts; matches sidebarWidth */
+    transition: transform 0.25s ease !important;
+  }
+  
+  .sidebar-item {
+    pointer-events: auto; /* Ensure clicks always register */
+  }
+  
+  /* Prevent width shrink interference */
+  .sidebar {
+    min-width: 280px;
+  }
+}
+
+/* Desktop collapse (unchanged, but explicit) */
+@media (min-width: 769px) {
+  .sidebar {
+    transition: width 0.4s ease-in-out !important;
+  }
+  
+  .sidebar.collapsed {
+    width: 60px !important;
+  }
+}
