@@ -85,6 +85,20 @@ const EmployeeDashboard = () => {
   const name = data?.profile?.name || (username || "Employee");
   const initial = useMemo(() => (username ? username[0].toUpperCase() : "E"), [username]);
 
+  // Mobile detection (reactive)
+  const [isMobile, setIsMobile] = useState(() => typeof window !== "undefined" && window.innerWidth < 768);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  // Force no collapse in mobile (overlay mode)
+  useEffect(() => {
+    if (isMobile) setIsCollapsed(false);
+  }, [isMobile]);
+
   // persist active tab + sopsTab
   useEffect(() => {
     localStorage.setItem("activeContent", activeContent);
@@ -373,7 +387,8 @@ const EmployeeDashboard = () => {
 
   // ----- Layout parity with Trainer/Trainee -----
   const sidebarWidth = isCollapsed ? 60 : 280;
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  // Updated: Mobile uses transform transition; desktop uses width
+  const sidebarTransition = isMobile ? "transform 0.25s ease" : "width 0.4s ease-in-out";
 
   if (loading) return <Loader />;
   if (error) return <div style={{ padding: 20 }}>{error}</div>;
@@ -394,7 +409,7 @@ const EmployeeDashboard = () => {
         tabIndex={-1}
       />
 
-      {/* Sidebar — fixed, matches other dashboards */}
+      {/* Updated: Sidebar styles for consistent width/animation */}
       <aside
         className={`sidebar ${isCollapsed ? "collapsed" : ""} ${isSidebarOpen ? "open" : ""}`}
         aria-label="Main navigation"
@@ -402,14 +417,16 @@ const EmployeeDashboard = () => {
           position: "fixed",
           top: 0,
           left: 0,
-          width: isMobile && !isSidebarOpen ? 0 : sidebarWidth,
+          width: sidebarWidth,  // Always full width; slide handles visibility
           height: "100vh",
           display: "flex",
           flexDirection: "column",
-          zIndex: 1000,
-          transition: "width 0.3s ease",
+          zIndex: 2000,
+          transition: sidebarTransition,  // Mobile: transform; Desktop: width
           overflow: "hidden",
-          paddingTop: 0,
+          paddingTop: 50,  // Consistent with CSS
+          margin: 10,
+          backgroundColor: "#393939",  // Inline for reliability
         }}
       >
         {/* Brand */}
@@ -447,21 +464,30 @@ const EmployeeDashboard = () => {
               className={`sidebar-item ${activeContent === item.key ? "active" : ""}`}
               onClick={() => {
                 if (item.key === "sops") setSopsTab("sops");
-                setActiveContent(item.key);
-                localStorage.setItem("activeContent", item.key);
-                setIsSidebarOpen(false);
+                const newContent = item.key;
+                setActiveContent(newContent);
+                localStorage.setItem("activeContent", newContent);
+                // Updated: Delay close in mobile to allow content switch to render
+                if (isMobile && isSidebarOpen) {
+                  setTimeout(() => setIsSidebarOpen(false), 150);
+                }
               }}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   if (item.key === "sops") setSopsTab("sops");
-                  setActiveContent(item.key);
-                  localStorage.setItem("activeContent", item.key);
-                  setIsSidebarOpen(false);
+                  const newContent = item.key;
+                  setActiveContent(newContent);
+                  localStorage.setItem("activeContent", newContent);
+                  if (isMobile && isSidebarOpen) {
+                    setTimeout(() => setIsSidebarOpen(false), 150);
+                  }
+                  e.preventDefault();  // Prevent scroll jump
                 }
               }}
               title={isCollapsed ? item.label : undefined}
+              style={{ pointerEvents: "auto" }}  // Explicit for mobile
             >
               <i className={`bi ${item.icon} sidebar-icon`} />
               {!isCollapsed && (
@@ -507,11 +533,11 @@ const EmployeeDashboard = () => {
         </div>
       </aside>
 
-      {/* Content panel respects sidebar width */}
+      {/* Updated: Main content margin only for desktop (overlay in mobile) */}
       <main
         className={`content-panel ${activeContent === "curriculum" ? "curriculum-panel" : ""}`}
         style={{
-          marginLeft: isMobile && !isSidebarOpen ? 0 : sidebarWidth,
+          marginLeft: isMobile ? 20 : sidebarWidth + 20,  // Mobile: small left margin; Desktop: full sidebar offset
           padding: "20px",
           minHeight: "100vh",
           transition: "margin-left 0.3s ease",
