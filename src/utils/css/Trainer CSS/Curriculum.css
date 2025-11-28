@@ -145,3 +145,136 @@ html, body, #root {
   border-radius: 8px;
 }
 
+/* =========================================================
+   📱 MOBILE OPTIMIZATION (Desktop remains intact)
+   Applies to screens below 900px width
+========================================================= */
+
+@media (max-width: 900px) {
+
+  /* Entire page stacks vertically */
+  .container1 {
+    flex-direction: column;
+    height: auto;
+    padding: 12px;
+    gap: 12px;
+  }
+
+  /* Sidebar becomes full-width */
+  .sidebar1 {
+    width: 100%;
+    padding: 16px;
+    border-radius: 10px;
+    flex-direction: column;
+  }
+
+  .sidebar1 h2 {
+    text-align: center;
+    font-size: 20px;
+  }
+
+  .sidebar1 select {
+    font-size: 15px;
+  }
+
+  /* Buttons stretch full width */
+  .lesson-buttons {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .lesson-buttons button {
+    width: 48%;
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  /* Content shifts below sidebar */
+  .content1 {
+    width: 100%;
+    padding: 14px;
+    min-height: 70vh;
+  }
+
+  .lesson-content1 {
+    gap: 10px;
+  }
+
+  .lesson-title {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  /* Viewer area takes proper space */
+  .viewer-wrapper {
+    min-height: 60vh;
+    border-radius: 10px;
+  }
+
+  .viewer-frame {
+    height: 60vh;
+    border-radius: 8px;
+  }
+
+  /* Empty placeholder view */
+  .empty-space1 {
+    padding: 30px 10px;
+    font-size: 15px;
+  }
+}
+
+
+/* ============================================
+   📱 Extra-small phones (< 600px)
+============================================ */
+@media (max-width: 600px) {
+
+  .lesson-buttons button {
+    width: 100%;
+  }
+
+  .sidebar1 {
+    padding: 14px;
+  }
+
+  .sidebar1 select {
+    font-size: 14px;
+    padding: 6px;
+  }
+
+  .content1 {
+    padding: 12px;
+  }
+
+  .viewer-frame {
+    height: 50vh;
+  }
+
+  .lesson-title {
+    font-size: 17px;
+  }
+}
+
+
+/* ============================================
+   📱 Ultra-small phones (< 420px)
+============================================ */
+@media (max-width: 420px) {
+
+  .sidebar1 h2 {
+    font-size: 18px;
+  }
+
+  .lesson-buttons button {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .lesson-title {
+    font-size: 16px;
+  }
+
+  .viewer-frame {
+    height: 45vh;
+  }
+}
