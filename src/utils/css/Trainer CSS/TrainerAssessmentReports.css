@@ -143,3 +143,95 @@ grid-template-columns: 1fr !important; }
     width: 36%;
   }
 }
+
+/* ========================= */
+/* 📱 MOBILE OPTIMISATION    */
+/* (does NOT affect desktop) */
+/* ========================= */
+
+@media (max-width: 767.98px) {
+  /* Container a bit tighter on mobile */
+  .ar-wrap {
+    padding: 12px 8px 24px;
+  }
+
+  /* Toolbar: stack controls nicely */
+  .ar-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .ar-controls {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .ar-controls .field select,
+  .ar-controls .btn-primary,
+  .ar-controls .btn-outline {
+    width: 100%;
+  }
+
+  .ar-actions {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .ar-actions .btn-outline {
+    width: 100%;
+  }
+
+  /* Metrics: 2 columns instead of 4 */
+  .ar-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .metric {
+    padding: 8px 6px;
+  }
+
+  .metric-k {
+    font-size: 14px;
+  }
+
+  .metric-v {
+    font-size: 16px;
+  }
+
+  /* Table: allow horizontal scroll instead of squeezing */
+  .table-wrap {
+    max-height: none;
+    overflow-x: auto;   /* override hidden for mobile */
+  }
+
+  .results-table {
+    min-width: 540px;   /* so columns don't get too tiny */
+  }
+
+  .results-table thead th,
+  .results-table tbody td {
+    padding: 8px 6px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .user-cell {
+    gap: 6px;
+  }
+
+  .muted {
+    font-size: 12px;
+  }
+}
+
+/* Extra small phones: metrics go 1 per row */
+@media (max-width: 480px) {
+  .ar-metrics {
+    grid-template-columns: 1fr;
+  }
+}
