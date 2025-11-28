@@ -94,3 +94,127 @@
 .tn-tab:active {
   transform: translateY(1px); /* Button pressed effect */
 }
+
+/* ========================= */
+/* 📱 MOBILE OPTIMISATION    */
+/* (desktop layout untouched)*/
+/* ========================= */
+
+@media (max-width: 767.98px) {
+  .tn-wrap {
+    padding: 8px 6px;
+  }
+
+  /* Header: stack tabs + actions */
+  .tn-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .tn-tabs {
+    margin-bottom: 8px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .tn-tab {
+    flex: 1 1 120px;
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  .tn-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .tn-search {
+    width: 100%;
+  }
+
+  .tn-inline-filter {
+    font-size: 13px;
+  }
+
+  .tn-send-btn {
+    width: 100%;
+  }
+
+  /* Cards grid: single column */
+  .tn-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tn-card {
+    padding: 10px;
+  }
+
+  .tn-card-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tn-title {
+    font-size: 15px;
+  }
+
+  .tn-when {
+    font-size: 11px;
+  }
+
+  .tn-body {
+    font-size: 14px;
+  }
+
+  .tn-chips {
+    gap: 4px;
+  }
+
+  .chip {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+
+  .tn-link a {
+    font-size: 12px;
+  }
+
+  /* Pager: stack vertically */
+  .tn-pager {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .tn-count {
+    margin-right: 0;
+  }
+
+  .tn-page-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .tn-page-controls .btn-outline,
+  .tn-page-controls .btn-primary {
+    flex: 1 1 0;
+    text-align: center;
+  }
+}
+
+/* Extra-small phones */
+@media (max-width: 480px) {
+  .tn-tab {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .tn-wrap {
+    padding-inline: 4px;
+  }
+}
