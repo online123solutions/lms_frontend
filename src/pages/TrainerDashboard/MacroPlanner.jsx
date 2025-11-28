@@ -33,7 +33,6 @@ const MacroPlanner = () => {
 
   const weekOptions = ["week 1","week 2","week 3","week 4"];
 
-  // ✅ NEW: Role options
   const roleOptions = [
     { value: "trainee", label: "Trainee" },
     { value: "employee", label: "Employee" },
@@ -79,7 +78,6 @@ const MacroPlanner = () => {
       duration: form.elements.duration.value,
       department: form.elements.department.value,
       module: form.elements.module.value,
-      // ✅ include role in payload
       role: form.elements.role.value,
     };
 
@@ -103,12 +101,15 @@ const MacroPlanner = () => {
 
   return (
     <div className="macro-planner container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-4 header">
-        <h2 className="fw-bold text-white">
-          <i className="bi bi-calendar" style={{ color: "#FFFFFF" }}></i> Road Map
+      {/* HEADER: now responsive using flex-column on mobile */}
+      <div className="header d-flex justify-content-between align-items-center mb-4">
+        <h2 className="fw-bold text-white mb-0">
+          <i className="bi bi-calendar me-2" style={{ color: "#FFFFFF" }}></i>
+          Road Map
         </h2>
+
         <Form.Select
-          className="w-auto border-primary shadow-sm"
+          className="w-auto border-primary shadow-sm macro-filter-select"
           onChange={(e) => setSelectedWeek(e.target.value)}
           value={selectedWeek}
         >
@@ -119,10 +120,11 @@ const MacroPlanner = () => {
             </option>
           ))}
         </Form.Select>
+
         <Button
-          variant="info macro-btn"
+          variant="info"
           onClick={() => handleShowModal()}
-          className="shadow-sm"
+          className="macro-btn shadow-sm"
         >
           <i className="bi bi-plus-circle me-2"></i>Add Road Map
         </Button>
@@ -139,11 +141,9 @@ const MacroPlanner = () => {
           <table className="macro-planner-table">
             <thead>
               <tr>
-                {/* <th>Week</th> */}
                 <th>Duration</th>
                 <th>Department</th>
                 <th>Module</th>
-                {/* ✅ show role */}
                 <th>Role</th>
                 <th>Modify</th>
               </tr>
@@ -152,16 +152,17 @@ const MacroPlanner = () => {
               {filteredPlanners.length > 0 ? (
                 filteredPlanners.map((planner) => (
                   <tr key={planner.id}>
-                    {/* <td className="fw-medium">{planner.week}</td> */}
-                    <td>{planner.duration}</td>
-                    <td>{planner.department}</td>
-                    <td>{planner.module}</td>
-                    {/* ✅ show role */}
-                    <td className="text-capitalize">{planner.role}</td>
-                    <td>
+                    <td data-label="Duration">{planner.duration}</td>
+                    <td data-label="Department">{planner.department}</td>
+                    <td data-label="Module">{planner.module}</td>
+                    <td data-label="Role" className="text-capitalize">
+                      {planner.role}
+                    </td>
+                    <td data-label="Modify">
                       <Button
                         variant="outline-primary"
                         size="sm"
+                        className="w-100 w-md-auto"
                         onClick={() => handleShowModal(planner)}
                       >
                         <i className="bi bi-pencil"></i> Edit
@@ -171,7 +172,8 @@ const MacroPlanner = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" className="text-center text-muted">
+                  {/* colSpan fixed to 5 (number of columns) */}
+                  <td colSpan="5" className="text-center text-muted">
                     No Macroplanner found for selected week.
                   </td>
                 </tr>
@@ -252,7 +254,6 @@ const MacroPlanner = () => {
               />
             </Form.Group>
 
-            {/* ✅ NEW: Role dropdown */}
             <Form.Group className="mb-3" controlId="formRole">
               <Form.Label>Role</Form.Label>
               <Form.Select

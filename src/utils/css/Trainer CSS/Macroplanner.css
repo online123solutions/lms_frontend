@@ -13,7 +13,7 @@
 }
 
 .table>thead{
-  background-color: #0ba3e6 !important; /* Increased specificity and added !important */
+  background-color: #0ba3e6 !important;
   color: white;
 }
 
@@ -38,7 +38,7 @@
 }
 
 .macro-planner-table thead .table-custom {
-  background-color: #0ba3e6 !important; /* Increased specificity and added !important */
+  background-color: #0ba3e6 !important;
   color: white;
 }
 
@@ -138,8 +138,100 @@
 .macro-planner-table tr:last-child td:first-child { border-bottom-left-radius: 8px; }
 .macro-planner-table tr:last-child td:last-child { border-bottom-right-radius: 8px; }
 
-
 .macro-btn{
   background-color: #0ba3e6;
   color:white;
+}
+
+/* ===================== */
+/* 📱 MOBILE OPTIMISATION */
+/* ===================== */
+
+@media (max-width: 767.98px) {
+  .macro-planner {
+    padding: 10px;
+  }
+
+  .header {
+    padding: 12px;
+  }
+
+  .header h2 {
+    font-size: 1.2rem;
+  }
+
+  .macro-filter-select {
+    font-size: 0.9rem;
+  }
+
+  .macro-planner-table th,
+  .macro-planner-table td {
+    font-size: 0.85rem;
+    padding: 6px 4px;
+  }
+}
+
+/* Turn table into cards on very small screens */
+@media (max-width: 575.98px) {
+  .macro-planner-table thead {
+    display: none;
+  }
+
+  .macro-planner-table,
+  .macro-planner-table tbody,
+  .macro-planner-table tr,
+  .macro-planner-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .macro-planner-table tr {
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #fff;
+  }
+
+  .macro-planner-table td {
+    border: none;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    padding-left: 45%;
+    min-height: 38px;
+  }
+
+  .macro-planner-table td:last-child {
+    border-bottom: none;
+  }
+
+  .macro-planner-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+}
+@media (max-width: 767.98px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .header h2 {
+    font-size: 1.2rem;
+    text-align: left;   /* or center if you prefer */
+    width: 100%;
+  }
+
+  .macro-filter-select,
+  .macro-btn {
+    width: 100% !important;
+  }
 }
