@@ -245,3 +245,210 @@
     max-width: none;
   }
 }
+/* ========================= */
+/* 📱 MOBILE OPTIMISATION    */
+/* (desktop layout untouched)*/
+/* ========================= */
+
+@media (max-width: 767.98px) {
+  .trainer-queries-scope .qc-root {
+    padding: 0;
+  }
+
+  .trainer-queries-scope .qc-shell {
+    border-radius: 12px;
+  }
+
+  /* Topbar: stack title + back button */
+  .trainer-queries-scope .qc-topbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .trainer-queries-scope .qc-top-left h2 {
+    font-size: 1.1rem;
+  }
+
+  .trainer-queries-scope .qc-top-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .trainer-queries-scope .qc-top-actions .btn-outline {
+    width: 100%;
+  }
+
+  /* Whole layout: already 1 column at 980px; tweak spacing on small */
+  .trainer-queries-scope .query-chat-container {
+    padding: 8px;
+    gap: 8px;
+  }
+
+  /* Left list: reduce height and padding */
+  .trainer-queries-scope .query-list {
+    padding: 8px 6px;
+  }
+
+  .trainer-queries-scope .list-search input {
+    height: 38px;
+    font-size: 14px;
+  }
+
+  .trainer-queries-scope .list-items {
+    height: auto;
+    max-height: 260px;
+  }
+
+  .trainer-queries-scope .chat-list-item {
+    padding: 6px 8px;
+  }
+
+  .trainer-queries-scope .chat-list-item .item-title {
+    font-size: 13px;
+  }
+
+  .trainer-queries-scope .chat-list-item .item-sub {
+    font-size: 12px;
+  }
+
+  .trainer-queries-scope .chat-list-item .item-meta {
+    font-size: 11px;
+  }
+
+  /* Filters: they’re already 1 column at 780px; tighten spacing */
+  .trainer-queries-scope .filter-bar {
+    margin: 6px 0 10px;
+    gap: 8px;
+  }
+
+  .trainer-queries-scope .filter-bar .filter {
+    padding: 6px 8px;
+  }
+
+  .trainer-queries-scope .filter-bar .filter label {
+    font-size: 11px;
+  }
+
+  .trainer-queries-scope .filter-bar .filter select {
+    height: 34px;
+    font-size: 13px;
+  }
+
+  /* Right panel / thread */
+  .trainer-queries-scope .chat-main {
+    min-height: auto;
+    grid-template-rows: auto minmax(180px, 1fr) auto;
+    padding: 4px 2px 8px;
+  }
+
+  .trainer-queries-scope .thread-header {
+    padding: 8px 4px;
+  }
+
+  .trainer-queries-scope .thread-title {
+    font-size: 15px;
+  }
+
+  .trainer-queries-scope .thread-sub {
+    font-size: 12px;
+  }
+
+  /* Assign row: stack nicely */
+  .trainer-queries-scope .assign-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .trainer-queries-scope .assign-left {
+    width: 100%;
+  }
+
+  .trainer-queries-scope .assign-controls {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .trainer-queries-scope .assign-input {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+
+  .trainer-queries-scope .assign-btn {
+    flex: 1 1 48%;
+    text-align: center;
+  }
+
+  /* Messages */
+  .trainer-queries-scope .message-area {
+    padding: 6px 0 8px;
+  }
+
+  .trainer-queries-scope .bubble-row {
+    gap: 6px;
+  }
+
+  .trainer-queries-scope .bubble {
+    max-width: 100%;
+    font-size: 14px;
+  }
+
+  .trainer-queries-scope .bubble-meta {
+    font-size: 11px;
+  }
+
+  .trainer-queries-scope .avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+  }
+
+  /* Reply box */
+  .trainer-queries-scope .reply-box.sticky {
+    margin-top: 6px;
+    padding: 6px;
+  }
+
+  .trainer-queries-scope .reply-box input {
+    font-size: 14px;
+    height: 40px;
+  }
+
+  .trainer-queries-scope .reply-box .btn-primary {
+    padding: 0 16px;
+    height: 40px;
+    margin-left: 6px;
+  }
+}
+
+/* Extra-small phones */
+@media (max-width: 480px) {
+  .trainer-queries-scope .qc-topbar {
+    padding-inline: 8px;
+  }
+
+  .trainer-queries-scope .query-chat-container {
+    padding-inline: 4px;
+  }
+
+  .trainer-queries-scope .assign-btn {
+    flex: 1 1 100%;
+  }
+
+  .trainer-queries-scope .reply-box {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .trainer-queries-scope .reply-box input {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .trainer-queries-scope .reply-box .btn-primary {
+    width: 100%;
+    margin-left: 0;
+  }
+}
