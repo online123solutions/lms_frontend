@@ -238,3 +238,177 @@ img, canvas, iframe, video { max-width: 100%; height: auto; display: block; }
 /* =========================
    End of file
    ========================= */
+
+   /* ===== Component: Trainee Dashboard fixes (header + notifications) ===== */
+
+/* Header + logo */
+.left-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  margin: 0 0 12px;
+  padding: 0;
+  box-sizing: border-box;
+}
+.left-greeting { display:flex; flex-direction:column; min-width:0; }
+.greeting-name { font-weight:700; font-size:16px; color:#111827; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sub-greet { font-size:14px; color:#374151; margin-top:4px; }
+
+/* header logo */
+.header-logo img { height: 72px; width: auto; object-fit: contain; display:block; }
+
+/* notifications icon-heading */
+.icon-heading {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width: 0;
+}
+.icon-heading .icon { font-size: 18px; color: #111827; }
+.icon-heading-title { margin: 0; font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* unread badge */
+.unread-badge {
+  margin-left: auto;
+  background: #e02424;
+  color: #fff;
+  border-radius: 999px;
+  padding: 0 8px;
+  font-size: 12px;
+  line-height: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+/* notifications list container */
+.header-con1 {
+  padding: 8px 12px;
+  box-sizing: border-box;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* list reset */
+.notif-list { list-style: none; margin: 0; padding: 0; }
+
+/* each notification */
+.notif-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 6px;
+  border-bottom: 1px solid #f1f2f6;
+  min-width: 0;
+}
+.notif-empty { padding: 8px 6px; color: #6b7280; }
+
+/* head row: unread dot + title + meta */
+.notif-head { display:flex; align-items:center; gap:8px; min-width:0; }
+.notif-dot { width: 10px; height: 10px; border-radius: 50%; background: #203C6E; flex: 0 0 auto; }
+.notif-title { font-weight:700; color:#111827; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+.notif-meta { margin-left:auto; font-size:12px; color:#6b7280; flex: 0 0 auto; white-space:nowrap; }
+
+/* body and footer */
+.notif-body { display:flex; flex-direction:column; gap:8px; min-width:0; }
+.notif-message { color:#374151; font-size:14px; line-height:1.35; word-break: break-word; }
+.notif-link { color:#1f6feb; text-decoration: underline; }
+.notif-footer { display:flex; align-items:center; gap:8px; margin-top:2px; min-width:0; }
+.notif-from { font-size:12px; color:#6b7280; }
+.btn-mark-read { margin-left:auto; background:#e5e7eb; border: none; border-radius: 6px; padding:6px 8px; cursor: pointer; font-size:12px; white-space:nowrap; }
+
+/* scroll inside the card */
+.header-con1 .notif-list {
+  max-height: 220px;
+  overflow-y: auto;
+  scrollbar-gutter: stable both-edges;
+  padding-right: 6px;
+}
+
+/* responsive tweaks */
+@media (max-width: 900px) {
+  .header-logo img { height: 48px; }
+  .left-greeting .greeting-name { white-space: normal; } /* allow wrap */
+  .header-con1 .notif-list { max-height: 260px; }
+}
+@media (max-width: 420px) {
+  .header-logo img { height: 40px; }
+  .notif-item { padding: 8px 4px; }
+  .notif-meta { font-size: 11px; }
+  .btn-mark-read { padding: 5px 6px; font-size: 11px; }
+  .header-con1 .notif-list { max-height: 300px; }
+}
+/* ---------- Fix: notification title/date overlap & message overlap ---------- */
+
+/* Make the head a stable 3-col layout: dot | title (wraps) | meta (fixed) */
+.notif-head {
+  display: grid;
+  grid-template-columns: 18px 1fr auto; /* dot (fixed) | title (flexible) | date (auto) */
+  gap: 8px;
+  align-items: start;   /* allow title to wrap onto multiple lines */
+  min-width: 0;         /* allow children to shrink inside flex/grid parents */
+}
+
+/* Dot stays centered in its cell */
+.notif-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #203C6E;
+  margin-top: 4px;      /* visually center with wrapped lines */
+  flex: 0 0 auto;
+}
+
+/* Title now can wrap; limit height to avoid huge items */
+.notif-title {
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  white-space: normal;        /* ALLOW wrap (previously nowrap caused overlap) */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  line-height: 1.25;
+  max-height: calc(1.25em * 2 + 4px);
+}
+
+/* Date/meta pinned to right and never wraps */
+.notif-meta {
+  margin-left: 0;
+  justify-self: end;
+  font-size: 12px;
+  color: #6b7280;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+/* Ensure message sits below the head and cannot overlap */
+.notif-body {
+  margin-top: 6px;           /* gives breathing room from the title */
+  z-index: 0;                /* keep body at normal stacking */
+}
+
+/* Message safe wrapping and long-word breaking */
+.notif-message {
+  word-break: break-word;
+  overflow-wrap: anywhere;   /* support very long unbroken strings/URLs */
+  color: #374151;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+/* Small-screen tweak: allow 3-line titles if necessary */
+@media (max-width: 420px) {
+  .notif-title {
+    max-height: calc(1.25em * 3 + 6px);
+  }
+  .notif-dot { margin-top: 6px; }
+  .header-con1 .notif-list { max-height: 320px; } /* allow more scrolling */
+}
+
+/* Safety: prevent absolute/negative-margin children from overlapping */
+.notif-item { position: relative; }
