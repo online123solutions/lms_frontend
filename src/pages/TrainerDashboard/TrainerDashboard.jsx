@@ -166,42 +166,69 @@ const TrainerDashboard = () => {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // Force-clear any transform on desktop-sidebar to stop zooming issues.
-  // This is a defensive runtime fix — we still need to remove the source later.
-  useEffect(() => {
-    const clearSidebarTransform = () => {
-      try {
-        const el = document.querySelector("aside.sidebar");
-        if (!el) return;
-        if (!isMobile) {
-          // Desktop: ensure no translate transform is applied
-          el.style.transform = "none";
-          el.style.webkitTransform = "none";
-          // keep a smooth width transition only on desktop
-          el.style.transition = "width 0.4s ease-in-out";
-        } else {
-          // Mobile: respect isSidebarOpen class/state (we handle transform via inline style/class)
-          if (isSidebarOpen) {
-            el.style.transform = "translateX(0)";
-            el.style.webkitTransform = "translateX(0)";
-          } else {
-            el.style.transform = "translateX(-110%)";
-            el.style.webkitTransform = "translateX(-110%)";
-          }
-          el.style.transition = "transform 0.25s ease";
-        }
-      } catch (e) {
-        // noop
+useEffect(() => {
+  if (typeof window === "undefined") return;
+  const aside = () => document.querySelector("aside.sidebar");
+  const applySafeState = () => {
+    const el = aside();
+    if (!el) return;
+    if (!isMobile) {
+      // force safe desktop state
+      el.style.transform = "none";
+      el.style.webkitTransform = "none";
+      el.style.transition = "width 0.4s ease-in-out";
+    } else {
+      // keep mobile behavior controlled by app state (open/close)
+      if (isSidebarOpen) {
+        el.style.transform = "translateX(0)";
+        el.style.webkitTransform = "translateX(0)";
+      } else {
+        el.style.transform = "translateX(-110%)";
+        el.style.webkitTransform = "translateX(-110%)";
       }
-    };
+      el.style.transition = "transform 0.25s ease";
+    }
+  };
 
-  // Run immediately and on relevant state changes
-  clearSidebarTransform();
+  // apply immediately
+  setTimeout(applySafeState, 10);
 
-  // Re-apply when these states change
-  // (cleanup not necessary because function writes inline style)
-  // Dependencies chosen to reapply when layout toggles
-}, [isMobile, isSidebarOpen, isCollapsed, sidebarWidth]);
+  // Observe attribute changes so we can log and re-apply safety
+  let mo;
+  const setupObserver = () => {
+    const el = aside();
+    if (!el) return;
+    mo = new MutationObserver((mutations) => {
+      // log changes and reapply safe state
+      mutations.forEach(m => {
+        if (m.attributeName === "style" || m.attributeName === "class") {
+          const computed = getComputedStyle(el).transform;
+          console.warn("[sidebar-observer] style/class changed — computed transform:", computed, " classList:", el.className);
+          // reapply safe state after a tiny delay (let mutating code finish)
+          setTimeout(applySafeState, 5);
+        }
+      });
+    });
+    mo.observe(el, { attributes: true, attributeFilter: ['style', 'class'] });
+  };
+
+  // initial setup (if sidebar not present immediately, wait a bit)
+  const t = setInterval(() => {
+    if (document.querySelector("aside.sidebar")) {
+      clearInterval(t);
+      setupObserver();
+      applySafeState();
+    }
+  }, 50);
+
+  // also re-apply whenever isMobile/isSidebarOpen changes
+  applySafeState();
+
+  return () => {
+    clearInterval(t);
+    if (mo) mo.disconnect();
+  };
+}, [isMobile, isSidebarOpen, isCollapsed]);
 
 
   const handleLogout = useCallback(async () => {
