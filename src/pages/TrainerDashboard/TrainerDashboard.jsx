@@ -330,24 +330,29 @@ const TrainerDashboard = () => {
         tabIndex={-1}
       />
 
-      {/* Updated: Sidebar styles for consistent width/animation */}
+            {/* Updated: Sidebar styles for consistent width/animation */}
       <aside
-        className={`sidebar ${isCollapsed ? "collapsed" : ""} ${isSidebarOpen ? "open" : ""}`}
+        className={`sidebar ${isCollapsed ? "collapsed" : ""} ${isSidebarOpen ? "open" : ""} ${isMobile ? "mobile" : "desktop"}`}
         aria-label="Main navigation"
         style={{
           position: "fixed",
           top: 0,
           left: 0,
-          width: sidebarWidth,  // Always full width; slide handles visibility
+          width: sidebarWidth,                       // keep width for layout calculations
           height: "100vh",
           display: "flex",
           flexDirection: "column",
           zIndex: 2000,
-          transition: sidebarTransition,  // Mobile: transform; Desktop: width
+          transition: isMobile ? "transform 0.25s ease" : "width 0.4s ease-in-out",
           overflow: "hidden",
-          paddingTop: 50,  // Consistent with CSS
+          paddingTop: 50,
           margin: 10,
-          backgroundColor: "#393939",  // Inline for reliability
+          backgroundColor: "#393939",
+
+          /* CRITICAL: prevent desktop transforms (this neutralizes the earlier translateX that caused page shrink)
+             On mobile we still slide in/out by transform so mobile overlay works. */
+          transform: isMobile ? (isSidebarOpen ? "translateX(0)" : "translateX(-110%)") : "none",
+          WebkitTransform: isMobile ? (isSidebarOpen ? "translateX(0)" : "translateX(-110%)") : "none",
         }}
       >
         <div className="sidebar-header brand" title={name ? `Logged in as ${name}` : ""} style={{ background: "transparent", border: "none", padding: "0px 0 0 0", marginTop: 0, flexShrink: 0 }}>
