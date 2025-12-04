@@ -19,7 +19,7 @@ const Loader = () => {
 const StyledWrapper = styled.div`
   .loader {
     position: relative;
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     margin-bottom: 10px;
     border: 1px solid #d3d3d3;

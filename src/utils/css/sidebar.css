@@ -105,7 +105,7 @@
 .sidebar.collapsed .sidebar-icon {
   margin-right: 18px;
   color: #FFFFFF;
-  transform: scale(0.9) translateX(5px);
+  transform: translateX(5px);
   transition: transform 0.4s ease;
 }
 
