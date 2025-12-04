@@ -76,11 +76,15 @@ const TrainerDashboard = () => {
   // near the top of the component (after hooks)
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
 
+
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
+
+  const sidebarWidth = isCollapsed ? 60 : 280;
+  const sidebarTransition = isMobile ? "transform 0.25s ease" : "width 0.4s ease-in-out";
 
   // Force no collapse in mobile (overlay mode)
   useEffect(() => {
@@ -161,6 +165,44 @@ const TrainerDashboard = () => {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
+
+  // Force-clear any transform on desktop-sidebar to stop zooming issues.
+  // This is a defensive runtime fix — we still need to remove the source later.
+  useEffect(() => {
+    const clearSidebarTransform = () => {
+      try {
+        const el = document.querySelector("aside.sidebar");
+        if (!el) return;
+        if (!isMobile) {
+          // Desktop: ensure no translate transform is applied
+          el.style.transform = "none";
+          el.style.webkitTransform = "none";
+          // keep a smooth width transition only on desktop
+          el.style.transition = "width 0.4s ease-in-out";
+        } else {
+          // Mobile: respect isSidebarOpen class/state (we handle transform via inline style/class)
+          if (isSidebarOpen) {
+            el.style.transform = "translateX(0)";
+            el.style.webkitTransform = "translateX(0)";
+          } else {
+            el.style.transform = "translateX(-110%)";
+            el.style.webkitTransform = "translateX(-110%)";
+          }
+          el.style.transition = "transform 0.25s ease";
+        }
+      } catch (e) {
+        // noop
+      }
+    };
+
+  // Run immediately and on relevant state changes
+  clearSidebarTransform();
+
+  // Re-apply when these states change
+  // (cleanup not necessary because function writes inline style)
+  // Dependencies chosen to reapply when layout toggles
+}, [isMobile, isSidebarOpen, isCollapsed, sidebarWidth]);
+
 
   const handleLogout = useCallback(async () => {
     const result = await logout();
@@ -305,11 +347,6 @@ const TrainerDashboard = () => {
       default: return <div style={{ padding: 20 }}>Select an option</div>;
     }
   };
-
-  // Updated: Consistent sidebar width (no conditional shrink)
-  const sidebarWidth = isCollapsed ? 60 : 280;
-  // Updated: Mobile uses transform transition; desktop uses width
-  const sidebarTransition = isMobile ? "transform 0.25s ease" : "width 0.4s ease-in-out";
 
   if (loading) return <Loader />;
   if (error) return <div style={{ padding: 20 }}>{error}</div>;
