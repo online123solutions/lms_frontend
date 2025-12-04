@@ -104,4 +104,8 @@ img, canvas, iframe, video {
   :root { --page-max: 1600px; }
 }
 
-
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  font-size: clamp(14px, 0.8vw + 12px, 16px); /* prevents fonts from becoming too large on big screens */
+}
