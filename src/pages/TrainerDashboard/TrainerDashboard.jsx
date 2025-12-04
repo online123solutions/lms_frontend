@@ -396,7 +396,7 @@ useEffect(() => {
 
             {/* Updated: Sidebar styles for consistent width/animation */}
       <aside
-        className={`sidebar ${isCollapsed ? "collapsed" : ""} ${isSidebarOpen ? "open" : ""} ${isMobile ? "mobile" : "desktop"}`}
+        className={`sidebar ${isMobile ? "mobile" : "desktop"} ${isCollapsed ? "collapsed" : ""} ${isSidebarOpen ? "open" : ""}`}
         aria-label="Main navigation"
         style={{
           position: "fixed",
