@@ -5,6 +5,12 @@
 /* =========================
    Layout safety / global reset
    ========================= */
+
+aside.sidebar {
+  transform: translateX(0px) !important;
+}
+
+
 :root {
   --sidebar-w: 280px;
   --sidebar-w-collapsed: 70px;
