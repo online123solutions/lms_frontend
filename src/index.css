@@ -412,3 +412,855 @@ img, canvas, iframe, video { max-width: 100%; height: auto; display: block; }
 
 /* Safety: prevent absolute/negative-margin children from overlapping */
 .notif-item { position: relative; }
+
+/* ---------------- Dashboard responsive & grid fixes ---------------- */
+
+/* dashboard container: left / center / right columns */
+.dashboard-container {
+  display: grid;
+  grid-template-columns: 280px minmax(620px, 1fr) 360px; /* desktop layout */
+  gap: 28px;
+  align-items: start;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ensure content doesn't overflow horizontally */
+.dashboard-container,
+.dashboard-container * { box-sizing: border-box; }
+
+/* Left container behavior (center column will take remaining space) */
+.left-container { width: 100%; }
+
+/* Right column container hold profile, notifications, etc. */
+.right-container { width: 100%; }
+
+/* For screens narrower than 1280px, reduce center width & shrink right column */
+@media (max-width: 1280px) {
+  .dashboard-container {
+    grid-template-columns: 260px minmax(520px, 1fr) 320px;
+  }
+}
+
+/* For medium screens stack right column under center (mobile-first overlay is already in your CSS) */
+@media (max-width: 900px) {
+  .dashboard-container {
+    grid-template-columns: 1fr;
+  }
+  .right-container { order: 2; }
+  .left-container { order: 1; }
+  .sidebar { transform: translateX(-110%); } /* overlay behavior preserved */
+}
+
+/* ---------- Header / Logo alignment fixes ---------- */
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 12px;
+  flex-wrap: wrap; /* allow wrap on small screens */
+}
+
+.header-left { flex: 1 1 auto; min-width: 220px; }
+.header-right { flex: 0 0 auto; display:flex; align-items:center; justify-content:flex-end; min-width: 120px; }
+
+.header-logo {
+  height: 78px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  border-radius: 6px;
+}
+
+/* small subtext under greeting if needed */
+.greeting-line .subtext {
+  font-size: 0.95rem;
+  color: #374151;
+  margin-top: 6px;
+}
+
+/* ---------- Notifications layout safety ---------- */
+.action-card .notif-list { list-style: none; padding: 0; margin: 0; }
+.notif-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 10px;
+  background: transparent;
+  border-bottom: 1px solid rgba(15,23,42,0.04);
+}
+
+/* header of each notification */
+.notif-head {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* small dot for unread */
+.notif-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #203C6E;
+  flex: 0 0 9px;
+}
+
+/* title should wrap, allow long titles to break */
+.notif-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.1;
+  word-break: break-word;     /* allow wrapping words */
+  white-space: normal;
+  flex: 1 1 auto;
+}
+
+/* time stays to the right; keep it small and single-line */
+.notif-meta {
+  margin-left: 12px;
+  font-size: 12px;
+  color: #6b7280;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+/* message body: clamp to 3 lines */
+.notif-body .notif-message {
+  font-size: 0.95rem;
+  color: #374151;
+  overflow: hidden;
+  display: -webkit-box;
+
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  word-break: break-word;
+}
+
+/* footer (From + button) aligned with footer gap */
+.notif-footer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* mark as read button styling */
+.btn-mark-read {
+  margin-left: auto;
+  background: #e5e7eb;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* ---------- Quick Activities (icons on top) ---------- */
+.qa-card .qa-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: stretch;
+}
+
+/* single large button style shared across admin/trainer */
+.qa-btn {
+  display: flex;
+  flex-direction: column; /* icon on top, text below */
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px 12px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(20,20,40,0.04);
+  font-weight: 700;
+  min-height: 64px;
+  text-align: center;
+}
+
+/* icon size */
+.qa-btn i {
+  font-size: 22px;
+  display: block;
+}
+
+/* color variations (reuse your class names) */
+.qa-btn.purple { background: linear-gradient(180deg,#fbf3ff,#f3e9ff); color:#111; }
+.qa-btn.pink   { background: linear-gradient(180deg,#ffeef2,#ffdfe8); color:#111; }
+.qa-btn.cyan   { background: linear-gradient(180deg,#e6fbff,#dff7fa); color:#111; }
+
+/* If there are more than 4 items (admin), allow grid to flow to 3 columns on wider screens */
+@media (min-width: 1400px) {
+  .qa-card .qa-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ensure long labels wrap */
+.qa-btn span { white-space: normal; font-size: 0.95rem; }
+
+/* ---------- Chart safety / content widths ---------- */
+.content-card1, .card {
+  overflow: visible;
+}
+
+/* chart container should be height-controlled; charts should not force horizontal scroll */
+.chart-container1 { width: 100%; }
+.chart-inner1 { height: 220px; max-width: 100%; }
+
+/* preserve card padding + consistent border radius as in your theme */
+.content-card1 { padding: 18px; border-radius: 12px; }
+
+/* neutralize inline 100vw issues you saw earlier */
+*[style*="100vw"] { width: 100% !important; max-width: 100% !important; }
+
+/* small: keep sidebar visible and main content centred within page max width */
+.dashboard-shell { max-width: 1380px; margin: 0 auto; }
+
+/* ------------------------------------------- */
+/*  MATCH QUICK ACTIVITY COLORS WITH TOP-BAR   */
+/* ------------------------------------------- */
+
+/* reuse exact colors of top-bar cards */
+.qa-btn.purple {
+  background: var(--purple-bg, #EBDFFF);   /* SAME AS top-bar purple */
+  color: var(--purple-text, #1F1142);
+}
+
+.qa-btn.pink {
+  background: var(--pink-bg, #FFE3EC);     /* SAME AS top-bar pink */
+  color: var(--pink-text, #4A1020);
+}
+
+.qa-btn.cyan {
+  background: var(--cyan-bg, #DFF7FA);     /* SAME AS top-bar cyan */
+  color: var(--cyan-text, #063445);
+}
+
+/* ensure size consistency */
+.qa-btn {
+  border-radius: 12px;
+  padding: 15px 12px;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+}
+
+/* icon centered above text */
+.qa-btn i {
+  font-size: 22px;
+  display: block;
+}
+/* ------------------------------------------- */
+/*  MATCH QUICK ACTIVITY COLORS WITH TOP-BAR   */
+/* ------------------------------------------- */
+
+/* reuse exact colors of top-bar cards */
+.qa-btn.purple {
+  background: var(--purple-bg, #EBDFFF);   /* SAME AS top-bar purple */
+  color: var(--purple-text, #1F1142);
+}
+
+.qa-btn.pink {
+  background: var(--pink-bg, #FFE3EC);     /* SAME AS top-bar pink */
+  color: var(--pink-text, #4A1020);
+}
+
+.qa-btn.cyan {
+  background: var(--cyan-bg, #DFF7FA);     /* SAME AS top-bar cyan */
+  color: var(--cyan-text, #063445);
+}
+
+/* ensure size consistency */
+.qa-btn {
+  border-radius: 12px;
+  padding: 15px 12px;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+}
+
+/* icon centered above text */
+.qa-btn i {
+  font-size: 22px;
+  display: block;
+}
+/* -------------------------------------------------------------------
+   Make Quick Activities buttons match top-bar cards exactly
+   Paste this at the END of TDContent.css (or index.css) to override
+   ------------------------------------------------------------------- */
+
+/* --- exact colors used by top-bar cards --- */
+:root{
+  --brand-purple-bg: #EBDFFF;
+  --brand-purple-text: #1F1142;
+
+  --brand-pink-bg:   #FFE3EC;
+  --brand-pink-text: #4A1020;
+
+  --brand-cyan-bg:   #DFF7FA;
+  --brand-cyan-text: #063445;
+
+  /* shared card look */
+  --brand-card-radius: 12px;
+  --brand-card-shadow: 0 6px 18px rgba(20,20,40,0.04);
+}
+
+/* Target common quick-activity button selectors used in Trainer/Admin */
+.qa-grid .qa-btn,
+.qa-card .qa-btn,
+.qa-card button.qa-btn,
+.qa-grid button.qa-btn {
+  /* layout */
+  display: flex !important;
+  flex-direction: column !important; /* icon above text */
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+
+  /* sizing */
+  padding: 18px 14px !important;
+  min-height: 64px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+
+  /* visuals */
+  border-radius: var(--brand-card-radius) !important;
+  border: none !important;
+  box-shadow: var(--brand-card-shadow) !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+
+  /* ensure no unexpected gradient or background-image interferes */
+  background-image: none !important;
+}
+
+/* icon styling: centered above the label */
+.qa-grid .qa-btn i,
+.qa-card .qa-btn i {
+  font-size: 20px !important;
+  display: block !important;
+  line-height: 1 !important;
+}
+
+/* label text */
+.qa-grid .qa-btn span,
+.qa-card .qa-btn span {
+  display: block !important;
+  font-size: 13px !important;
+  text-align: center !important;
+  margin: 0 !important;
+}
+
+/* --- color variants (exact brand colors) --- */
+.qa-btn.purple {
+  background: var(--brand-purple-bg) !important;
+  color: var(--brand-purple-text) !important;
+}
+
+.qa-btn.pink {
+  background: var(--brand-pink-bg) !important;
+  color: var(--brand-pink-text) !important;
+}
+
+.qa-btn.cyan {
+  background: var(--brand-cyan-bg) !important;
+  color: var(--brand-cyan-text) !important;
+}
+
+/* make sure icon color is same as text (if icon is font-based) */
+.qa-btn.purple i { color: var(--brand-purple-text) !important; }
+.qa-btn.pink   i { color: var(--brand-pink-text) !important; }
+.qa-btn.cyan   i { color: var(--brand-cyan-text) !important; }
+
+/* subtle hover — same color but slight lift */
+.qa-btn:hover {
+  transform: translateY(-3px);
+  transition: transform .12s ease, box-shadow .12s ease;
+  box-shadow: 0 10px 22px rgba(20,20,40,0.06) !important;
+}
+
+/* Resist conflicting utility rules: make sure qa-grid layout keeps two buttons side-by-side 
+   on wide screens and stacks on smaller screens */
+.qa-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+/* for admin where there are five items, allow grid to automatically fill */
+.qa-grid.multi-5 {
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: minmax(64px, auto);
+}
+
+/* stack buttons on small devices */
+@media (max-width: 900px) {
+  .qa-grid,
+  .qa-grid.multi-5 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .qa-grid .qa-btn,
+  .qa-card .qa-btn {
+    min-height: 60px !important;
+  }
+}
+/* =========================
+   Mobile/Tablet responsive fixes
+   Paste at the END of TDContent.css or index.css
+   ========================= */
+
+/* Ensure off-canvas sidebar on small screens */
+@media (max-width: 900px) {
+  /* sidebar becomes overlay hidden by default */
+  .sidebar {
+    width: 260px !important;
+    max-width: 260px !important;
+    height: 100vh !important;
+    transform: translateX(-110%) !important; /* hidden by default */
+    transition: transform .28s ease, box-shadow .18s ease !important;
+    z-index: 2200 !important;
+    border-radius: 0 !important;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.35) !important;
+    pointer-events: auto !important;
+    padding: 14px 12px !important;
+  }
+
+  /* When toggled open (JS should add .open) it slides in */
+  .sidebar.open {
+    transform: translateX(0) !important;
+  }
+
+  /* Backdrop to block interactions */
+  .mobile-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.36);
+    z-index: 2100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .18s ease;
+  }
+  .mobile-backdrop.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Main/content should not be offset (use full width) */
+  .main, .main-content, .content-panel, .teacher-dashboard-content1 {
+    margin-left: 0 !important;
+    max-width: 100% !important;
+    padding: 12px !important;
+  }
+
+  /* header area: allow wrapping and reduce spacing */
+  .top-bar1 {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    align-items: center !important;
+    padding: 8px 0 !important;
+  }
+
+  .top-bar-left1, .top-bar-middle1, .top-bar-right1 {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+
+  /* top bar cards shrink on small screens */
+  .top-bar-card1 {
+    min-width: 120px !important;
+    padding: 10px 12px !important;
+    font-size: 14px !important;
+  }
+
+  /* make profile picture smaller */
+  .profile-pic-frame img, .profile-pic-frame > div {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 8px !important;
+  }
+
+  /* Quick activities: stack single column and keep icon above label */
+  .qa-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .qa-grid .qa-btn,
+  .qa-card .qa-btn {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    width: 100% !important;
+    padding: 12px 10px !important;
+    min-height: 56px !important;
+    font-size: 14px !important;
+  }
+
+  .qa-grid .qa-btn i, .qa-card .qa-btn i { font-size: 18px !important; }
+
+  /* Right column cards should not be too tall on small screen */
+  .right-column1 .content-card1 {
+    padding: 12px !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Make Overview cards inline stacked (shrink) */
+  .overview-row1 {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .overview-card-item1 {
+    width: 160px !important;
+    padding: 12px !important;
+  }
+
+  /* Reduce chart height a bit on small screens */
+  .chart-container1 .chart-inner1 {
+    height: 160px !important;
+  }
+
+  /* Avoid content overflow caused by large fixed paddings/margins */
+  .cards-container1, .cards-container1 > .left-column1, .cards-container1 > .right-column1 {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Make the sidebar nav items slightly smaller */
+  .sidebar .sidebar-item {
+    padding: 10px 8px !important;
+    gap: 10px !important;
+    font-size: 14px !important;
+  }
+}
+
+/* Extra small phones: tighten further */
+@media (max-width: 420px) {
+  .sidebar { width: 240px !important; max-width: 240px !important; }
+  .top-bar-card1 { min-width: 110px !important; font-size: 13px !important; padding: 8px 10px !important; }
+  .qa-grid .qa-btn, .qa-card .qa-btn { min-height: 52px !important; font-size: 13px !important; }
+  .chart-container1 .chart-inner1 { height: 140px !important; }
+}
+
+/* Safety: prevent the overlay sidebar accidentally staying visible
+   (if JS fails, user can toggle via your existing toggle button) */
+@media (max-width: 900px) {
+  body.sidebar-force-hide .sidebar { transform: translateX(-110%) !important; }
+}
+
+/* small improvement: ensure the toggle control (if present) is always visible */
+.mobile-sidebar-toggle, .mobile-backdrop-toggle {
+  z-index: 2300 !important;
+}
+
+/* If you want the sidebar to be closed automatically when user clicks backdrop,
+   ensure your JS toggles .mobile-backdrop.show and .sidebar.open together.
+   The CSS above expects your code to: 
+     document.querySelector('.sidebar').classList.toggle('open')
+     document.querySelector('.mobile-backdrop').classList.toggle('show')
+*/
+/* =========================
+   Tablet / 1024px responsive fixes
+   Paste at end of TDContent.css (no color changes)
+   ========================= */
+
+/* =========================
+   Tablet / 1024px refined responsive fixes
+   Paste at end of TDContent.css (no color changes)
+   ========================= */
+
+@media (min-width: 900px) and (max-width: 1100px) {
+
+  /* ensure top-level dashboard container does not overflow */
+  .dashboard-container, .teacher-dashboard-content1, .cards-container1 {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* GRID: main content + right rail */
+  .cards-container1 {
+    display: grid;
+    grid-template-columns: 1fr 340px; /* give right column predictable width */
+    gap: 18px;
+    align-items: start;
+    margin-top: 6px;
+  }
+
+  /* left / right column safety */
+  .left-column1, .right-column1 {
+    min-width: 0; /* allow flex/grid children to shrink */
+  }
+
+  /* TOP BAR: compact layout to avoid wrapping */
+  .top-bar1 {
+    display: grid;
+    grid-template-columns: 1fr auto; /* left side chips, right side profile */
+    gap: 12px;
+    align-items: center;
+    padding: 10px 6px;
+  }
+
+  /* Top chips container */
+  .top-bar-left1 {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;         /* allow chips to go to next line if needed */
+    justify-content: flex-start;
+  }
+
+  /* reduce chip size and spacing so they fit on one or two rows */
+  .top-bar-card1 {
+    padding: 6px 10px;
+    min-width: 86px;
+    max-width: 140px;
+    font-size: 13px;
+    border-radius: 10px;
+    box-shadow: 0 6px 14px rgba(10,10,30,0.06);
+  }
+
+  /* center logo smaller so it doesn't force header wrap */
+  .top-bar-middle1 img {
+    height: 56px !important;
+    width: auto !important;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* profile area aligned right with smaller avatar */
+  .top-bar-right1 { display:flex; align-items:center; gap:10px; justify-self:flex-end; }
+  .profile-pic-frame img { width:56px !important; height:56px !important; border-radius:8px !important; }
+
+  /* Make header card (with logo + chips) use internal padding & not push below */
+  .teacher-dashboard-content1 > .top-bar1 + .content-card1,
+  .teacher-dashboard-content1 .content-card1:first-of-type {
+    margin-top: 4px;
+  }
+
+  /* Overview: keep two small cards side-by-side, but shrink comfortably */
+  .overview-row1 {
+    display:flex;
+    gap:12px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .overview-card-item1 {
+    flex: 1 1 46%;
+    min-width: 0;
+    padding: 18px;
+  }
+
+  /* Quick Activities: two-column grid in right column */
+  .qa-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    align-items: center;
+  }
+  .qa-card { padding: 12px; }
+  .qa-btn { padding: 12px 10px; font-size: 14px; border-radius: 10px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; min-height:64px; }
+
+  /* Put icon above label inside QA buttons */
+  .qa-btn i { font-size: 18px; display:block; }
+  .qa-btn span { display:block; font-size:13px; line-height:1.1; text-align:center; }
+
+  /* LMS chart height / spacing in right column */
+  .lms-engagement-card1 .chart-inner1,
+  .chart-container1 .chart-inner1 {
+    height: 180px !important; /* compact but readable */
+  }
+
+  /* Recent activities card: ensure readable padding and width */
+  .recent-activities-card1 {
+    padding: 16px;
+  }
+  .recent-activities-card1 ul { padding-left: 18px; margin-top:6px; }
+
+  /* Notice board / big cards should expand full width of left column */
+  .notice-board-card1, .recent-activities-card1, .overview-card1 {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Trainer progress mini card sits under charts in right column with spacing */
+  .trainer-progress-mini-card1 {
+    margin-top: 12px;
+  }
+
+  /* Reduce main inner padding to give more horizontal space */
+  .content-card1 {
+    padding: 14px;
+  }
+
+  /* Small typographic reductions to avoid line breaks */
+  h3 { font-size: 1.02rem; }
+  .top-bar-card1 .number1 { font-size: 20px; }
+  .top-bar-card1 .text1 { font-size: 13px; }
+
+  /* Sidebar: keep same width but ensure content doesn't shift on tablet */
+  .sidebar {
+    width: var(--sidebar-w);
+    min-width: var(--sidebar-w);
+  }
+  .main, .main-content {
+    margin-left: var(--sidebar-w);
+    max-width: calc(100% - var(--sidebar-w));
+  }
+
+  /* Safety: avoid any internal fixed-width from overflowing */
+  .content-card1 img, .content-card1 .chart-inner1, .slider-card, .banner {
+    max-width: 100%;
+    height: auto;
+    box-sizing: border-box;
+  }
+
+  /* hide any accidental scrollbar caused by minor rounding */
+  html, body, #root { overflow-x: hidden; }
+}
+
+/* Small fallback for slightly narrower tablets so header chips don't overlap */
+@media (max-width: 900px) {
+  .cards-container1 { grid-template-columns: 1fr; gap: 12px; }
+  .qa-grid { grid-template-columns: 1fr 1fr; }
+  .top-bar-left1 { justify-content: flex-start; }
+}
+
+/* =========================
+   Responsive fix for ~1024px (tablet / small laptop)
+   Paste at the END of TDContent.css (or index.css)
+   ========================= */
+
+@media (min-width: 960px) and (max-width: 1100px) {
+
+  /* Make the overall cards container a 2-column grid with a fixed right rail */
+  .cards-container1 {
+    display: grid !important;
+    grid-template-columns: 1fr 360px; /* main | right rail */
+    gap: 18px;
+    align-items: start;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Make the left and right columns flexible but non-overflowing */
+  .left-column1, .right-column1 {
+    min-width: 0; /* allow children to shrink within grid column */
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Ensure right rail never exceeds its column (prevents horizontal overflow) */
+  .right-column1 {
+    max-width: 360px;
+  }
+  .right-column1 > * {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Quick Activities grid: keep two small buttons per row and ensure internal wrapping */
+  .qa-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .qa-card, .qa-header { padding: 12px; box-sizing: border-box; }
+
+  /* Make QA buttons vertical (icon above label) and force break if too long */
+  .qa-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px;
+    min-height: 64px;
+    line-height: 1.05;
+    white-space: normal;
+    text-align: center;
+    word-break: break-word;
+    box-sizing: border-box;
+  }
+
+  .qa-btn i { font-size: 18px; display:block; margin-bottom:4px; }
+  .qa-btn span { display:block; font-size:13px; }
+
+  /* Chart area: slightly reduce height to fit the rail comfortably */
+  .lms-engagement-card1 .chart-inner1,
+  .chart-container1 .chart-inner1 {
+    height: 170px !important;
+    max-height: 170px !important;
+    box-sizing: border-box;
+  }
+
+  /* Reduce padding on content cards to free width */
+  .content-card1 {
+    padding: 12px !important;
+  }
+
+  /* Overview small cards (left column) — let them wrap (prevent overflow) */
+  .overview-row1 {
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .overview-card-item1 {
+    flex: 1 1 48%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  /* Prevent large fixed margins/inline pushes — enforce logo and avatar sizing */
+  .top-bar-middle1 img { height: 56px !important; width: auto !important; object-fit: contain; }
+  .profile-pic-frame img { width:56px !important; height:56px !important; border-radius:8px !important; }
+
+  /* If any element uses inline margin-left to position the logo (e.g. marginLeft: "300px")
+     this fallback prevents that from breaking the layout */
+  .left-container img[style*="margin-left"], .left-container [style*="margin-left"] {
+    margin-left: 0 !important;
+  }
+
+  /* Recent activities: ensure list doesn't overflow */
+  .recent-activities-card1, .notice-board-card1 {
+    overflow: visible;
+    padding: 12px;
+  }
+  .recent-activities-card1 ul { padding-left: 18px; margin-top: 6px; }
+
+  /* Small typographic / spacing tweaks */
+  h3 { font-size: 1.02rem; }
+  .top-bar-card1 .number1 { font-size: 20px; }
+  .top-bar-card1 .text1 { font-size: 13px; }
+
+  /* Safety: hide accidental horizontal scroll */
+  html, body, #root { overflow-x: hidden; }
+}
+
+/* fallback: at slightly smaller widths stack into single column */
+@media (max-width: 959px) {
+  .cards-container1 { grid-template-columns: 1fr; gap: 12px; }
+  .qa-grid { grid-template-columns: repeat(2,1fr); }
+}

@@ -1472,3 +1472,1094 @@ html, body, #root {
 @media (min-width: 1600px){
   :root{ --page-max: 1440px; }
 }
+
+/* ---------- Quick Activities: responsive + icon-above-text ---------- */
+
+/* Ensure the card doesn't clip children and can grow naturally */
+.qa-card,
+.qa-card * {
+  box-sizing: border-box;
+}
+.qa-card {
+  overflow: visible !important;      /* avoid clipping of button content */
+  padding: 14px;
+  min-height: 0;                     /* allow natural height */
+}
+
+/* header */
+.qa-card .qa-header h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+/* layout container for quick action buttons */
+.qa-grid {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;           /* keep buttons aligned at top */
+  justify-content: flex-start;
+  flex-wrap: wrap;                   /* wrap if space is constrained */
+  margin-top: 6px;
+}
+
+/* button base: icon above label (stacked column) */
+.qa-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 120px;                 /* consistent button width */
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: center;
+  background: linear-gradient(180deg,#ffffff,#fbfbff);
+  box-shadow: 0 6px 18px rgba(15,23,42,0.06);
+  transition: transform .12s ease, box-shadow .12s ease;
+  white-space: normal;              /* allow label to wrap */
+}
+
+/* icon size and color */
+.qa-btn i {
+  font-size: 22px;                 /* visible icon */
+  line-height: 1;
+  display: block;
+  color: #0f172a;
+}
+
+/* label */
+.qa-btn span {
+  display: block;
+  font-weight: 700;
+  font-size: 13px;
+  color: #0f172a;
+  line-height: 1.1;
+}
+
+/* color variants (tweak to fit theme) */
+.qa-btn.purple {
+  background: linear-gradient(180deg,#f5efff,#f0e9ff);
+}
+.qa-btn.cyan {
+  background: linear-gradient(180deg,#e8fbff,#e0f7ff);
+}
+
+/* hover uplift */
+.qa-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(15,23,42,0.08);
+}
+
+/* responsive: on narrow viewports stack buttons full width */
+@media (max-width: 900px) {
+  .qa-grid { gap: 10px; }
+  .qa-btn { min-width: 48%; padding: 12px; } /* two columns */
+}
+
+/* ensure right column card doesn't get constrained by parent grid row height */
+.right-column1 .qa-card,
+.right-column1 .content-card1 {
+  min-height: 0;
+  overflow: visible;
+}
+
+/* safety: if any parent sets min-height causing clipping, allow flex children */
+.cards-container1,
+.left-column1,
+.right-column1 {
+  min-height: 0;
+}
+
+/* optional: make quick activities header with icon on top of header text (if desired) */
+.qa-header {
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.qa-header .qa-header-icon {
+  width:36px;
+  height:36px;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#fff;
+  box-shadow: 0 6px 18px rgba(15,23,42,0.04);
+  margin-right:6px;
+}
+/* ===============================
+   Normalize all dashboard section headers
+   Make them match Quick Activities
+   =============================== */
+
+.content-card1 > h3,
+.overview-card1 > h3,
+.qa-header > h3,
+.recent-activities-card1 > h3,
+.lms-engagement-header1 > h3,
+.notice-board-card1 > h3,
+.trainer-progress-mini-header1 > h3 {
+    font-size: 18px !important;   /* Same as Quick Activities */
+    font-weight: 600 !important;
+    margin-bottom: 10px;
+    color: #222;
+}
+/* Make inner Recent Activities headers smaller */
+.recent-activities-card1 h4 {
+    font-size: 14px !important;
+    font-weight: 600;
+    color: #444;
+    margin: 12px 0 6px 0;
+}
+@media (max-width: 450px) {
+    .top-bar-card1 {
+        min-width: 90px !important;
+        height: 70px !important;
+        padding: 6px !important;
+    }
+
+    .top-bar-card1 .number1 {
+        font-size: 18px !important;
+    }
+
+    .top-bar-card1 .text1 {
+        font-size: 11px !important;
+    }
+}
+@media (max-width: 450px) {
+    .overview-card1 {
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .overview-row1 {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: center;
+        gap: 8px !important;
+        width: 100%;
+        flex-wrap: nowrap !important;
+    }
+
+    .overview-card-item1 {
+        min-width: 120px !important;
+        height: 80px !important;
+    }
+
+    .overview-card-item1 .number1 {
+        font-size: 20px !important;
+    }
+
+    .overview-card-item1 .text1 {
+        font-size: 12px !important;
+    }
+}
+
+/* ---------- Normalize Top-bar / Overview / Quick-activities heading sizes ---------- */
+
+/* Use the same visual sizing as Quick Activities header */
+.qa-header h3 {
+  font-size: 15px;         /* Quick Activities header baseline */
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.1;
+}
+
+/* Make all section H3s match Quick Activities */
+.content-card1 h3,
+.recent-activities-card1 h3,
+.notice-board-card1 h3,
+.lms-engagement-header1 h3,
+.qa-header h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+  line-height: 1.1;
+}
+
+/* Make the smaller sub-headers (h4) slightly smaller / consistent */
+.recent-activities-card1 h4,
+.action-card h4,
+.icon-heading-title,
+.left-container h2 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  line-height: 1.15;
+}
+
+/* Top-bar chip numbers/text match the same scale */
+.top-bar-card1 .number1,
+.overview-card-item1 .number1 {
+  font-size: 15px;     /* number size matches other headers */
+  font-weight: 700;
+  line-height: 1;
+}
+
+.top-bar-card1 .text1,
+.overview-card-item1 .text1 {
+  font-size: 12px;     /* subtext for chips */
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Also make Quick-Activity button text consistent */
+.qa-btn { font-size: 13px; font-weight: 600; }
+
+/* Reduce any oversized icon-heading inside action cards */
+.icon-heading .icon { font-size: 16px; }
+
+/* Responsive tweak: slightly reduce on smaller screens */
+@media (max-width: 1024px) {
+  .qa-header h3,
+  .content-card1 h3,
+  .recent-activities-card1 h3 {
+    font-size: 14px;
+  }
+  .top-bar-card1 .number1,
+  .overview-card-item1 .number1 {
+    font-size: 14px;
+  }
+  .top-bar-card1 .text1,
+  .overview-card-item1 .text1 {
+    font-size: 11px;
+  }
+  .qa-btn { font-size: 12px; }
+}
+
+@media (max-width: 420px) {
+  /* mobile: keep small and avoid overflow */
+  .qa-header h3,
+  .content-card1 h3,
+  .recent-activities-card1 h3 { font-size: 13px; }
+  .top-bar-card1 .number1,
+  .overview-card-item1 .number1 { font-size: 13px; }
+  .top-bar-card1 .text1,
+  .overview-card-item1 .text1 { font-size: 10px; }
+  .qa-btn { font-size: 11px; padding: 8px; }
+}
+/* ---------------- Dashboard responsive helpers (paste at end of TDContent.css) ---------------- */
+
+/* Base grid layout for the cards area */
+.cards-container1 {
+  display: grid;
+  grid-template-columns: 1fr 360px; /* left main column and a fixed right column */
+  gap: 22px;
+  align-items: start;
+}
+
+/* make sure columns don't collapse to zero */
+.left-column1,
+.right-column1 {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* Right column content should flow vertically */
+.right-column1 {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Quick Activities grid: 2 columns on wide screens, fallback to 1 on small */
+.qa-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 12px;
+}
+
+/* Keep quick-activity buttons flexible and break text */
+.qa-btn {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 14px;
+  border-radius: 10px;
+  white-space: normal;
+  text-align: center;
+  word-break: break-word;
+}
+
+/* Chart container safe sizing */
+.lms-engagement-card1 .chart-container1,
+.lms-engagement-card1 .chart-inner1 {
+  min-height: 170px;
+  max-height: 260px;
+}
+
+/* Ensure content cards don't overflow horizontally */
+.content-card1,
+.qa-card,
+.action-card,
+.recent-activities-card1 {
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Top-bar chips / overview cards scaling */
+.top-bar-card1,
+.overview-card-item1 {
+  min-width: 86px;
+  max-width: 180px;
+  padding: 12px 16px;
+  box-sizing: border-box;
+}
+
+.top-bar-card1 .number1,
+.overview-card-item1 .number1 {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.top-bar-card1 .text1,
+.overview-card-item1 .text1 {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Standardize section headings to match Quick Activities style */
+.qa-header h3,
+.content-card1 h3,
+.recent-activities-card1 h3,
+.lms-engagement-header1 h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+  line-height: 1.12;
+}
+
+/* Smaller sub-headers */
+.recent-activities-card1 h4,
+.action-card h4,
+.icon-heading-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+/* ---------- Breakpoints ---------- */
+
+/* Large tablet / small desktop (around 1024px) */
+@media (max-width: 1024px) {
+  .cards-container1 {
+    grid-template-columns: 1fr 320px;
+    gap: 18px;
+  }
+
+  .qa-grid {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 10px;
+  }
+
+  .lms-engagement-card1 .chart-container1,
+  .lms-engagement-card1 .chart-inner1 {
+    min-height: 150px;
+  }
+
+  .top-bar-card1 .number1,
+  .overview-card-item1 .number1 { font-size: 14px; }
+  .top-bar-card1 .text1, .overview-card-item1 .text1 { font-size: 11px; }
+  .qa-btn { font-size: 12px; padding: 10px; }
+}
+
+/* Tablet / small screens: stack right column under left (single column layout) */
+@media (max-width: 900px) {
+  .cards-container1 {
+    grid-template-columns: 1fr; /* single column */
+  }
+
+  /* Right column becomes full width and stacks under left */
+  .right-column1 {
+    width: 100%;
+  }
+
+  /* Make QA grid two columns or one depending on width */
+  .qa-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+
+/* Mobile portrait: make QA grid single column, reduce paddings and font sizes */
+@media (max-width: 420px) {
+  .cards-container1 { gap: 12px; padding: 0; }
+
+  .qa-grid {
+    grid-template-columns: 1fr; /* single column on small mobile */
+    gap: 8px;
+  }
+
+  .qa-btn {
+    padding: 10px;
+    font-size: 11px;
+  }
+
+  .lms-engagement-card1 .chart-container1,
+  .lms-engagement-card1 .chart-inner1 {
+    min-height: 120px;
+  }
+
+  .top-bar-card1,
+  .overview-card-item1 {
+    max-width: 140px;
+    padding: 10px 12px;
+  }
+
+  /* notification / active quiz cards in your trainee layout: force stacking cleanly */
+  .action-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .action-card { padding: 10px; }
+
+  /* small headings */
+  .qa-header h3,
+  .content-card1 h3,
+  .recent-activities-card1 h3 { font-size: 13px; }
+  .recent-activities-card1 h4,
+  .action-card h4 { font-size: 13px; }
+}
+
+/* small additional safety: ensure images and avatars never overflow */
+img, .profile-pic-frame img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+/* ---------- Responsive layout tuning for teacher/admin dashboards ---------- */
+
+/* Grid: left + right columns.
+   Use a flexible left column but cap its max-width so cards don't expand too far. */
+.cards-container1 {
+  display: grid;
+  grid-template-columns: 1fr 360px;  /* right column fixed width, left flexible */
+  gap: 24px;
+  align-items: start;
+}
+
+/* Make sure content fills without overflow */
+.left-column1,
+.right-column1 {
+  box-sizing: border-box;
+}
+
+/* Limit how wide the left column *content* cards can become while keeping grid flexible */
+.left-column1 {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* Cards inside left column - max width so they don't look too stretched on wide screens */
+.left-column1 .content-card1 {
+  width: 100%;
+  max-width: 940px;    /* <= adjust down (900/820) if you want narrower on very wide monitors */
+  margin: 0 auto;      /* center inside left column */
+}
+
+/* Top bar small status cards (the three colored chips) — make them consistent & compact */
+.top-bar-left1 {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.top-bar-card1 {
+  min-width: 100px;
+  max-width: 170px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  box-shadow: 0 6px 8px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.top-bar-card1 .number1 { font-size: 20px; font-weight: 700; }
+.top-bar-card1 .text1   { font-size: 13px; }
+
+/* Quick Activities: keep buttons wrapped and evenly spaced */
+.qa-card .qa-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.qa-card .qa-btn { padding: 14px 12px; font-size: 13px; }
+
+/* LHS headers (Overview / Recent / Notice) - unify header size with Quick Activities header */
+.content-card1 h3,
+.qa-card .qa-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+}
+
+/* Recent Activities sub-headers smaller (as requested) */
+.recent-activities-card1 h4,
+.content-card1 .recent-activities-card1 h4 {
+  font-size: 14px;
+  margin: 8px 0;
+  font-weight: 600;
+}
+
+/* Chart card sizing: ensure right-column chart does not overflow vertically */
+.lms-engagement-card1 .chart-container1,
+.chart-inner1 {
+  height: 220px;  /* fixed chart area for consistent appearance */
+}
+
+/* Small visual tweaks */
+.content-card1 { padding: 18px; }
+.qa-card { padding: 18px; }
+
+/* ---------------- Breakpoints ---------------- */
+
+/* Large screens - keep left column a bit tighter */
+@media (min-width: 1400px) {
+  .cards-container1 { grid-template-columns: 1fr 360px; }
+  .left-column1 .content-card1 { max-width: 1000px; }
+}
+
+/* Desktop / laptop typical */
+@media (min-width: 1024px) and (max-width: 1399px) {
+  .cards-container1 { grid-template-columns: 1fr 360px; gap: 20px; }
+  .left-column1 .content-card1 { max-width: 880px; }
+}
+
+/* Tablet landscape ~ 768 - 1023: reduce right column to keep everything visible */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .cards-container1 { grid-template-columns: 1fr 320px; gap: 16px; }
+  .left-column1 .content-card1 { max-width: 720px; padding: 16px; }
+  .qa-card .qa-grid { grid-template-columns: 1fr 1fr; }
+  .top-bar-card1 { min-width: 92px; max-width: 150px; padding: 10px 14px; }
+}
+
+/* Narrow tablets / large phones: stack into single column with right column under left */
+@media (max-width: 767px) {
+  .cards-container1 {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .right-column1 { order: 2; }
+  .left-column1  { order: 1; }
+  .left-column1 .content-card1 { max-width: 100%; padding: 14px; }
+  .qa-card .qa-grid { grid-template-columns: 1fr; }
+  .top-bar-left1 { justify-content: flex-start; gap: 8px; }
+  .top-bar-card1 { min-width: 86px; padding: 10px; }
+  .lms-engagement-card1 .chart-container1,
+  .chart-inner1 { height: 180px; }
+}
+
+/* Very small phones: tighten spacing */
+@media (max-width: 420px) {
+  .content-card1 { padding: 12px; }
+  .content-card1 h3 { font-size: 16px; }
+  .top-bar-card1 { font-size: 12px; min-width: 72px; padding: 8px; }
+  .top-bar-card1 .number1 { font-size: 16px; }
+  .qa-card .qa-btn { padding: 10px; font-size: 12px; }
+  .lms-engagement-card1 .chart-container1, .chart-inner1 { height: 150px; }
+}
+
+.right-column1 {
+  width: 100%;
+  max-width: none !important;   /* allow full expansion */
+}
+
+.qa-card,
+.lms-engagement-card1 {
+  width: 100% !important;
+}
+
+/* -----------------------
+  Global box-sizing / safety
+   ----------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ensure main content panel keeps inner cards contained */
+.content-panel,
+.teacher-dashboard-content1,
+.main-content-panel,
+.cards-container1 {
+  overflow: visible; /* allow shadows, but inner cards handle overflow */
+  box-sizing: border-box;
+}
+
+/* make inner cards always respect parent's width */
+.content-card1,
+.profile-card,
+.action-card,
+.qa-card,
+.content-card {
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* images / charts should not overflow */
+.content-card1 img,
+.content-card1 svg,
+.content-card1 canvas {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* -----------------------
+  Top-bar responsive cards
+   ----------------------- */
+.top-bar1,
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* individual little stat cards */
+.top-bar-card1,
+.top-bar-card {
+  min-width: 120px;
+  max-width: 200px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: transform .18s ease;
+}
+
+.top-bar-card1 .number1,
+.top-bar-card .number {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.top-bar-card1 .text1,
+.top-bar-card .text {
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+/* shrink top bar cards on medium screens */
+@media (max-width: 1199px) {
+  .top-bar-card1, .top-bar-card {
+    min-width: 100px;
+    max-width: 160px;
+    padding: 10px 14px;
+  }
+  .top-bar-card1 .number1 { font-size: 18px; }
+  .top-bar-card1 .text1 { font-size: 12px; }
+}
+
+/* compact top bar for tablets / phones */
+@media (max-width: 767px) {
+  .top-bar1 { justify-content: space-between; }
+  .top-bar-card1, .top-bar-card {
+    min-width: 86px;
+    max-width: 120px;
+    padding: 8px 10px;
+  }
+  .top-bar-card1 .number1 { font-size: 16px; }
+  .top-bar-card1 .text1 { font-size: 11px; }
+}
+
+/* -----------------------
+  Cards container layout (left / right)
+   ----------------------- */
+/* desktop: keep two-column layout with a narrower right column */
+.cards-container1 {
+  display: grid;
+  grid-template-columns: 1fr 360px; /* left flexible, right fixed */
+  gap: 22px;
+  align-items: start;
+}
+
+/* center overview items horizontally */
+.overview-row1,
+.overview-row {
+  display: flex;
+  justify-content: center;   /* center the small overview chips */
+  gap: 22px;
+  flex-wrap: wrap;
+}
+
+/* each overview chip */
+.overview-card-item1,
+.overview-card-item {
+  width: 180px;
+  max-width: 45%;
+  padding: 18px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+/* reduce widths on medium screens (1024) */
+@media (max-width: 1199px) {
+  .cards-container1 {
+    grid-template-columns: 1fr 320px;
+    gap: 18px;
+  }
+  .overview-card-item1 { width: 160px; }
+}
+
+/* tablet - stack if needed, but try keep right column */
+@media (max-width: 1024px) {
+  /* try to keep two columns but make right column narrower */
+  .cards-container1 { grid-template-columns: 1fr 300px; gap: 16px; }
+  .right-column1 { width: 100%; }
+  .overview-card-item1 { width: 150px; font-size: 14px; }
+}
+
+/* mobile - single column stack (left then right) */
+@media (max-width: 767px) {
+  .cards-container1 {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .right-column1 { order: 2; } /* put right content after left on mobile if needed */
+  .left-column1  { order: 1; }
+  /* make overview chips stack centered */
+  .overview-row1 { justify-content: center; gap: 14px; }
+  .overview-card-item1 { width: 46%; max-width: 220px; }
+}
+
+/* very small phones (<=420) – compact everything */
+@media (max-width: 420px) {
+  .overview-card-item1 { width: 100%; max-width: 340px; }
+  .top-bar-card1 { min-width: 84px; max-width: 120px; padding: 8px; }
+  .top-bar-card1 .number1 { font-size: 15px; }
+  .top-bar-card1 .text1 { font-size: 11px; }
+
+  /* Quick Activities grid stacked vertically for narrow screens */
+  .qa-grid,
+  .action-cards .qa-grid,
+  .qa-grid .qa-btn {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+/* -----------------------
+  Quick activities / action card font sizing
+   ----------------------- */
+.qa-card .qa-header h3,
+.action-card .icon-heading-title,
+.content-card1 h3,
+.content-card h3 {
+  /* make headings consistent and visually matching 'Quick Activities' */
+  font-size: 18px;
+  margin: 0 0 12px 0;
+  font-weight: 700;
+}
+
+/* smaller heading on small screens */
+@media (max-width: 767px) {
+  .qa-card .qa-header h3,
+  .action-card .icon-heading-title,
+  .content-card1 h3 {
+    font-size: 16px;
+  }
+}
+
+/* buttons in quick activities */
+.qa-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.qa-btn { padding: 16px; min-height: 68px; display:flex; align-items:center; justify-content:center; gap:8px; }
+.qa-btn i { font-size: 20px; }
+.qa-btn span { font-size: 13px; font-weight:600; }
+
+/* reduce qa-btn size on medium */
+@media (max-width: 1024px) {
+  .qa-grid { grid-template-columns: repeat(2, 1fr); }
+  .qa-btn { padding: 12px; min-height: 56px; }
+  .qa-btn span { font-size: 12px; }
+}
+
+/* -----------------------
+  Recent Activities / Notice board headers small & consistent
+   ----------------------- */
+.recent-activities-card1 h3,
+.notice-board-card1 h3,
+.content-card1 h3 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* make these smaller in compact screens */
+@media (max-width: 767px) {
+  .recent-activities-card1 h3,
+  .notice-board-card1 h3,
+  .content-card1 h3 {
+    font-size: 16px;
+  }
+}
+
+/* -----------------------
+  Fix overflow/spill issues (charts / cards leaving white panel)
+   ----------------------- */
+/* ensure the white panel (content-panel / main) contains shadows but not clipped content */
+.content-panel,
+.main.content-panel,
+.main-content-panel,
+.teacher-dashboard-content1 {
+  background: transparent;
+  padding: 14px 18px;
+}
+
+/* ensure each card has its own inner padding and does not overflow its rounded border */
+.content-card1,
+.action-card,
+.qa-card,
+.content-card,
+.recent-activities-card1 {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 3px 12px rgba(12, 20, 30, 0.06);
+  overflow: hidden; /* prevents child content escaping rounded corners */
+}
+
+/* charts: keep inside card */
+.chart-container1,
+.chart-inner1 {
+  width: 100% !important;
+  overflow: hidden;
+}
+
+/* small tweak to avoid horizontal scroll due to vertical scroll bar on small devices */
+@media (max-width: 480px) {
+  body, html, #root {
+    overflow-x: hidden;
+  }
+}
+/* ========== Responsive Dashboard fixes ========== */
+/* Top bar (admin) - flexible and wrap-friendly */
+.top-bar1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;           /* allow wrapping on smaller screens */
+  padding: 8px 12px;
+}
+
+/* left group of small cards */
+.top-bar-left1 {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex: 1 1 auto;            /* allow it to shrink */
+  min-width: 0;
+}
+
+/* middle logo */
+.top-bar-middle1 {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 8px;
+}
+
+/* right group (greeting + profile) */
+.top-bar-right1 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+
+/* small count cards in top-bar */
+.top-bar-card1 {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 16px;
+  min-width: 110px;
+  max-width: 150px;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.06);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* number/text inside those cards */
+.top-bar-card1 .number1 { font-size: 20px; line-height:1; font-weight:700; }
+.top-bar-card1 .text1   { font-size: 13px; }
+
+/* Make right-column narrower and prevent it from leaving large empty space */
+.cards-container1 {
+  display: grid;
+  grid-template-columns: 1fr 360px; /* left content and right sidebar */
+  gap: 20px;
+  align-items: start;
+}
+
+/* card content inside left column should be centered and not stretch */
+.left-column1 .content-card1 {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ensure cards are contained in white panel */
+.content-panel, .teacher-dashboard-content1, .main-content-panel {
+  overflow: visible; /* let inner scrolls behave, but avoid missing content */
+}
+
+/* fix right-column cards width so they don't push layout sideways */
+.right-column1 {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Overview small chips: center in card */
+.overview-row1 {
+  display: flex;
+  gap: 18px;
+  justify-content: center; /* center the chips */
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* overview items */
+.overview-card-item1 {
+  min-width: 150px;
+  max-width: 220px;
+  text-align: center;
+  padding: 28px 18px;
+  box-sizing: border-box;
+  border-radius: 12px;
+}
+
+/* action / quick activities button sizing */
+.qa-grid { display:flex; gap:12px; flex-wrap:wrap; justify-content:flex-start; }
+.qa-btn { min-width: 140px; }
+
+/* Recent activities / Notice board cards to not grow too wide */
+.recent-activities-card1, .notice-board-card1, .content-card1 {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+/* Prevent chart dropdown from overflowing the card on small screens */
+.lms-engagement-card1 .dropdown, .lms-engagement-header1 .dropdown {
+  position: relative;
+}
+
+/* ===== Breakpoints ===== */
+
+/* 1024 and below - tighten spacing, reduce top-bar card sizes */
+@media (max-width: 1024px) {
+  .top-bar-card1 { min-width: 100px; padding: 12px; }
+  .top-bar-middle1 img { height: 60px; }
+  .cards-container1 { grid-template-columns: 1fr 320px; gap: 16px; }
+  .overview-card-item1 { min-width: 140px; }
+}
+
+/* 768px and below - stack columns (single column layout) and center overview chips */
+@media (max-width: 768px) {
+  .cards-container1 {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  /* top bar becomes column layout: counts row -> logo -> profile row */
+  .top-bar1 {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .top-bar-left1 {
+    order: 1;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .top-bar-middle1 { order: 2; margin-top: 4px; margin-bottom: 4px; }
+  .top-bar-right1 { order: 3; justify-content: center; }
+
+  /* make overview chips stack vertically but centered */
+  .overview-row1 { justify-content: center; gap: 12px; }
+  .overview-card-item1 { width: 180px; margin: 0 auto; }
+
+  /* reduce quick activity width so both cards fit */
+  .qa-btn { min-width: calc(50% - 12px); }
+}
+
+/* 420px and below - compact everything for small phones */
+@media (max-width: 420px) {
+  .top-bar-card1 { min-width: 120px; padding: 10px; font-size: 13px; }
+  .top-bar-left1 { gap: 10px; }
+  .top-bar-middle1 img { height: 48px; }
+  .top-bar-right1 .greeting { font-size: 14px; }
+  .overview-card-item1 { width: 160px; padding: 20px; }
+  .qa-btn { min-width: 100%; }
+  .recent-activities-card1, .notice-board-card1 { padding: 14px; }
+}
+
+/* Prevent elements from growing outside the white rounded panel */
+.content-panel > .teacher-dashboard-content1,
+.main .content-panel {
+  background-clip: padding-box; /* ensure border radius masks children */
+}
+
+/* If any card still overflows due to internal elements, force internal scroll */
+.content-card1, .action-card, .profile-card, .mp-card {
+  overflow: hidden;
+  word-break: break-word;
+}
+
+/* optional small tweak: center the profile pic & greeting on small screens */
+@media (max-width: 768px) {
+  .top-bar-right1 { justify-content: center; text-align: center; }
+  .top-bar-right1 .greeting { margin-right: 0; }
+}
+/* ---------- Fix: overview chips on 1024px screens ---------- */
+/* Make left column wider around tablet/1024px so Overview chips can sit side-by-side */
+@media (min-width: 768px) and (max-width: 1100px) {
+  /* adjust main cards grid: left content gets more width, right sidebar narrower */
+  .cards-container1 {
+    grid-template-columns: 1fr 320px !important;
+    gap: 18px;
+  }
+
+  /* give left column more breathing room */
+  .left-column1 {
+    padding-right: 10px;
+  }
+
+  /* ensure the overview row centers and keeps items side-by-side */
+  .overview-row1 {
+    justify-content: center;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: nowrap; /* keep chips on same row if there's space */
+  }
+
+  .overview-card-item1 {
+    min-width: 160px;
+    max-width: 260px;
+    padding: 22px 18px;
+  }
+
+  /* shrink right column cards slightly so they don't push layout */
+  .right-column1 { max-width: 320px; }
+  .qa-grid { gap: 10px; }
+}
+
+/* small extra tweak for exactly 1024px (sometimes media ranges miss it) */
+@media (width: 1024px) {
+  .cards-container1 { grid-template-columns: 1fr 320px !important; }
+  .overview-row1 { flex-wrap: nowrap; gap: 18px; }
+  .overview-card-item1 { min-width: 150px; }
+}

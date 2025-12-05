@@ -1100,3 +1100,322 @@
   height: 1px;
   background: rgba(0, 0, 0, 0.08);
 }
+/* Make Action Card Headers (h4) smaller to match Quick Activities */
+.action-card h4 {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    margin-bottom: 6px !important;
+    line-height: 1.2 !important;
+}
+
+/* ------------------------ FORCEFUL tablet fixes (aggressive) ------------------------ */
+/* Targets: 1100px down to cover 1024 and nearby devices */
+@media (max-width: 1100px) {
+  /* Use grid for main container - left flexible, right fixed */
+  .dashboard-container,
+  .teacher-dashboard-content1,
+  .main-content-grid,
+  .cards-container1 {
+    display: grid !important;
+    grid-template-columns: 1fr 340px !important;
+    gap: 20px !important;
+    align-items: start !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 auto !important;
+  }
+
+  /* Defensive: prevent flex children from forcing width on parents */
+  .dashboard-container *, .teacher-dashboard-content1 * {
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+  }
+
+  /* Lock right column width so it never overflows */
+  .right-container, .right-column1, .right-column, .action-cards, .profile-card {
+    width: 340px !important;
+    max-width: 340px !important;
+    min-width: 260px !important;
+  }
+
+  /* Left column should take remaining width */
+  .left-container, .left-column1, .left-column, .content-area {
+    width: auto !important;
+    min-width: 0 !important;
+  }
+
+  /* Top bar cards: allow wrap and center them */
+  .top-bar-left1, .top-bar-left, .top-bar {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+
+  /* Reduce card sizes in top bar */
+  .top-bar-card1, .top-bar-card {
+    min-width: 86px !important;
+    max-width: 140px !important;
+    padding: 8px 10px !important;
+    font-size: 13px !important;
+    line-height: 1.1 !important;
+  }
+
+  /* Align profile area in top bar to the right of header area */
+  .top-bar-middle1, .top-bar-middle {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .top-bar-right1, .top-bar-right {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 10px !important;
+  }
+  .top-bar-right1 .greeting, .top-bar-right .greeting {
+    font-size: 14px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 160px !important;
+  }
+
+  /* Reduce header paddings so inner cards don't push width */
+  .content-panel, .teacher-dashboard-content1, .main-content {
+    padding: 14px !important;
+  }
+
+  /* Make overview items centered and wrap vertically */
+  .overview-row1, .overview-row {
+    display: flex !important;
+    gap: 14px !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+  .overview-card-item1, .overview-card-item {
+    flex: 0 1 140px !important;
+    max-width: 180px !important;
+    padding: 12px !important;
+    text-align: center !important;
+    margin: 0 auto !important;
+  }
+
+  /* Ensure large inner cards (slider, charts) do not overflow */
+  .slider-card, .slider-viewport, .slide, .chart-inner1, .chart-container1, .lms-engagement-card1 {
+    max-width: 100% !important;
+    width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  /* Clip any long text and reduce fonts a little */
+  .slider-title, .slider-desc, .icon-heading-title, .card h3 {
+    font-size: 15px !important;
+  }
+
+  /* Prevent horizontal scroll inside the main white panel */
+  .content-panel {
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Force right column children to stack nicely */
+  .right-column1 > *, .right-container > * {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* ------------------------ Narrower screens stack columns ------------------------ */
+@media (max-width: 900px) {
+  .dashboard-container,
+  .teacher-dashboard-content1,
+  .main-content-grid {
+    grid-template-columns: 1fr !important; /* single column stack */
+  }
+
+  /* Right column goes full width below left column */
+  .right-container, .right-column1 {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* Make top bar cards even smaller */
+  .top-bar-card1, .top-bar-card {
+    min-width: 72px !important;
+    max-width: 120px !important;
+    font-size: 12px !important;
+    padding: 8px !important;
+  }
+
+  .profile-pic-frame img, .profile-image {
+    width: 56px !important;
+    height: 56px !important;
+  }
+}
+
+/* ------------------------ Extra: 768 / 420 fixes for mobile header alignment ------------------------ */
+@media (max-width: 768px) {
+  /* Ensure top header elements center */
+  .top-bar-left1, .top-bar-middle1, .top-bar-right1, .top-bar {
+    justify-content: center !important;
+  }
+  .top-bar-right1 .greeting {
+    display: none !important; /* hide long greeting on small screens (keeps profile visible) */
+  }
+
+  /* Put profile image top-right inside header box, keep responsive */
+  .profile-pic-frame, .profile-card .profile-pic {
+    margin-left: auto !important;
+  }
+
+  /* Ensure all boxes remain inside the white card */
+  .content-card1, .content-card, .card {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+/* =========================
+   Quick overrides for tablet/mobile alignment
+   Paste at the END of profilecard.css
+   ========================= */
+
+/* 1) Force single-column layout for <= 1100px so right column can't push */
+@media (max-width: 1100px) {
+  .dashboard-container {
+    grid-template-columns: 1fr !important; /* stack left + right */
+    gap: 18px !important;
+  }
+
+  /* make right-container full width and stop fixed widths */
+  .right-container,
+  .right-column,
+  .right-column1,
+  .action-cards {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* prevent any child from forcing horizontal scroll */
+  .dashboard-container * {
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* 2) Ensure top-section stacks and centers at tablet sizes */
+@media (max-width: 1024px) {
+  .top-section {
+    display: grid !important;
+    grid-template-columns: 1fr !important; /* profile above actions */
+    gap: 16px !important;
+    align-items: start !important;
+  }
+
+  /* profile card become compact & centered */
+  .profile-card,
+  .centered-profile {
+    width: 100% !important;
+    max-width: 420px !important;
+    margin: 0 auto !important;
+    height: auto !important;
+  }
+
+  /* action-cards full width */
+  .action-cards {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+  }
+
+  /* keep notifications and active quiz heights reasonable */
+  .action-cards > .action-card:nth-child(1),
+  .action-cards > .action-card:nth-child(2) {
+    max-height: 220px !important;
+    height: auto !important;
+  }
+
+  /* make slider and chart elements fit their container */
+  .slider-viewport,
+  .slide,
+  .chart,
+  .chart canvas,
+  .slider-card,
+  .content-card1,
+  .content-card,
+  .card {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  /* hide long greeting on constrained widths to avoid shifting */
+  .top-bar-right1 .greeting,
+  .greeting-name {
+    display: none !important;
+  }
+}
+
+/* 3) Mobile tweaks: keep header compact and profile image smaller */
+@media (max-width: 768px) {
+  .top-section {
+    grid-template-columns: 1fr !important;
+  }
+
+  .profile-card,
+  .centered-profile {
+    max-width: 360px !important;
+    padding: 12px !important;
+  }
+
+  .centered-profile .profile-pic,
+  .profile-card .profile-pic {
+    width: 80px !important;
+    height: 80px !important;
+  }
+
+  /* ensure slider image keeps aspect without overflow */
+  .slide { background-size: cover !important; background-position: center !important; }
+}
+
+/* 4) Small screens (420px) — stack and remove side paddings that cause overflow */
+@media (max-width: 420px) {
+  .dashboard-container,
+  .left-container,
+  .right-container {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  .header-con1, .header-con {
+    max-height: 120px !important;
+    overflow-y: auto !important;
+  }
+
+  .action-cards > .action-card:nth-child(1),
+  .action-cards > .action-card:nth-child(2) {
+    max-height: 160px !important;
+  }
+
+  .centered-profile, .profile-card {
+    max-height: none !important;
+    height: auto !important;
+  }
+}
+
+/* 5) Defensive rule: force any overflowing child to fit parent (testing only) */
+/* Remove or comment out after you confirm layout is fixed */
+@media (max-width: 1100px) {
+  .dashboard-container * {
+    max-width: 100% !important;
+    overflow-wrap: break-word !important;
+  }
+}
