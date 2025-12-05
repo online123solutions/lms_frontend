@@ -1264,3 +1264,12 @@ img, canvas, iframe, video { max-width: 100%; height: auto; display: block; }
   .cards-container1 { grid-template-columns: 1fr; gap: 12px; }
   .qa-grid { grid-template-columns: repeat(2,1fr); }
 }
+/* --- DEBUG OVERRIDE (temporary) --- */
+html, body, #root, .app-root, .dashboard-shell, .main-wrapper {
+  transform: none !important;
+  transform-origin: unset !important;
+  zoom: 1 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
