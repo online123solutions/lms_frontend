@@ -611,6 +611,8 @@ img, canvas, iframe, video { max-width: 100%; height: auto; display: block; }
 *[style*="100vw"] { width: 100% !important; max-width: 100% !important; }
 
 /* small: keep sidebar visible and main content centred within page max width */
+.dashboard-shell { width: 100%; max-width: 1800px; margin: 0 auto; box-sizing: border-box; padding-left: 24px; padding-right: 24px; }
+
 /* ------------------------------------------- */
 /*  MATCH QUICK ACTIVITY COLORS WITH TOP-BAR   */
 /* ------------------------------------------- */
@@ -1266,31 +1268,35 @@ html, body, #root, .app-root, .dashboard-shell, .main-wrapper {
   min-width: 0 !important;
 }
 /* Ensure main content can grow on wide screens */
-#root, .app-root, .app-shell, .main-wrapper, .main, .content, .dashboard-container, /* SAFETY: make sure main content can grow on very wide screens */
-#root, .app-root, .app-shell, .main-wrapper, .main, .content, .dashboard-container, /* FORCE: final layout override — ensures wide screens use this width */
+#root, .app-root, .app-shell, .main-wrapper, .main, .content, .dashboard-container, .dashboard-shell {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  flex: 1 1 auto !important;
+}
+
+/* SAFETY: make sure main content can grow on very wide screens */
+#root, .app-root, .app-shell, .main-wrapper, .main, .content, .dashboard-container, .dashboard-shell {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  flex: 1 1 auto !important;
+}
+
+/* FORCE: final layout override — ensures wide screens use this width */
+.dashboard-shell {
+  width: 100% !important;
+  max-width: 1800px !important; /* change to 1400/none if you prefer */
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
+}
+
 /* safety for flex containers */
 #root, .app-root, .app-shell, .main-wrapper, .main, .content, .dashboard-container {
   min-width: 0 !important;
   max-width: none !important;
   width: 100% !important;
   box-sizing: border-box !important;
-}
-
-/* ===== Canonical dashboard-shell (single source of truth) ===== */
-.dashboard-shell {
-  width: 100%;
-  max-width: 1800px;         /* change to 1400/none if you prefer */
-  margin: 0 auto;
-  box-sizing: border-box;
-  padding-left: 24px;
-  padding-right: 24px;
-}
-
-/* SAFETY: ensure main/flex containers can grow on wide monitors */
-#root, .app-root, .app-shell, .main-wrapper, .main, .content, .dashboard-container {
-  min-width: 0 !important;
-  width: 100% !important;
-  max-width: none !important;
-  box-sizing: border-box !important;
-  flex: 1 1 auto !important;
 }
