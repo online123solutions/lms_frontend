@@ -1277,14 +1277,7 @@ html, body, #root, .app-root, .dashboard-shell, .main-wrapper {
 }
 
 /* ===== Canonical dashboard-shell (single source of truth) ===== */
-.dashboard-shell {
-  width: 100%;
-  max-width: 1800px;         /* change to 1400/none if you prefer */
-  margin: 0 auto;
-  box-sizing: border-box;
-  padding-left: 24px;
-  padding-right: 24px;
-}
+.dashboard-shell { max-width: 100% !important; width: 100% !important; margin: 0 auto !important; box-sizing: border-box; padding-left: 24px; padding-right: 24px; }
 
 /* SAFETY: ensure main/flex containers can grow on wide monitors */
 #root, .app-root, .app-shell, .main-wrapper, .main, .content, .dashboard-container {
