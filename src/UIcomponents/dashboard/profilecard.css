@@ -1419,3 +1419,237 @@
     overflow-wrap: break-word !important;
   }
 }
+@media (max-width: 480px) {
+  .content-panel,
+  .main-content,
+  .teacher-dashboard-content1 {
+      width: 100% !important;
+      max-width: 100% !important;
+      padding: 10px !important;
+      margin: 0 !important;
+      overflow-x: hidden !important;
+  }
+
+  /* If your grid is causing overflow */
+  .dashboard-container,
+  .main-content-grid {
+      grid-template-columns: 1fr !important;
+  }
+}
+/* ------------------ FINAL OVERRIDES (paste at END) ------------------ */
+
+/* Base safety */
+html, body, #root {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden; /* prevents the right-side cut-off */
+  -webkit-overflow-scrolling: touch;
+}
+*, *::before, *::after { box-sizing: inherit; }
+
+/* Ensure flex/grid children can't force parent width */
+.dashboard-container, .teacher-dashboard-content1, .main-content-grid {
+  min-width: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Generic card/flex guards */
+.left-container,
+.right-container,
+.content-panel,
+.main-content,
+.teacher-dashboard-content1,
+.profile-card,
+.centered-profile,
+.action-card,
+.action-cards,
+.top-section {
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Fix for accidental gap unitless bug */
+.action-cards { gap: 0px !important; } /* if you want some space use 8px/10px */
+
+/* Make top-section stable (left profile + right actions) */
+.top-section {
+  display: grid !important;
+  grid-template-columns: clamp(220px, 20vw, 270px) minmax(0, 1fr);
+  gap: 16px !important;
+  align-items: start !important; /* content-based heights, no forced stretch */
+}
+
+/* Make columns stack early to avoid right-column overflow */
+@media (max-width: 1100px) {
+  .dashboard-container {
+    grid-template-columns: 1fr !important; /* stack left + right */
+    gap: 18px !important;
+  }
+
+  .right-container,
+  .right-column,
+  .right-column1,
+  .action-cards {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* Defensive: no child forces horizontal scroll */
+  .dashboard-container * { min-width: 0 !important; }
+}
+
+/* Tablet: turn top-section into single column (profile above actions) */
+@media (max-width: 1024px) {
+  .top-section {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+    align-items: start !important;
+  }
+
+  .profile-card,
+  .centered-profile {
+    width: 100% !important;
+    max-width: 520px !important;
+    margin: 0 auto !important;
+    height: auto !important;
+  }
+
+  .action-cards {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .slider-viewport,
+  .slide,
+  .chart,
+  .chart canvas,
+  .slider-card,
+  .content-card1,
+  .content-card,
+  .card {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+}
+
+/* Narrow screens: single column layout & smaller paddings */
+@media (max-width: 900px) {
+  .dashboard-container,
+  .teacher-dashboard-content1,
+  .main-content-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .right-container, .right-column1 {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .top-bar-card1, .top-bar-card {
+    min-width: 72px !important;
+    max-width: 120px !important;
+    font-size: 12px !important;
+  }
+}
+
+/* Mobile: compact and safe (420px and below) */
+@media (max-width: 420px) {
+  .dashboard-container,
+  .left-container,
+  .right-container,
+  .content-panel,
+  .main-content {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .profile-card, .centered-profile {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 12px !important;
+    height: auto !important;
+  }
+
+  /* Avoid long scrolling areas pushing width */
+  .header-con1, .header-con { max-height: 120px !important; overflow-y: auto !important; }
+
+  /* Ensure each inner card fits */
+  .slider-viewport, .slide, .chart, .card, .slider-card { width: 100% !important; max-width: 100% !important; }
+
+  /* Prevent floating avatars or badges from overflowing */
+  .avatar, .floating-avatar, .profile-pic { right: 12px !important; left: auto !important; transform: none !important; }
+}
+
+/* Very small screens (<=360px) additional tweaks */
+@media (max-width: 360px) {
+  .dashboard-container, .content-panel {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+
+  .centered-profile .profile-pic,
+  .profile-card .profile-pic { width: 64px !important; height: 64px !important; }
+
+  .top-section { gap: 10px !important; }
+}
+
+/* Make action-cards column behave predictably in grid/flex */
+.action-cards {
+  display: grid !important;
+  grid-template-rows: auto auto;
+  gap: 10px !important; /* balanced gutter between notifications and quizzes */
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* Ensure cards don't push parent width */
+.action-card, .mp-card, .updates-card, .bottom-card {
+  min-width: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Final defensive rules: word-wrap and hide overflow for rogue children */
+.dashboard-container * {
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* ---------- END FINAL OVERRIDES ---------- */
+/* FINAL FIX – remove unwanted outer spacing on 420px and smaller */
+@media (max-width: 480px) {
+
+  body, html, #root {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #ffffff !important; /* remove blue background */
+  }
+
+  .dashboard-container {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    background: #ffffff !important;
+  }
+
+  /* The white inner card container */
+  .content-panel,
+  .main-content,
+  .teacher-dashboard-content1,
+  .left-container,
+  .right-container {
+      padding: 0 !important;
+      margin: 0 !important;
+      border-radius: 0 !important; /* optional */
+  }
+}
