@@ -2628,3 +2628,126 @@ img, .profile-pic-frame img {
   .qa-card { margin-left: 8px !important; margin-right: 8px !important; }
   .content-card1 { padding-left: 12px !important; padding-right: 12px !important; }
 }
+/* ---------- Strong mobile / tablet layout fix for TeacherDashboardContent ---------- */
+/* Put this at the END of your CSS (loaded after original styles) */
+
+@media (max-width: 1024px) {
+
+  /* Layout: force single-column stacking for dashboard content */
+  .teacher-dashboard-content1 .cards-container1,
+  .teacher-dashboard-content1 .cards-container1 .left-column1,
+  .teacher-dashboard-content1 .cards-container1 .right-column1,
+  .teacher-dashboard-content1 .top-bar1 {
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 auto !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* Put overview / small cards as inline items that wrap rather than absolute/transformed */
+  .top-bar-left1,
+  .top-bar-left1 .top-bar-card1,
+  .overview-card1,
+  .overview-card-item1,
+  .top-bar-card1 {
+    position: relative !important;
+    transform: none !important;
+    -webkit-transform: none !important;
+    left: auto !important;
+    top: auto !important;
+    margin: 8px 6px !important;
+    display: inline-flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    vertical-align: middle !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06) !important;
+    z-index: 3 !important;
+    pointer-events: auto !important;
+  }
+
+  /* Size constraints so they wrap instead of overlapping */
+  .top-bar-left1 .top-bar-card1,
+  .overview-card-item1 {
+    min-width: 110px !important;
+    max-width: calc(50% - 12px) !important;
+    flex: 1 1 calc(50% - 12px) !important;
+  }
+
+  /* Hide vertical rotated side labels / rails that overlap content */
+  .rotated-label,
+  .vertical-rotated,
+  .overview-rail,
+  aside.sidebar,
+  .side-rail,
+  .side-pill,
+  .left-column1 .rotated,
+  .left-rail {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  /* Ensure QA card sits below the overview block — clear floats and full width */
+  .qa-card,
+  .qa-grid,
+  .qa-card .qa-header,
+  .qa-card .qa-grid .qa-btn {
+    clear: both !important;
+    width: 100% !important;
+    display: block !important;
+    margin: 12px 0 !important;
+    box-sizing: border-box !important;
+    z-index: 4 !important;
+  }
+
+  /* Chart container: let it expand and not be clipped */
+  .content-card1.lms-engagement-card1,
+  .chart-container1,
+  .chart-inner1,
+  .content-card1 {
+    width: 100% !important;
+    overflow: visible !important;
+    margin: 12px 0 !important;
+  }
+
+  /* Recent activities / notice board: stack below overview and take full width */
+  .left-column1 .content-card1,
+  .recent-activities-card1,
+  .notice-board-card1,
+  .overview-card1 {
+    width: 100% !important;
+    margin: 12px 0 !important;
+    display: block !important;
+    padding: 12px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Trainer progress mini: full width */
+  .trainer-progress-mini-card1 {
+    width: 100% !important;
+    margin-top: 8px !important;
+  }
+
+  /* Reduce avatar/profile sizes on small screens to avoid pushing content */
+  .profile-pic-frame img,
+  .profile-pic-frame div {
+    width: 56px !important;
+    height: 56px !important;
+    border-radius: 8px !important;
+  }
+}
+
+/* Extra narrow phones: force single column, slightly smaller boxes */
+@media (max-width: 420px) {
+  .top-bar-left1 .top-bar-card1,
+  .overview-card-item1 {
+    min-width: 80px !important;
+    max-width: 100% !important;
+    flex: 1 1 100% !important;
+  }
+  .qa-card { margin-left: 8px !important; margin-right: 8px !important; }
+  .content-card1 { padding-left: 12px !important; padding-right: 12px !important; }
+}
