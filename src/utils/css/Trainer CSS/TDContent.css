@@ -2749,5 +2749,69 @@ img, .profile-pic-frame img {
     flex: 1 1 100% !important;
   }
   .qa-card { margin-left: 8px !important; margin-right: 8px !important; }
-  .content-card1 { padding-left: 12px !important; padding-right: 12px !important; }
+  .content-card1 {text-align: center; padding-left: 12px !important; padding-right: 12px !important; }
+  .recent-activities ul {
+    list-style: none !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+  }
+
+  .recent-activities ul li::before {
+    content: ""; /* ensure NO dots */
+  }
+
+  /* put this inside your @media (max-width: 420px) { ... } block */
+
+.top-bar1 {
+  display: flex !important;
+  flex-direction: column !important; /* stack logo/cards above profile */
+  align-items: center !important;    /* center children horizontally */
+  gap: 12px !important;
+}
+
+/* ensure left / middle items still behave and don't stretch full width */
+.top-bar-left1,
+.top-bar-middle1,
+.top-bar-right1 {
+  width: 100% !important;   /* allow each block to take full row */
+  display: flex !important;
+  justify-content: center !important; /* center content inside each */
+  align-items: center !important;
+}
+
+/* make the cards row wrap nicely (left area) */
+.top-bar-left1 {
+  flex-wrap: wrap;
+  justify-content: center !important;
+  gap: 10px;
+}
+
+/* center the logo */
+.top-bar-middle1 img {
+  margin: 0 auto !important;
+}
+
+/* center the greeting + profile container and move greeting below or hide if crowded */
+.top-bar-right1 .greeting {
+  display: none; /* optional: hide the "Hi, Name" text on small screens */
+}
+
+/* center the profile pic */
+.profile-pic-frame {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin: 0 auto !important;
+}
+
+/* prefer a circular avatar and consistent size */
+.profile-pic-frame img,
+.profile-pic-frame > div {
+  width: 80px !important;
+  height: 80px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08) !important;
+}
+
 }
