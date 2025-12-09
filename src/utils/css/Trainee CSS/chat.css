@@ -701,3 +701,214 @@
 
 .chip.status-open{ background: #eef2ff; color:#1d4ed8; }
 .chip.status-closed{ background:#ecfdf5; color:#047857; }
+
+/* -------- Mobile-only responsive overrides for TraineeChat -------- */
+@media (max-width: 900px) {
+  /* let the container grow naturally on phones */
+  .qc-root {
+    height: auto !important;
+    min-height: 100vh !important;
+  }
+
+  /* allow shell to show overflow (prevents header/card clipping) */
+  .qc-shell {
+    overflow: visible !important;
+    border-radius: 12px !important;
+    padding-bottom: 16px;
+  }
+
+  /* topbar: reduce height & padding so it doesn't cover content */
+  .qc-topbar {
+    padding: 10px 12px !important;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .qc-top-left h2 {
+    font-size: 16px !important;
+    margin: 0;
+  }
+
+  /* stack the main layout vertically */
+  .query-chat-container {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0;
+    padding: 0 10px 12px 10px;
+    min-height: 0; /* allow inner scrolling */
+  }
+
+  /* list becomes a top collapsible area with scroll inside */
+  .query-list {
+    order: 2;
+    width: 100%;
+    max-height: 220px; /* keeps list usable but limits its height */
+    overflow-y: auto !important;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    padding-bottom: 8px;
+  }
+  .list-search { padding: 10px 8px; }
+  .list-search input { padding: 10px 12px; font-size: 14px; }
+
+  /* main chat area flows first on mobile */
+  .chat-main {
+    order: 1;
+    flex: 1 1 auto;
+    padding: 12px !important;
+    min-height: 0;
+  }
+
+  /* message area: allow vertical scroll within the chat panel */
+  .message-area {
+    padding: 12px !important;
+    max-height: calc(100vh - 260px); /* keeps message area visible above reply box */
+    overflow-y: auto;
+  }
+
+  /* compress bubbles and fonts */
+  .bubble .bubble-text { font-size: 14px !important; }
+  .bubble { padding: 10px 12px !important; border-radius: 14px !important; }
+
+  /* make reply box sticky but inside screen bounds */
+  .reply-box {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 30;
+    padding: 10px !important;
+    background: rgba(255,255,255,0.96);
+    border-top: 1px solid var(--line);
+    gap: 8px;
+  }
+  .reply-box input { padding: 12px 14px; font-size: 14px; border-radius: 999px; }
+
+  /* shrink controls and buttons */
+  .btn-primary, .btn-back, .btn-outline, .btn-option {
+    padding: 10px 14px !important;
+    font-size: 14px !important;
+  }
+
+  /* feedback / concern forms: full width stack */
+  .feedback-form, .new-concern-form .form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+
+  /* concern list becomes vertical cards with spacing */
+  .concern-list { grid-template-columns: 1fr !important; }
+
+  /* ensure empty / center option UI fits */
+  .query-options { height: auto; padding: 20px 10px; gap: 12px; }
+  .options-row { flex-wrap: wrap; gap: 12px; }
+
+  /* reduce margins for cards to avoid side clipping */
+  .card, .new-query-form.card, .concern-section.card, .feedback-section.card {
+    margin: 12px !important;
+    width: calc(100% - 24px) !important;
+  }
+}
+
+/* Fine tune for very small screens */
+@media (max-width: 420px) {
+  .qc-top-left h2 { font-size: 15px !important; }
+  .list-search input, .reply-box input { font-size: 14px !important; }
+  .message-area { max-height: calc(100vh - 220px); }
+  .query-list { max-height: 180px; }
+  .bubble .bubble-text { font-size: 13px !important; }
+  .btn-option { width: 140px; padding: 8px 10px !important; font-size: 14px; }
+}
+/* Move heading down slightly on small screens */
+@media (max-width: 900px) {
+  /* give the topbar more visual breathing room */
+  .qc-topbar {
+    padding-bottom: 14px !important;
+  }
+
+  /* push the "Select an Option" block lower inside the card */
+  .query-options {
+    padding-top: 26px !important;
+    padding-bottom: 18px !important;
+  }
+
+  /* if the h3 itself needs more distance from the topbar */
+  .query-options h3 {
+    margin-top: 8px !important;
+    margin-bottom: 14px !important;
+    font-size: 20px !important;
+  }
+}
+
+/* fine tune for very small phones */
+@media (max-width: 420px) {
+  .query-options {
+    padding-top: 20px !important;
+  }
+  .query-options h3 { font-size: 18px !important; margin-top: 6px !important; }
+}
+.query-options {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px 10px;
+  height: 220px; /* or whatever card height you prefer */
+}
+/* Move ONLY the top heading down on small screens */
+@media (max-width: 900px) {
+  .qc-top-left {
+    margin-top: 18px !important; /* pushes heading downward */
+  }
+
+  .qc-top-left h2 {
+    font-size: 18px !important;  /* slightly smaller so it breathes */
+  }
+}
+
+/* For very small devices */
+@media (max-width: 420px) {
+  .qc-top-left {
+    margin-top: 22px !important;
+  }
+  .qc-top-left h2 {
+    font-size: 17px !important;
+  }
+}
+/* Strong mobile override — push top heading down and avoid overlap with mobile toggle */
+@media (max-width: 900px) {
+  /* push the whole topbar content down */
+  .qc-topbar {
+    padding-top: 36px !important;   /* larger space above heading */
+    padding-bottom: 10px !important;
+    align-items: flex-start !important;
+  }
+
+  /* extra margin on the left block that contains the heading */
+  .qc-top-left {
+    margin-top: 12px !important;
+    margin-left: 6px !important;
+  }
+
+  /* slightly reduce heading size and ensure it wraps */
+  .qc-top-left h2 {
+    font-size: 17px !important;
+    line-height: 1.2 !important;
+    margin: 0 !important;
+  }
+
+  /* move the mobile sidebar toggle (if present) down so it doesn't overlap the heading */
+  .mobile-sidebar-toggle,
+  .mobile-sidebar-toggle * {
+    top: 8px !important;
+    transform: translateY(0) !important;
+    z-index: 60 !important;
+  }
+}
+
+/* extra push for very small phones */
+@media (max-width: 420px) {
+  .qc-topbar { padding-top: 44px !important; }
+  .qc-top-left { margin-top: 14px !important; }
+  .qc-top-left h2 { font-size: 16px !important; }
+}
