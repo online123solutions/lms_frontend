@@ -2676,20 +2676,6 @@ img, .profile-pic-frame img {
     flex: 1 1 calc(50% - 12px) !important;
   }
 
-  /* Hide vertical rotated side labels / rails that overlap content */
-  .rotated-label,
-  .vertical-rotated,
-  .overview-rail,
-  aside.sidebar,
-  .side-rail,
-  .side-pill,
-  .left-column1 .rotated,
-  .left-rail {
-    display: none !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-  }
-
   /* Ensure QA card sits below the overview block — clear floats and full width */
   .qa-card,
   .qa-grid,
