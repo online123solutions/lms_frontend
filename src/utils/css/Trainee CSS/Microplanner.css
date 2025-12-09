@@ -89,3 +89,240 @@
   background-color: #0ba3e6;
   color:white;
 }
+
+/* ---------- Base (keep your existing styles above) ---------- */
+.micro-planner {
+  padding: 15px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1100px;     /* prevents content from growing too wide on large screens */
+  margin: 0 auto;
+}
+
+/* header layout - flexible and will wrap on small screens */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background-color: #393939;
+  padding: 12px 14px;
+  border-radius: 8px;
+  gap: 8px;
+  color: #fff;
+}
+
+/* allow title & controls to be targeted separately in HTML */
+.header .micro-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* container for dropdown / buttons in header */
+.header .micro-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* keep rounded corners and overflow */
+.table-responsive {
+  border-radius: 15px;
+  overflow: auto; /* allow horizontal scroll on mobile */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* table basics */
+.micro-planner-table {
+  width: 100%;
+  min-width: 700px; /* keeps columns from collapsing; small screens will scroll horizontally */
+  background-color: #fff;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+/* smaller table paddings for compactness */
+.micro-planner-table th,
+.micro-planner-table td {
+  border: 1px solid #ddd;
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+/* table header color */
+.micro-planner-table thead.table-custom th {
+  background-color: #0ba3e6 !important;
+  color: #fff !important;
+}
+
+/* highlight rows */
+.micro-planner-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* button tweaks */
+.btn-outline-info {
+  border-color: #17a2b8;
+  color: #17a2b8;
+}
+.btn-outline-info:hover { background-color: #17a2b8; color: #fff; }
+
+.micro-btn {
+  background-color: #0ba3e6;
+  color: #fff;
+  border: none;
+}
+
+/* ---------- Small screens (phones / portrait) ---------- */
+@media (max-width: 768px) {
+  .micro-planner {
+    padding: 10px;
+    max-width: 620px;
+  }
+
+  /* stack header items vertically on small screens */
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .header .micro-title {
+    font-size: 18px;
+  }
+
+  /* make controls full width and right-aligned inside their row */
+  .header .micro-controls {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  /* reduce table font / padding to fit more on small screens */
+  .micro-planner-table th,
+  .micro-planner-table td {
+    padding: 8px 8px;
+    font-size: 13px;
+  }
+
+  /* allow the table to scroll horizontally rather than break layout */
+  .micro-planner-table {
+    min-width: 640px; /* smaller but still scrollable */
+  }
+
+  /* show the rounded corners properly on scrollable container */
+  .table-responsive {
+    border-radius: 12px;
+  }
+}
+
+/* ---------- Very small phones ---------- */
+@media (max-width: 420px) {
+  .micro-planner {
+    padding: 8px 6px;
+    max-width: 100%;
+  }
+
+  .header .micro-title { font-size: 16px; }
+
+  .header .micro-controls {
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  /* make action buttons small */
+  .btn, .btn-outline-info, .micro-btn {
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+
+  /* shrink table min width to reduce horizontal scroll on very small phones */
+  .micro-planner-table {
+    min-width: 560px;
+  }
+
+  .micro-planner-table th, .micro-planner-table td {
+    padding: 6px 6px;
+    font-size: 12px;
+  }
+}
+
+/* ---------- Optional: keep header visible when user scrolls the table ---------- */
+/* If you want the dark header to remain visible while user scrolls the page,
+   uncomment position: sticky; and z-index. Make sure parent has overflow visible. */
+/*
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+*/
+/* Ensure the main wrapper doesn't get clipped by parent layout */
+.micro-planner {
+  padding: 15px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* header */
+.header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 20px;
+  background-color: #393939;
+  padding: 12px 14px;
+  border-radius: 8px;
+  gap: 8px;
+  color: #fff;
+}
+
+/* title + controls used in JSX above */
+.micro-title h2 { margin: 0; color: #fff; }
+.micro-controls { display:flex; align-items:center; gap:8px; }
+
+/* Table must match class used in JSX */
+.micro-planner-table {
+  width: 100%;
+  min-width: 700px;
+  background-color: #fff;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+/* Force Bootstrap overrides if needed */
+.micro-planner-table th,
+.micro-planner-table td {
+  border: 1px solid #ddd !important;
+  padding: 8px 10px !important;
+  text-align: left;
+  font-size: 14px;
+}
+
+/* header color */
+.table-custom th {
+  background-color: #0ba3e6 !important;
+  color: #fff !important;
+}
+
+/* responsive */
+.table-responsive { border-radius: 15px; overflow: auto; -webkit-overflow-scrolling: touch; }
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .header { flex-direction: column; align-items:flex-start; gap:10px; }
+  .micro-controls { width:100%; justify-content:flex-end; }
+  .micro-planner-table { min-width: 640px; }
+}

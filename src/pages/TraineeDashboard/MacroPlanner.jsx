@@ -1,49 +1,45 @@
+// MacroPlanner.jsx (Trainee view — read-only, uses trainee API only)
 import React, { useState, useEffect } from "react";
 import { Form, Spinner } from "react-bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../utils/css/Trainer CSS/Macroplanner.css";
-import { fetchMacroPlanner } from "../../api/traineeAPIservice";
+import { fetchMacroPlanner } from "../../api/traineeAPIservice"; // trainee API
+import "../../index.css";
 
 const MacroPlanner = () => {
   const [planners, setPlanners] = useState([]);
-  const [weeks, setWeeks] = useState([]);
-  const [selectedWeek, setSelectedWeek] = useState(""); // "" = All Weeks
+  const [selectedWeek, setSelectedWeek] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // helper: normalize any week string -> "week 1" / "week 2" etc.
-  const normalizeWeek = (w) =>
-    String(w || "")
-      .toLowerCase()
-      .replace(/\s+/g, " ")
-      .trim();
+  const monthOptions = [
+    "January","February","March","April","May","June",
+    "July","August","September","October","November","December",
+  ];
 
+  const durationOptions = [
+    "1 Month","2 Months","3 Months","4 Months","5 Months","6 Months",
+  ];
+
+  const departmentOptions = [
+    "HR","IT","Finance","Marketing","Sales",
+    "Operations","Support","Training","Development","Design",
+  ];
+
+  const weekOptions = ["week 1","week 2","week 3","week 4"];
+
+  // fetch data (trainee endpoint)
   useEffect(() => {
     const fetchData = async () => {
       try {
         const result = await fetchMacroPlanner();
-        if (result.success) {
-          // normalize week values once
-          const data = result.data.map((p) => ({
-            ...p,
-            week: normalizeWeek(p.week),
-          }));
-          setPlanners(data);
-
-          // unique week list for dropdown
-          const uniqueWeeks = [...new Set(data.map((p) => p.week))].sort(
-            (a, b) => {
-              // sort by week number if present
-              const na = parseInt(a.match(/\d+/)?.[0] || "0", 10);
-              const nb = parseInt(b.match(/\d+/)?.[0] || "0", 10);
-              return na - nb;
-            }
-          );
-          setWeeks(uniqueWeeks);
+        if (result && result.success) {
+          setPlanners(result.data || []);
         } else {
           setError("Failed to fetch macroplanner data.");
         }
-      } catch {
+      } catch (err) {
+        console.error("fetchMacroPlanner error:", err);
         setError("An error occurred while fetching macroplanner data.");
       } finally {
         setLoading(false);
@@ -53,16 +49,44 @@ const MacroPlanner = () => {
   }, []);
 
   const filteredPlanners = planners.filter((p) =>
-    selectedWeek ? p.week === normalizeWeek(selectedWeek) : true
+    selectedWeek ? p.week === selectedWeek : true
   );
 
   return (
     <div className="macro-planner container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-4 header">
-        <h2 className="fw-bold text-white">
-          <i className="bi bi-calendar me-2"></i>
-          Road Map
+      {/* Header layout (matches Trainer visual layout) */}
+      <div className="header d-flex justify-content-between align-items-center mb-4">
+        <h2 className="fw-bold text-white mb-0" title="Road Map">
+          {/* inline svg fallback for icon (safe if icon font not loaded) */}
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            focusable="false"
+            style={{ width: 18, height: 18, marginRight: 8 }}
+          >
+            <rect x="3" y="5" width="18" height="16" rx="2" stroke="white" strokeWidth="1.6" fill="none" />
+            <path d="M16 3v4M8 3v4" stroke="white" strokeWidth="1.6" strokeLinecap="round" />
+          </svg>
+          <span style={{ marginLeft: 4 }}>Road Map</span>
         </h2>
+
+        <Form.Select
+          className="w-auto border-primary shadow-sm macro-filter-select"
+          onChange={(e) => setSelectedWeek(e.target.value)}
+          value={selectedWeek}
+        >
+          <option value="">All Weeks</option>
+          {weekOptions.map((week) => (
+            <option key={week} value={week}>
+              {week}
+            </option>
+          ))}
+        </Form.Select>
+
+        {/* Trainee view: no Add button (read-only) */}
+        <div style={{ minWidth: 120 }} /> {/* placeholder to keep spacing consistent */}
       </div>
 
       {loading ? (
@@ -73,32 +97,30 @@ const MacroPlanner = () => {
         <p className="text-danger text-center">{error}</p>
       ) : (
         <div className="table-responsive">
-          <table className="table table-bordered table-hover align-middle shadow-sm macro-planner-table">
+          <table className="macro-planner-table">
             <thead>
               <tr>
-                {/* <th>Week</th> */}
                 <th>Duration</th>
                 <th>Department</th>
                 <th>Module</th>
-                <th>Mode</th>
+                <th>Role</th>
               </tr>
             </thead>
             <tbody>
               {filteredPlanners.length > 0 ? (
                 filteredPlanners.map((planner) => (
                   <tr key={planner.id}>
-                    {/* <td className="fw-medium">
-                      {planner.week.replace(/^week\s/, (m) => m.charAt(0).toUpperCase() + m.slice(1))}
-                    </td> */}
-                    <td>{planner.duration}</td>
-                    <td>{planner.department}</td>
-                    <td>{planner.module}</td>
-                    <td>{planner.mode || "N/A"}</td>
+                    <td data-label="Duration">{planner.duration}</td>
+                    <td data-label="Department">{planner.department}</td>
+                    <td data-label="Module">{planner.module}</td>
+                    <td data-label="Role" className="text-capitalize">
+                      {planner.role}
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="text-center text-muted">
+                  <td colSpan="4" className="text-center text-muted">
                     No Macroplanner found for selected week.
                   </td>
                 </tr>

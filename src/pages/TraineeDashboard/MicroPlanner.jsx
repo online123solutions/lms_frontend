@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Spinner } from "react-bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
-// Temporarily comment out the CSS import to isolate the issue
-// import "../../utils/css/Trainer CSS/Microplanner.css";
-import {
-  fetchMicroPlanner,
-} from "../../api/traineeAPIservice";
+import "../../utils/css/Trainee CSS/Microplanner.css";
+import { fetchMicroPlanner } from "../../api/traineeAPIservice";
 
 const MicroPlanner = () => {
   const [planners, setPlanners] = useState([]);
@@ -16,9 +13,7 @@ const MicroPlanner = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const weekOptions = [
-    "Week 1", "Week 2", "Week 3", "Week 4"
-  ];
+  const weekOptions = ["Week 1", "Week 2", "Week 3", "Week 4"];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,24 +51,29 @@ const MicroPlanner = () => {
   );
 
   return (
-    <div className="micro-planner container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-4 header">
-        <h2 className="fw-bold text-white">
-          <i className="bi bi-calendar-check me-2"></i>
-          Planner
-        </h2>
-        <Form.Select
-          className="w-auto border-primary shadow-sm"
-          onChange={(e) => setSelectedWeek(e.target.value)}
-          value={selectedWeek}
-        >
-          <option value="">All Weeks</option>
-          {weekOptions.map((week) => (
-            <option key={week} value={week}>
-              {week}
-            </option>
-          ))}
-        </Form.Select>
+    <div className="micro-planner mt-4">
+      <div className="header d-flex justify-content-between align-items-center mb-4">
+        <div className="micro-title">
+          <h2 className="fw-bold text-white mb-0">
+            <i className="bi bi-calendar-check me-2"></i>
+            Planner
+          </h2>
+        </div>
+
+        <div className="micro-controls">
+          <Form.Select
+            className="w-auto border-primary shadow-sm"
+            onChange={(e) => setSelectedWeek(e.target.value)}
+            value={selectedWeek}
+          >
+            <option value="">All Weeks</option>
+            {weekOptions.map((week) => (
+              <option key={week} value={week}>
+                {week}
+              </option>
+            ))}
+          </Form.Select>
+        </div>
       </div>
 
       {loading ? (
@@ -84,11 +84,12 @@ const MicroPlanner = () => {
         <p className="text-danger text-center">{error}</p>
       ) : (
         <div className="table-responsive">
-          <table className="table table-bordered table-hover align-middle shadow-sm macro-planner-table">
+          {/* NOTE: class name corrected to micro-planner-table */}
+          <table className="table table-bordered table-hover align-middle shadow-sm micro-planner-table">
             <thead className="table-custom">
               <tr>
                 <th>Month</th>
-                <th>Week</th> {/* Updated from Month to Week */}
+                <th>Week</th>
                 <th>Days & Modules</th>
                 <th>Department</th>
                 <th>Sessions</th>
@@ -105,7 +106,7 @@ const MicroPlanner = () => {
                   return (
                     <tr key={planner.id}>
                       <td>{planner.month}</td>
-                      <td>{planner.week}</td> {/* Updated from Month to Week */}
+                      <td>{planner.week}</td>
                       <td>{dayModuleList || "N/A"}</td>
                       <td>{planner.department}</td>
                       <td>{planner.no_of_sessions}</td>
@@ -124,7 +125,7 @@ const MicroPlanner = () => {
                 })
               ) : (
                 <tr>
-                  <td colSpan="6" className="text-center text-muted">
+                  <td colSpan="7" className="text-center text-muted">
                     No Microplanner found for selected week.
                   </td>
                 </tr>
@@ -143,11 +144,7 @@ const MicroPlanner = () => {
             <Form>
               <Form.Group className="mb-3" controlId="formWeek">
                 <Form.Label>Week</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={currentPlanner.week}
-                  readOnly
-                />
+                <Form.Control type="text" value={currentPlanner.week} readOnly />
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="formDays">
@@ -170,29 +167,17 @@ const MicroPlanner = () => {
 
               <Form.Group className="mb-3" controlId="formDepartment">
                 <Form.Label>Department</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={currentPlanner.department}
-                  readOnly
-                />
+                <Form.Control type="text" value={currentPlanner.department} readOnly />
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="formSessions">
                 <Form.Label>No. of Sessions</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={currentPlanner.no_of_sessions}
-                  readOnly
-                />
+                <Form.Control type="text" value={currentPlanner.no_of_sessions} readOnly />
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="formMode">
                 <Form.Label>Mode</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={currentPlanner.mode}
-                  readOnly
-                />
+                <Form.Control type="text" value={currentPlanner.mode} readOnly />
               </Form.Group>
             </Form>
           )}
