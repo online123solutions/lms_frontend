@@ -345,7 +345,7 @@ const TraineeDashboard = () => {
         return <TraineeTasks />;
       case "sops": {
         return (
-          <div style={{ padding: 16 }}>
+          <div className="sop-page" style={{ padding: 16 }}>
             <div style={{ display: "flex", gap: 8, marginBottom: 16, alignItems: "center", flexWrap: "wrap" }}>
               <div className="segmented" role="tablist" aria-label="SOPs and Library">
                 <button

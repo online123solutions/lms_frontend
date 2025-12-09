@@ -51,7 +51,7 @@ export default function TraineeProgress() {
   };
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 trainee-progress" style={{ paddingTop: '50px' }}>
       {/* Header bar (same look as Planner) */}
       <div className="d-flex justify-content-between align-items-center mb-4 header">
         <h2 className="fw-bold text-white m-0 d-flex align-items-center gap-2">

@@ -170,7 +170,7 @@ const TraineeLoginActivity = ({ setActiveContent }) => {
   if (error) return <div className="text-red-500">{error}</div>;
 
   return (
-    <div>
+    <div className="login-activity">
       {/* Student Profile Display */}
       {traineeProfile && (
         <div className="bg-white shadow-md rounded-lg p-6 mb-6">

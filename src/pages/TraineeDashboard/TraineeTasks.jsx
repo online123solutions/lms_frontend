@@ -151,7 +151,7 @@ export default function TraineeTasks() {
   };
 
   return (
-    <div className="tn-wrap">
+    <div className="tn-wrap" style={{ paddingTop: '70px' }}>
       <div className="tn-header">
         <div className="d-flex gap-2 align-items-center">
           <Form.Select

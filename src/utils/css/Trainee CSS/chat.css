@@ -912,3 +912,163 @@
   .qc-top-left { margin-top: 14px !important; }
   .qc-top-left h2 { font-size: 16px !important; }
 }
+/* ========================
+   Login Activity - mobile safe spacing
+   Put at end of your global CSS file (index.css) or component CSS
+   ======================== */
+
+/* base spacing for this page (desktop remains same) */
+.login-activity {
+  padding-top: 18px; /* small breathing room on desktop */
+  box-sizing: border-box;
+}
+
+/* chart container responsive tweak */
+.login-activity .bg-white > div[style] {
+  /* targets the inline style div that wraps Chart (the one with height: "300px") */
+  max-width: 100%;
+}
+
+/* --- Mobile overrides: avoid top overlap with sidebar toggle --- */
+@media (max-width: 900px) {
+  /* push the whole page DOWN so headings are not under the topbar or toggle */
+  .login-activity {
+    padding-top: 80px !important; /* safe area — adjust number up/down if needed */
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* make sure immediate headings / first paragraphs have margin */
+  .login-activity > .bg-white,
+  .login-activity > p:first-child,
+  .login-activity h2,
+  .login-activity h1 {
+    margin-top: 10px !important;
+  }
+
+  /* reduce padding inside cards on mobile */
+  .login-activity .p-6 {
+    padding: 14px !important;
+  }
+
+  /* shrink the chart height on mobile so it fits above reply/composer */
+  .login-activity .bg-white .chart-wrapper,
+  .login-activity .bg-white > div[style] {
+    height: 220px !important;
+  }
+
+  /* Move the mobile sidebar toggle out of the way (if your app uses a different class, inspect it and replace selector) */
+  .mobile-sidebar-toggle,
+  .mobile-sidebar-toggle * {
+    position: fixed !important;
+    top: 12px !important;
+    left: 12px !important;
+    transform: translateY(0) !important;
+    z-index: 9999 !important;
+    pointer-events: auto !important;
+  }
+
+  /* Reduce toggle size if it is big */
+  .mobile-sidebar-toggle {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+  }
+}
+
+/* very small phones */
+@media (max-width: 420px) {
+  .login-activity { padding-top: 94px !important; }
+  .login-activity .bg-white > div[style] { height: 180px !important; } /* smaller chart */
+  .login-activity h2 { font-size: 18px !important; }
+}
+/* =========================
+   SOPs page - mobile safe spacing & segmented control tweaks
+   Paste at the END of your CSS file so it overrides other rules
+   ========================= */
+
+.sop-page {
+  box-sizing: border-box;
+  padding-top: 18px; /* desktop breathing room */
+}
+
+/* Segmented buttons (tabs) primary styling - keep but responsive */
+.sop-page .segmented {
+  display: inline-flex;
+  gap: 6px;
+  background: transparent;
+}
+.sop-page .seg-btn {
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.08);
+  background: #ffffff;
+  cursor: pointer;
+  font-weight: 600;
+}
+.sop-page .seg-btn.active {
+  background: #0ba3e6;
+  color: #fff;
+  border-color: #0ba3e6;
+}
+
+/* --- MOBILE: avoid top overlap with sidebar toggle; stack & compress --- */
+@media (max-width: 900px) {
+  /* push the whole SOP content down so the top toggle won't overlap */
+  .sop-page {
+    padding-top: 84px !important; /* safe area - increase if your toggle is taller */
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* reduce space around the segmented controls and allow wrapping */
+  .sop-page .segmented {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  .sop-page .seg-btn {
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+    min-width: 92px;
+    text-align: center;
+  }
+
+  /* card grid: single column and smaller gaps */
+  .sop-page > .card-grid,
+  .sop-page > div[style*="display: grid"] {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* inner card spacing: smaller on mobile */
+  .sop-page .sop-card,
+  .sop-page .lib-card {
+    padding: 12px !important;
+    border-radius: 12px !important;
+  }
+
+  /* Move the mobile sidebar toggle out of the way (if your toggle class differs inspect and replace) */
+  .mobile-sidebar-toggle,
+  .mobile-sidebar-toggle * {
+    position: fixed !important;
+    top: 10px !important;
+    left: 10px !important;
+    z-index: 9999 !important;
+    transform: translateY(0) !important;
+  }
+  .mobile-sidebar-toggle {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+  }
+}
+
+/* Very small phones: slightly more top spacing and smaller seg buttons */
+@media (max-width: 420px) {
+  .sop-page { padding-top: 100px !important; }
+  .sop-page .seg-btn { padding: 6px 10px !important; font-size: 13px !important; min-width: 80px; }
+  .sop-page .sop-card, .sop-page .lib-card { padding: 10px !important; }
+}
