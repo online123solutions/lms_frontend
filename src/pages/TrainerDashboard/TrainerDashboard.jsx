@@ -410,7 +410,10 @@ useEffect(() => {
           transition: isMobile ? "transform 0.25s ease" : "width 0.4s ease-in-out",
           overflow: "hidden",
           paddingTop: 50,
-          margin: 10,
+          margin: 0,
+          boxSizing: "border-box",
+          paddingLeft: 10, // if you need inner spacing instead of external margin
+          paddingRight: 10,
           backgroundColor: "#393939",
 
           /* CRITICAL: prevent desktop transforms (this neutralizes the earlier translateX that caused page shrink)
@@ -543,7 +546,7 @@ useEffect(() => {
       <main
         className="content-panel"
         style={{
-          marginLeft: isMobile ? 20 : sidebarWidth + 20,  // Mobile: small left margin; Desktop: full sidebar offset
+          marginLeft: isMobile ? 20 : sidebarWidth + 20,
           padding: "20px",
           backgroundColor: "#ffffff",
           borderRadius: "25px",
@@ -551,6 +554,11 @@ useEffect(() => {
           minHeight: "100vh",
           transition: "margin-left 0.3s ease",
           overflowY: "auto",
+
+          /* added */
+          maxWidth: "calc(100% - 40px)",   // always fit within viewport
+          overflowX: "hidden",
+          boxSizing: "border-box",
         }}
       >
         {renderContent()}
