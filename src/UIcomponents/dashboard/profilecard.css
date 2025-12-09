@@ -1653,3 +1653,62 @@ html, body, #root {
       border-radius: 0 !important; /* optional */
   }
 }
+/* ========== Mobile & small-screen fix: center + fully visible profile pic ========== */
+/* Put this at the END of profilecard.css so it overrides earlier rules */
+
+.centered-profile,
+.profile-card {
+  /* let the card size to its contents and center its children */
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: auto !important;
+  max-height: none !important;
+  padding: 12px 14px !important;
+  overflow: visible !important; /* allow avatar to be fully visible */
+}
+
+/* If you use different classnames for avatar also override them */
+.centered-profile .profile-pic,
+.profile-card .profile-pic,
+.avatar,
+.floating-avatar {
+  width: 110px !important;        /* default desktop/mobile medium size */
+  height: 110px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;   /* crop the image nicely */
+  display: block !important;
+  margin: 0 auto 12px auto !important; /* horizontally centered */
+  right: auto !important; left: auto !important;
+  position: relative !important; /* undo any absolute positioning */
+  transform: none !important;    /* undo any translate/offset */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08) !important;
+}
+
+/* Smaller screens: scale the avatar down so it never overflows */
+@media (max-width: 420px) {
+  .centered-profile .profile-pic,
+  .profile-card .profile-pic,
+  .avatar,
+  .floating-avatar {
+    width: 88px !important;
+    height: 88px !important;
+    margin-bottom: 10px !important;
+  }
+
+  /* ensure the left column/content has no side paddings that clip avatar */
+  .dashboard-container,
+  .left-container,
+  .content-panel {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+}
+
+/* Defensive overrides: if any earlier rule uses absolute positioning / floating badge */
+.centered-profile .profile-pic[style],
+.profile-card .profile-pic[style] {
+  /* strip inline transforms that may come from JS */
+  transform: none !important;
+}
