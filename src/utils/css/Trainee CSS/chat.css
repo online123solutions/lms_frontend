@@ -866,20 +866,11 @@
   }
 }
 
-/* For very small devices */
-@media (max-width: 420px) {
-  .qc-top-left {
-    margin-top: 22px !important;
-  }
-  .qc-top-left h2 {
-    font-size: 17px !important;
-  }
-}
 /* Strong mobile override — push top heading down and avoid overlap with mobile toggle */
 @media (max-width: 900px) {
   /* push the whole topbar content down */
   .qc-topbar {
-    padding-top: 36px !important;   /* larger space above heading */
+    padding-top: 16px !important;   /* larger space above heading */
     padding-bottom: 10px !important;
     align-items: flex-start !important;
   }
@@ -908,7 +899,7 @@
 
 /* extra push for very small phones */
 @media (max-width: 420px) {
-  .qc-topbar { padding-top: 44px !important; }
+  .qc-topbar { padding-top: 14px !important; }
   .qc-top-left { margin-top: 14px !important; }
   .qc-top-left h2 { font-size: 16px !important; }
 }

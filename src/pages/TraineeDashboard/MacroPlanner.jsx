@@ -53,7 +53,7 @@ const MacroPlanner = () => {
   );
 
   return (
-    <div className="macro-planner container mt-4">
+    <div className="macro-planner container mt-4" style={{ paddingTop: '50px' }}>
       {/* Header layout (matches Trainer visual layout) */}
       <div className="header d-flex justify-content-between align-items-center mb-4">
         <h2 className="fw-bold text-white mb-0" title="Road Map">

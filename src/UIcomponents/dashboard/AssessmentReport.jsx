@@ -159,7 +159,7 @@ const AssessmentReport = () => {
   };
 
   return (
-    <div style={{ width: "100%", padding: "20px" }}>
+    <div style={{ width: "100%", padding: "20px" ,paddingTop: '70px'}}>
       <div className="chart-section" style={{ position: "relative", height: "308px", width: "100%" }}>
         <div style={{ position: "absolute", top: "10px", right: "10px", zIndex: 10 }}>
           <Dropdown>
