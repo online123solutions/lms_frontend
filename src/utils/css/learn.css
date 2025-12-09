@@ -297,3 +297,223 @@ body {
   .back-text { display: none; }   /* keep it compact on mobile */
   .back-button { padding: 8px; }  /* icon-only */
 }
+/* =========================
+   Responsive navbar fix (mobile)
+   Paste at the END of learn.css
+   ========================= */
+
+/* 1) Desktop: keep former look but ensure stacking context */
+.navbar1 {
+  position: relative; /* keep relative for z-indexing children */
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  height: 80px;
+}
+
+/* Make sure absolute children don't unintentionally cover buttons */
+.circle-container,
+.navbar-text,
+.mark-completed-button,
+.back-button {
+  position: relative;
+  z-index: 2;
+}
+
+/* 2) Prevent circle container from blocking clicks when it's scrollable */
+.circle-container {
+  pointer-events: auto; /* allow its children to be clickable */
+}
+
+/* 3) Defensive: allow back button always receive clicks (above other elements) */
+.back-button {
+  position: relative;
+  z-index: 50 !important;
+  pointer-events: auto;
+}
+
+/* 4) Mobile: replace absolute positioning with flex arrangement */
+@media (max-width: 768px) {
+  .navbar1 {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    height: auto;
+    padding: 10px;
+    flex-wrap: nowrap;
+  }
+
+  /* Left: back button (icon-only on small screens) */
+  .back-button {
+    margin: 0;
+    padding: 8px 10px;
+    min-width: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #393939;
+    color: #fff;
+    border-radius: 10px;
+    border: none;
+  }
+
+  /* Center: circles and lesson title stacked nicely */
+  .center-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1 1 auto;
+    min-width: 0;            /* prevents forcing width */
+    margin: 0 8px;
+  }
+
+  .circle-container {
+    position: relative;      /* no absolute offsets */
+    left: auto;
+    transform: none;
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 6px 2px;
+    justify-content: center;
+    pointer-events: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .circle-container::-webkit-scrollbar { height: 6px; }
+  .circle-container::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
+  /* Title below circles, centered, truncated if needed */
+  .navbar-text {
+    position: relative;
+    margin: 6px 0 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111;
+    text-align: center;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Right: mark completed button fits without overlap */
+  .mark-completed-button {
+    position: relative;
+    margin: 0;
+    padding: 8px 12px;
+    border-radius: 12px;
+    min-width: 92px;
+    white-space: nowrap;
+    z-index: 40;
+  }
+
+  /* Make circle visible but compact */
+  .circle {
+    min-width: 34px;
+    min-height: 34px;
+    width: auto;
+    height: auto;
+    padding: 6px;
+    font-size: 14px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* 5) Ensure overlaying elements don't block the back button:
+   If some other element still covers it, this ensures the back button gets clicks. */
+.back-button,
+.back-button * {
+  pointer-events: auto !important;
+}
+
+/* 6) If some parent used absolute and full width, make it ignore pointer-events
+   except for its interactive children (the circles). This avoids invisible overlays. */
+.circle-container[style],
+.circle-container {
+  pointer-events: none;    /* default none so it doesn't block siblings */
+}
+.circle-container .circle {
+  pointer-events: auto;    /* circles are interactive */
+}
+/* ========== MAKE LESSON TITLE VISIBLE (mobile) ========== */
+/* Put at END of learn.css so it overrides previous rules */
+
+/* Ensure center-block exists (if you didn't add it, see JSX snippet below) */
+.center-block { min-width: 0; display: flex; flex-direction: column; align-items: center; }
+
+/* On small screens allow the lesson title to wrap to 2 lines and stay centered */
+@media (max-width: 768px) {
+  .center-block { flex: 1 1 auto; padding: 0 6px; }
+
+  /* Circles become smaller so title has more room */
+  .circle {
+    min-width: 30px;
+    min-height: 30px;
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+    padding: 0;
+  }
+
+  /* Title: allow up to 2 lines, centered and truncated after 2 lines */
+  .navbar-text {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;    /* show up to 2 lines */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;          /* allow wrapping */
+    font-size: 1rem;
+    line-height: 1.1;
+    text-align: center;
+    max-width: 100%;
+    margin-top: 6px;
+    color: #111;
+  }
+
+  /* Ensure mark completed fits but doesn't push the center-block too small */
+  .mark-completed-button {
+    flex: 0 0 auto;
+    min-width: 86px;
+    max-width: 160px;
+    white-space: nowrap;
+    margin-left: 8px;
+  }
+
+  /* Ensure back button is compact and visible */
+  .back-button {
+    flex: 0 0 auto;
+    margin-right: 8px;
+  }
+
+  /* Prevent the circles from occupying too much horizontal space */
+  .circle-container {
+    gap: 8px;
+    padding: 6px 2px;
+    max-width: 100%;
+    justify-content: center;
+  }
+
+  /* Defensive: ensure navbar children don't overflow the header area */
+  .navbar1 {
+    align-items: center;
+    gap: 8px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+/* Extra small screens: slightly reduce title size if needed */
+@media (max-width: 420px) {
+  .navbar-text { font-size: 0.95rem; }
+  .circle { width: 28px; height: 28px; font-size: 12px; }
+  .mark-completed-button { min-width: 72px; padding: 6px 10px; }
+}
