@@ -334,7 +334,7 @@ useEffect(() => {
       case "taskReviews": return <TrainerTaskReviews />;
       case "sops": {
         return (
-          <div style={{ padding: 16 }}>
+          <div style={{ padding: 16, paddingTop: 70 }}>
             <div style={{ display: "flex", gap: 8, marginBottom: 16, alignItems: "center", flexWrap: "wrap" }}>
               <div className="segmented" role="tablist" aria-label="SOPs and Library">
                 <button

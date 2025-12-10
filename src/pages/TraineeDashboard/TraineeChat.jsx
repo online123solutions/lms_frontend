@@ -265,7 +265,7 @@ export default function TraineeChat() {
 
   // ------------------- RENDER -------------------
   return (
-    <div className="qc-root" style={{ paddingTop: '70px' }}>
+    <div className="qc-root">
       <div className="qc-shell">
         {/* Top Bar */}
         <div className="qc-topbar">

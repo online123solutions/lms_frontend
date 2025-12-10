@@ -320,7 +320,7 @@ const AdminDashboard = () => {
 
       case "sops": {
         return (
-          <div style={{ padding: 16 }}>
+          <div style={{ padding: 16, paddingTop: 70 }}>
 
             <div
               style={{
