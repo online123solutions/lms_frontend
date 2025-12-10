@@ -452,3 +452,29 @@
     margin-left: 0;
   }
 }
+
+@media (max-width: 480px) {
+  /* give more safe top padding so floating toggle doesn't sit on header */
+  .trainer-queries-scope .qc-root { padding-top: 110px !important; }
+
+  .trainer-queries-scope .qc-topbar { padding:8px; }
+  .trainer-queries-scope .qc-top-left h2 { font-size:15px; }
+
+  .trainer-queries-scope .filter-bar { grid-template-columns: 1fr; gap:8px; }
+  .trainer-queries-scope .list-items { max-height:200px; }
+
+  .trainer-queries-scope .chat-list-item { padding:10px; }
+  .trainer-queries-scope .item-sub { font-size:13px; }
+  .trainer-queries-scope .item-meta { font-size:11px; }
+
+  .trainer-queries-scope .assign-controls { width:100%; flex-direction:column; align-items:stretch; gap:8px; }
+  .trainer-queries-scope .assign-input { width:100%; min-width:0; }
+
+  .trainer-queries-scope .reply-box { flex-direction:column; gap:8px; }
+  .trainer-queries-scope .reply-box .btn-primary { width: 100%; }
+  .trainer-queries-scope .reply-box input { width:100%; }
+
+  .trainer-queries-scope .avatar { width:34px; height:34px; font-size:13px; }
+  .trainer-queries-scope .bubble { font-size:13px; padding:8px; }
+}
+

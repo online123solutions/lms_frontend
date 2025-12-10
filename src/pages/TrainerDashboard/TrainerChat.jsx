@@ -226,7 +226,12 @@ async function assignToMe() {
             {selectedQuery && headerChips(selectedQuery)}
           </div>
           <div className="qc-top-actions">
-            <button className="btn-outline" onClick={() => setSelectedQuery(null)}>
+            <button
+              type="button"
+              className="btn-outline back-button-mobile"
+              onClick={() => setSelectedQuery(null)}
+              aria-label="Back to list"
+            >
               ← Back to list
             </button>
           </div>
