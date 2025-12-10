@@ -508,31 +508,18 @@ UpdatesCard.propTypes = {
 const LeftContainer = ({ data, banners }) => {
   return (
     <div className="left-container">
-    <h1
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "10px",
-        flexWrap: "nowrap",
-      }}
-    >
-      <span>
-        <b>Hello, </b>
-        {data?.profile?.name || "Trainee"}
-      </span>
+      <h1 className="left-header">
+        <div className="left-greeting">
+          <span className="greeting-name">
+            <b>Hello,</b> {data?.profile?.name || "Trainee"}
+          </span>
+          {/* <div className="sub-greet">Nice to have you back, what an exciting day!</div> */}
+        </div>
 
-      {/* logo at the END of the same line */}
-      <img
-        src={traineeLogo}
-        alt="Trainee Logo"
-        style={{
-          height: "78px",
-          width: "auto",
-          marginLeft: "300px",
-          verticalAlign: "middle",
-        }}
-      />
-    </h1>
+        <div className="header-logo" aria-hidden={!traineeLogo}>
+          <img src={traineeLogo} alt="Trainee Logo" />
+        </div>
+      </h1>
       {/* <h6>Nice to have you back, what an exciting day!</h6> */}
       <h6>Get ready and continue your lessons today.</h6>
 

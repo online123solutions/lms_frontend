@@ -59,11 +59,22 @@ const MacroPlanner = () => {
     w.replace(/^week\s/, (m) => m.charAt(0).toUpperCase() + m.slice(1)); // "Week 2"
 
   return (
-    <div className="macro-planner container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-4 header">
-        <h2 className="fw-bold text-white">
-          <i className="bi bi-calendar me-2"></i>
-          Road Map
+    <div className="macro-planner container mt-4" style={{ paddingTop: '50px' }}>
+      <div className="header d-flex justify-content-between align-items-center mb-4">
+        <h2 className="fw-bold text-white mb-0" title="Road Map">
+          {/* inline svg fallback for icon (safe if icon font not loaded) */}
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            focusable="false"
+            style={{ width: 18, height: 18, marginRight: 8 }}
+          >
+            <rect x="3" y="5" width="18" height="16" rx="2" stroke="white" strokeWidth="1.6" fill="none" />
+            <path d="M16 3v4M8 3v4" stroke="white" strokeWidth="1.6" strokeLinecap="round" />
+          </svg>
+          <span style={{ marginLeft: 4 }}>Road Map</span>
         </h2>
         {/* <Form.Select
           className="w-auto border-primary shadow-sm"

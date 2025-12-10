@@ -162,10 +162,10 @@ const QuizComponent = ({ setActiveContent }) => {
   };
 
   if (loading) return <p>Loading...</p>;
-  if (!data || !data.quizzes?.length) return <p>No quizzes available.</p>;
+  if (!data || !data.quizzes?.length) return <p style={{ padding: '80px' }}>No quizzes available.</p>;
 
   return (
-    <div className="quiz-container">
+    <div className="quiz-container" >
       <AnimatedBackground /> {/* Add the animated background */}
       {!selectedQuiz ? (
         <div className="quiz-cards-container">

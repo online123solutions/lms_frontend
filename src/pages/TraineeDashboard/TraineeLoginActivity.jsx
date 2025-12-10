@@ -174,7 +174,7 @@ const TraineeLoginActivity = ({ setActiveContent }) => {
       {/* Student Profile Display */}
       {traineeProfile && (
         <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-2">Student Profile</h2>
+          <h2 className="text-xl font-semibold mb-2">Trainee Profile</h2>
           <p>
             <strong>Name:</strong> {traineeProfile.name}
           </p>

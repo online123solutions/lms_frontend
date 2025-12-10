@@ -78,7 +78,7 @@ export default function EmployeeNotificationsPage({ onRefreshBadge }) {
   };
 
   return (
-    <div className="notif-container">
+    <div className="notif-container" style={{ paddingTop: '60px' }}>
       <div className="notif-header">
         <h2>Notifications</h2>
         <p className="notif-subtitle">

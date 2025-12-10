@@ -402,18 +402,18 @@ ActionCards.propTypes = {
 const LeftContainer = ({ data, banners }) => {
   return (
     <div className="left-container">
-    <h1 className="left-header">
-      <div className="left-greeting">
-        <span className="greeting-name">
-          <b>Hello,</b> {data?.profile?.name || "Trainee"}
-        </span>
-        {/* <div className="sub-greet">Nice to have you back, what an exciting day!</div> */}
-      </div>
+      <h1 className="left-header">
+        <div className="left-greeting">
+          <span className="greeting-name">
+            <b>Hello,</b> {data?.profile?.name || "Trainee"}
+          </span>
+          {/* <div className="sub-greet">Nice to have you back, what an exciting day!</div> */}
+        </div>
 
-      <div className="header-logo" aria-hidden={!traineeLogo}>
-        <img src={traineeLogo} alt="Trainee Logo" />
-      </div>
-    </h1>
+        <div className="header-logo" aria-hidden={!traineeLogo}>
+          <img src={traineeLogo} alt="Trainee Logo" />
+        </div>
+      </h1>
 
       {/* <h6>Nice to have you back, what an exciting day!</h6> */}
       <h6>Nice to have you back, what an exciting day!</h6>
