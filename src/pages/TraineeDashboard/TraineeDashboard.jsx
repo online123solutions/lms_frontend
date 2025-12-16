@@ -423,21 +423,20 @@ const TraineeDashboard = () => {
       {/* Updated: Sidebar styles for consistent width/animation */}
       <aside
         className={`sidebar ${isCollapsed ? "collapsed" : ""} ${isSidebarOpen ? "open" : ""}`}
-        aria-label="Main navigation"
         style={{
-          position: "fixed",
+          position: "fixed", 
           top: 0,
           left: 0,
-          width: sidebarWidth,  // Always full width; slide handles visibility
-          height: "100vh",
+          width: sidebarWidth,
+          height: isMobile ? "100vh" : "auto",
+          minHeight: "100vh",
           display: "flex",
           flexDirection: "column",
           zIndex: 2000,
-          transition: sidebarTransition,  // Mobile: transform; Desktop: width
-          overflow: "hidden",
-          paddingTop: 50,  // Consistent with CSS
-          margin: 10,
-          backgroundColor: "#393939",  // Inline for reliability
+          transition: sidebarTransition,
+          overflow: "visible",      // 🔥 KEY
+          paddingTop: 16,
+          backgroundColor: "#393939",
         }}
       >
         {/* Brand */}
@@ -450,16 +449,14 @@ const TraineeDashboard = () => {
             {!isCollapsed ? (
               <img
                 src={logoS1}
-                alt="SO"
+                alt="Steel Study"
                 className="sidebar-logo"
-                style={{ width: "220px", height: "auto", background: "transparent", border: "none", boxShadow: "none", filter: "none", opacity: 1, display: "block", margin: 0, padding: 0 }}
               />
             ) : (
               <img
                 src={logoS1}
-                alt="SO"
-                className="sidebar-logo sidebar-logo--mini"
-                style={{ width: "50px", height: "auto", background: "transparent", border: "none", boxShadow: "none", filter: "none", opacity: 1, display: "block", margin: 0, padding: 0 }}
+                alt="Steel Study"
+                className="sidebar-logo"
               />
             )}
           </div>
@@ -468,7 +465,15 @@ const TraineeDashboard = () => {
         <div className="sidebar-sep" style={{ flexShrink: 0 }} />
 
         {/* Menu */}
-        <div style={{ flex: 1, overflowY: "auto", padding: "10px 0" }}>
+        <div
+          className="sidebar-menu"
+          style={{
+            flex: "1 1 auto",
+            overflowY: "auto",
+            padding: "10px 0",
+            minHeight: 0,          // 🔥 THIS IS THE KEY FIX
+          }}
+        >
           {MENU.map((item) => (
             <div
               key={item.key}
@@ -515,7 +520,13 @@ const TraineeDashboard = () => {
         </div>
 
         {/* Bottom settings / logout */}
-        <div className="sidebar-bottom-section" style={{ flexShrink: 0, marginTop: "auto" }}>
+        <div
+            className="sidebar-bottom-section"
+            style={{
+              flexShrink: 0,
+              paddingBottom: 12,
+            }}
+          >
           <div className="sidebar-item" onClick={() => setShowDropdown(!showDropdown)}>
             <i className="bi bi-gear sidebar-icon"></i>
             {!isCollapsed && <span className="sidebar-text">Settings</span>}
@@ -546,13 +557,13 @@ const TraineeDashboard = () => {
 
       {/* Updated: Main content margin only for desktop (overlay in mobile) */}
       <main
-        className={`content-panel ${activeContent === "curriculum" ? "curriculum-panel" : ""}`}
+        className="content-panel"
         style={{
-          marginLeft: isMobile ? 20 : sidebarWidth + 20,  // Mobile: small left margin; Desktop: full sidebar offset
+          marginLeft: isMobile ? 0 : sidebarWidth, // 🔥 offset for fixed sidebar
           padding: "20px",
-          minHeight: "100vh",
+          height: "100vh",
+          overflowY: "auto",      // 🔥 SCROLL HERE ONLY
           transition: "margin-left 0.3s ease",
-          overflowY: "auto",
         }}
       >
         {renderContent()}

@@ -424,7 +424,7 @@ const EmployeeDashboard = () => {
           zIndex: 2000,
           transition: sidebarTransition,  // Mobile: transform; Desktop: width
           overflow: "hidden",
-          paddingTop: 50,  // Consistent with CSS
+          paddingTop: 16,  // Consistent with CSS
           margin: 10,
           backgroundColor: "#393939",  // Inline for reliability
         }}

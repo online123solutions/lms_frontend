@@ -503,7 +503,7 @@
   border-radius: 15px; /* Rounded corners */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
   display: block; /* Ensure it is visible when toggled */
-  height: calc(100vh - 180px); /* Match the height of the cards container */
+  height: calc(100vh - 180px);
   overflow-y: auto; /* Add scroll if content overflows */
   position: relative; /* Ensure child elements can be positioned absolutely */
 }
@@ -749,34 +749,6 @@
   }
 }
 
-/* 🔧 Ensure the app can fill the viewport */
-html, body, #root {
-  height: 100%;
-}
-
-/* 🔧 Dashboard layout */
-.dashboard {
-  display: grid;
-  grid-template-columns: 260px 1fr;   /* collapsed state handled below */
-  min-height: 100dvh;                 /* better on mobile than 100vh */
-  background: #f6f7fb;                /* optional */
-}
-
-/* 🔧 Sidebar fills full height and stays pinned */
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  height: 100dvh;
-  position: sticky;  /* pins to the top while page scrolls */
-  top: 0;
-  left: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  background: #111;  /* your theme */
-  z-index: 100;      /* above content but below modal/backdrop */
-  border-right: 1px solid rgba(0,0,0,.06);
-}
-
 /* collapsed width */
 .sidebar.collapsed {
   width: 76px;
@@ -814,14 +786,6 @@ html, body, #root {
     opacity: 1;
     pointer-events: auto;
   }
-}
-
-/* 🔧 Content area */
-.content-panel {
-  grid-column: 2 / -1;
-  min-height: 100dvh;
-  overflow: auto;
-  background: transparent;
 }
 
 /* Optional: make the glow/active item visible on dark bg */
@@ -930,18 +894,10 @@ html, body, #root {
 @media (min-width: 992px) {
   .chart-inner1 { height: 200px !important; }
 }
-/* 1) Let the main content area scroll */
-.content-panel {
-  height: 100dvh;          /* fills viewport */
-  overflow-y: auto;        /* <-- adds scroll */
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-}
 
 /* 2) Kill fixed-height on the inner dashboard, allow it to grow naturally */
 .teacher-dashboard-content1 {
-  height: auto !important;    /* was 100vh in earlier CSS */
-  min-height: calc(100vh - 40px);         /* optional; keeps it tall when short */
+  height: auto !important;    /* was 100vh in earlier CSS */     /* optional; keeps it tall when short */
   display: block;             /* if it was flex, you don't need it here */
 }
 
@@ -985,18 +941,14 @@ html, body, #root {
   display:block;
 }
 
-/* Ensure the center panel can scroll when needed */
-.content-panel{
-  height:100dvh;
-  overflow-y:auto;
-  overflow-x:hidden;
-}
-/* Let the whole block grow naturally; scrolling is already on .content-panel */
 .cards-container1 {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 20px;
+  align-items: start;
   height: auto !important;
-  min-height: 0;
-  align-items: flex-start;  /* no equal-height stretching */
 }
+
 
 /* Columns are just vertical stacks */
 .left-column1,
@@ -1027,16 +979,6 @@ html, body, #root {
 .chart-inner1 > canvas { width:100% !important; height:100% !important; display:block; }
 
 /* ========= Big-screen fixes: layout, notice board, trainer progress ========= */
-
-/* Make two true columns that stretch nicely on wide screens */
-.cards-container1 {
-  display: grid !important;
-  grid-template-columns: 1.35fr 1fr !important; /* left wider than right */
-  gap: 16px !important;
-  height: auto !important;
-  min-height: 0 !important;
-  align-items: stretch !important;
-}
 
 /* Turn columns into independent vertical stacks that don't force equal heights */
 .left-column1,
@@ -1743,14 +1685,6 @@ html, body, #root {
 }
 /* ---------------- Dashboard responsive helpers (paste at end of TDContent.css) ---------------- */
 
-/* Base grid layout for the cards area */
-.cards-container1 {
-  display: grid;
-  grid-template-columns: 1fr 360px; /* left main column and a fixed right column */
-  gap: 22px;
-  align-items: start;
-}
-
 /* make sure columns don't collapse to zero */
 .left-column1,
 .right-column1 {
@@ -1931,16 +1865,7 @@ img, .profile-pic-frame img {
   height: auto;
   display: block;
 }
-/* ---------- Responsive layout tuning for teacher/admin dashboards ---------- */
-
-/* Grid: left + right columns.
-   Use a flexible left column but cap its max-width so cards don't expand too far. */
-.cards-container1 {
-  display: grid;
-  grid-template-columns: 1fr 360px;  /* right column fixed width, left flexible */
-  gap: 24px;
-  align-items: start;
-}
+/* ---------- Responsive layout tuning for teacher/admin dashboards ---------- *
 
 /* Make sure content fills without overflow */
 .left-column1,
@@ -2027,12 +1952,6 @@ img, .profile-pic-frame img {
   .left-column1 .content-card1 { max-width: 1000px; }
 }
 
-/* Desktop / laptop typical */
-@media (min-width: 1024px) and (max-width: 1399px) {
-  .cards-container1 { grid-template-columns: 1fr 360px; gap: 20px; }
-  .left-column1 .content-card1 { max-width: 880px; }
-}
-
 /* Tablet landscape ~ 768 - 1023: reduce right column to keep everything visible */
 @media (min-width: 768px) and (max-width: 1023px) {
   .cards-container1 { grid-template-columns: 1fr 320px; gap: 16px; }
@@ -2082,14 +2001,6 @@ img, .profile-pic-frame img {
    ----------------------- */
 *, *::before, *::after { box-sizing: border-box; }
 
-/* ensure main content panel keeps inner cards contained */
-.content-panel,
-.teacher-dashboard-content1,
-.main-content-panel,
-.cards-container1 {
-  overflow: visible; /* allow shadows, but inner cards handle overflow */
-  box-sizing: border-box;
-}
 
 /* make inner cards always respect parent's width */
 .content-card1,
@@ -2171,17 +2082,6 @@ img, .profile-pic-frame img {
   }
   .top-bar-card1 .number1 { font-size: 16px; }
   .top-bar-card1 .text1 { font-size: 11px; }
-}
-
-/* -----------------------
-  Cards container layout (left / right)
-   ----------------------- */
-/* desktop: keep two-column layout with a narrower right column */
-.cards-container1 {
-  display: grid;
-  grid-template-columns: 1fr 360px; /* left flexible, right fixed */
-  gap: 22px;
-  align-items: start;
 }
 
 /* center overview items horizontally */
@@ -2412,10 +2312,6 @@ img, .profile-pic-frame img {
   box-sizing: border-box;
 }
 
-/* ensure cards are contained in white panel */
-.content-panel, .teacher-dashboard-content1, .main-content-panel {
-  overflow: visible; /* let inner scrolls behave, but avoid missing content */
-}
 
 /* fix right-column cards width so they don't push layout sideways */
 .right-column1 {
@@ -2807,3 +2703,114 @@ img, .profile-pic-frame img {
 
 }
 
+/* ❌ kill forced equal heights */
+.content-card1,
+.left-column1 .content-card1,
+.right-column1 .content-card1 {
+  height: auto !important;
+  min-height: unset !important;
+  flex: 0 0 auto !important;
+}
+.chart-inner1 {
+  height: 220px !important;
+  min-height: 220px !important;
+}
+
+@media (max-width: 768px) {
+  .chart-inner1 {
+    height: 160px !important;
+  }
+}
+
+/* === Desktop large (≥1600px) === */
+@media (min-width: 1600px) {
+  .cards-container1 {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 22px;
+  }
+}
+
+/* === Normal laptops (1366–1599px) === */
+@media (min-width: 1200px) and (max-width: 1599px) {
+  .cards-container1 {
+    display: grid;
+    grid-template-columns: 1fr 300px; /* 🔥 smaller right column */
+    gap: 18px;
+  }
+}
+
+/* === Small laptops / tablets === */
+@media (max-width: 1199px) {
+  .cards-container1 {
+    display: grid;
+    grid-template-columns: 1fr; /* stack */
+    gap: 16px;
+  }
+}
+.left-column1 {
+  min-width: 0;
+}
+
+.left-column1 .content-card1 {
+  min-width: 0;
+  width: 100%;
+}
+/* sidebar width */
+:root {
+  --sidebar-width: 280px;
+}
+
+.sidebar {
+  width: var(--sidebar-width);
+}
+
+.content-panel {
+  margin-left: var(--sidebar-width);
+}
+
+.sidebar {
+  width: 250px;
+  flex-shrink: 0;
+  background-color: #4b2eaa;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
+  z-index: 1001;
+}
+
+/* collapsed state */
+.sidebar.collapsed {
+  width: 80px;
+}
+
+.content-panel {
+  flex-grow: 1;
+  background-color: #ffffff;
+  margin: 10px;
+  padding: 20px;
+  border-radius: 25px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
+}
+
+.sidebar {
+  overflow-y: auto;
+}
+
+.content-panel {
+  overflow-y: auto;
+}
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+}

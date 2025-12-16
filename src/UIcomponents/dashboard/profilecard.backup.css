@@ -13,6 +13,7 @@
   display: flex;
   flex-direction: row;
   min-height: 100vh; /* ✅ allows growth */
+  width: 100%;
 }
 
 
@@ -27,6 +28,12 @@
 .left-container {
   flex-basis: 100%;
   background-color: var(--bg-card);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 20px;
 }
 
 @media (max-width: 768px) {
@@ -49,7 +56,9 @@
   flex-basis: 100%;
   display: flex;
   flex-direction: column;
+  padding: 20px;
   background-color: #f6f6fc;
+  border-radius: 15px;
   margin-right: 20px;
 }
 
@@ -119,12 +128,16 @@
 /* Top Section */
 .top-section {
   display: flex;
+  gap: 20px;
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
 
 .profile-card {
   background-color: var(--bg-card);
+  padding: 10px;
+  border-radius: 15px;
+  text-align: left;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   flex: 1;
   max-width: 400px;
@@ -171,6 +184,9 @@
 }
 
 .action-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   width: 60%;
   max-height: 100%;
   justify-content: space-between;
@@ -178,9 +194,14 @@
 
 .action-card {
   background-color: var(--bg-card);
+  border-radius: 15px;
+  padding: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   min-width: fit-content;
   flex: 1 1 auto;
+  height: auto; 
+  overflow: hidden; 
+  position: relative;
 }
 
 @media (max-width: 768px) {
@@ -208,6 +229,7 @@
 
 .header-con1,
 .header-con {
+  margin-top: 10px;
   height: calc(100% - 40px); 
   overflow-y: auto;
   padding-right: 10px; 
@@ -314,8 +336,17 @@
   background:#f1f3f8; color:#333; font-size:20px; line-height:1;
 }
 .slider-btn:hover{ background:#e6e9f2; }
-.slider-viewport{ height:220px;
+.slider-viewport{
+  position:relative; width:100%; height:220px;
+  border-radius:8px; overflow:hidden; margin-top:12px;
 }
+.slide{
+  position:absolute; inset:0;
+  background-size:cover; background-position:center;
+  opacity:0; transform:scale(1.02);
+  transition:opacity .5s ease, transform .5s ease;
+}
+.slide.active{ opacity:1; transform:scale(1); }
 .slider-desc{ color:#666; margin:12px 0 8px; }
 .slider-dots{ display:flex; gap:6px; justify-content:center; }
 .dot{
@@ -325,8 +356,16 @@
 .dot.on{ background:#111827; }
 
 /* Make Updates + Progress perfectly aligned and equal width */
+.right-container{
+  display:grid;
+  grid-auto-rows: auto;          /* was min-content */
+  gap:16px;
+}
 .right-container > .updates-card,
 .right-container > .mp-card{
+  margin: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box;
   height: 100% !important;
 }
 
@@ -339,6 +378,8 @@
 }
 .updates-card ul{ margin: 0; }
 .updates-card li{ margin-bottom: 10px; }
+
+.mp-card{ min-height: 320px; display:flex; flex-direction:column; }
 
 .mp-title{
   display:flex; align-items:center; gap:10px;
@@ -372,6 +413,10 @@
 .bg-blue  { background: linear-gradient(135deg,#dbeafe,#eef2ff); }
 .bg-amber { background: linear-gradient(135deg,#fff7ed,#fef3c7); }
 .bg-green { background: linear-gradient(135deg,#dcfce7,#e7f5eb); }
+
+.mp-progress{
+  display:flex; align-items:center; gap:18px;
+}
 @media (max-width:560px){ .mp-progress{ flex-direction:column; } }
 
 .mp-donut{
@@ -403,12 +448,16 @@
   border-radius: 15px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   text-align: center;
+  height: auto;
   border: 2px solid #FFD700; /* Yellow highlight border */
 }
 
 .centered-profile .profile-pic {
   width: 130px;
+  height: auto;
+  border-radius: 50%;
   margin-bottom: 15px;
+  object-fit: cover;
   border: 3px solid #ddd;
 }
 
@@ -497,7 +546,9 @@
 
 /* 4) Top row uses Grid with fixed profile column */
 .top-section{
+  display: grid;
   grid-template-columns: 360px minmax(0, 1fr);
+  gap: 20px;
   margin-bottom: 0;
 }
 
@@ -520,7 +571,11 @@
 }
 
 /* 6) Action cards column: let Grid decide width */
-.action-cards{             /* was 60% -> caused wrap on Linux */
+.action-cards{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  width: auto;             /* was 60% -> caused wrap on Linux */
   max-height: none;
   justify-content:unset;
 }
@@ -530,7 +585,9 @@
   background: var(--bg-card);
   border-radius: 15px;
   padding: 20px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);            /* important in grid/flex to avoid overflow */            /* was 150px */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  min-width: 0;            /* important in grid/flex to avoid overflow */
+  height: auto;            /* was 150px */
   overflow: hidden;
   position: relative;
 }
@@ -544,7 +601,9 @@
 .header-con{
   margin-top: 10px;
   max-height: none;       /* optional, keeps list tidy */
-  padding-right: 8px; /* prevents layout jump on Linux */
+  overflow: auto;
+  padding-right: 8px;
+  scrollbar-gutter: stable both-edges; /* prevents layout jump on Linux */
 }
 
 /* 9) Banner slider keeps aspect and never stretches layout */
@@ -589,14 +648,26 @@
 /* Slim the profile card */
 .centered-profile{
   padding: 16px;
-  border: 1px solid #e5e7eb;     /* was 2px yellow; looks bulky */                   /* avoid forcing tall box */              /* cap it so it never balloons */
+  border: 1px solid #e5e7eb;     /* was 2px yellow; looks bulky */
+  height: auto;                   /* avoid forcing tall box */
+  max-height: none;              /* cap it so it never balloons */
+  gap: 8px;
 }
 
 /* Smaller avatar */
+.centered-profile .profile-pic{
+  width: 96px;
+  height: auto;
+  margin-bottom: 8px;
+  border: 2px solid #ddd;
+}
 
 /* Tighter text */
+.centered-profile h4{ font-size: 18px; margin: 2px 0; }
+.centered-profile .location{ font-size: 14px; }
 
 /* Compact stats */
+.centered-profile .stats{ gap: 6px; margin-top: 10px; }
 .centered-profile .stat-row{ gap: 6px; }
 .centered-profile .stat-count,
 .centered-profile .stat-label{ font-size: 12px; }
@@ -607,16 +678,22 @@
 */
 /* --- 1) Grid/row behavior: remove forced heights and prevent stretch --- */
 .top-section{
-  grid-template-columns: clamp(240px, 22vw, 300px) minmax(0,1fr);          /* <<< important: no equal-height stretch */
+  display: grid;
+  grid-template-columns: clamp(240px, 22vw, 300px) minmax(0,1fr);
+  gap: 20px;
+  align-items: start;          /* <<< important: no equal-height stretch */
 }
 
 /* Profile card should size to content; no white band inside */
-.centered-profile{                /* don't fix to 500/300 */
+.centered-profile{
+  height: auto;                /* don't fix to 500/300 */
   max-height: none;            /* allow natural height */
   padding: 14px;
   gap: 8px;
 }
-.centered-profile .profile-pic{ width: 96px; }
+.centered-profile .profile-pic{ width: 96px; height: auto; margin-bottom: 8px; }
+.centered-profile h4{ font-size: 18px; margin: 2px 0; }
+.centered-profile .location{ font-size: 14px; margin: 1px 0; }
 .centered-profile .stats{ gap: 6px; margin-top: 10px; }
 
 /* Right-column cards should also be auto height (no fixed 150px) */
@@ -624,16 +701,46 @@
 
 
 /* --- 2) Notifications list: stable 2-col layout + no wrapping of the button --- */
-.header-con1 ul{ padding: 0 0 6px 0; }
+.header-con1 ul{ list-style: none; margin: 0; padding: 0 0 6px 0; }
+.header-con1 li{
+  display: grid;
+  grid-template-columns: 1fr auto;   /* title/desc | actions */
+  gap: 6px 10px;
+  align-items: start;
+  padding: 6px 0;
+  border-bottom: 1px solid #f1f2f6;
+}
+.header-con1 li:last-child{ border-bottom: none; }
+
+.notif-head{
+  display: flex; align-items: center; gap: 8px;
+  min-width: 0;                     /* allow ellipsis */
+}
 .notif-head strong{
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   max-width: 100%;
+}
+.notif-meta{ font-size: 12px; color: #6b7280; margin-left: auto; white-space: nowrap; }
+
+.notif-actions{
+  display: flex; align-items: center; gap: 8px;
+  white-space: nowrap;               /* keep button on one line */
+}
+.btn-mark-read{
+  background: #e5e7eb; border: 0; border-radius: 6px;
+  padding: 4px 8px; cursor: pointer; font-size: 12px;
 }
 
 /* Keep scrollbar space reserved so Linux doesn’t shift layout */
+.header-con1{ max-height: none; overflow: auto; scrollbar-gutter: stable both-edges; }
 /* Right column spacing & card sizing */
 .right-container { gap: 14px; }
 
 /* Top row: slightly narrower profile column */
+.top-section{
+  grid-template-columns: clamp(230px, 20vw, 280px) minmax(0,1fr);
+  align-items: start;
+}
 
 /* Profile card: compact */
 .centered-profile{
@@ -648,15 +755,22 @@
   overflow: auto;
   scrollbar-gutter: stable both-edges;
 }
-.header-con1 li{   /* text | actions */
+.header-con1 ul{ list-style:none; margin:0; padding:0; }
+.header-con1 li{
+  display:grid;
+  grid-template-columns: 1fr auto;   /* text | actions */
+  gap: 8px 10px;
   align-items:flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f2f6;
 }
+.header-con1 li:last-child{ border-bottom:none; }
 
 .notif-head{ display:flex; align-items:center; gap:8px; min-width:0; }
 .notif-head strong{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .notif-meta{ margin-left:auto; font-size:12px; color:#6b7280; white-space:nowrap; }
 
-.notif-actions{ display:flex; align-items:center; gap:8px; }
+.notif-actions{ display:flex; align-items:center; gap:8px; white-space:nowrap; }
 .btn-mark-read{
   padding: 4px 8px; border:0; border-radius:6px; cursor:pointer; font-size:12px;
   background:#e5e7eb;
@@ -666,33 +780,52 @@
 .action-card.set-target{ padding: 16px; }
 
 /* Make both columns in the top row stretch to the same row height */
+.top-section{
+  grid-template-columns: clamp(230px, 20vw, 280px) minmax(0,1fr);
+  align-items: stretch;                 /* <- key */
+}
 
 /* Left column: profile card fills the whole row height */
 .profile-card,
 .centered-profile{
-  height: 100%;                         /* fill row height */                     /* no internal cap */
+  height: 100%;                         /* fill row height */
+  max-height: none;                     /* no internal cap */
   display: flex;
   flex-direction: column;
 }
 
 /* Right column: turn the wrapper into a 2-row grid that also fills the row */
 .action-cards{
-  grid-template-rows: 1fr 1fr;          /* Notifications (top), Active Quizzes (bottom) = equal height */                         /* match profile-card height */
+  display: grid;
+  grid-template-rows: 1fr 1fr;          /* Notifications (top), Active Quizzes (bottom) = equal height */
+  gap: 20px;
+  height: 100%;                         /* match profile-card height */
   width: auto;                          /* no fixed 60% */
 }
 
 /* Each action-card must be a flex column so its content can scroll inside */
+.action-card{
+  display: flex;
+  flex-direction: column;
+  min-height: unset;                        /* allow inner scroll areas to size correctly */
+}
 
 /* The scrollable bodies take remaining space inside each card */
 .header-con1,
 .header-con{
-  flex: 1;  /* Linux scrollbar stability */
+  flex: 1;
+  min-height: unset;
+  overflow: auto;
+  scrollbar-gutter: stable both-edges;  /* Linux scrollbar stability */
 }
 
 /* Optional: keep Notifications title line tidy and button on the right */
 .header-con1 ul{ list-style:none; margin:0; padding:0; }
 .header-con1 li{
+  display: grid;
+  grid-template-columns: 1fr auto;
   gap: 8px 10px;
+  align-items: start;
   padding: 8px 0;
   border-bottom: 1px solid #f1f2f6;
 }
@@ -707,10 +840,11 @@
 
 /* let both sides size to their content */
 .profile-card,
-.centered-profile{ height: 470px; }
+.centered-profile{ height: 470px; max-height: none; }
 
 .action-cards{
-  display: grid;   /* Notifications then Quizzes by content */
+  display: grid;
+  grid-template-rows: auto auto;   /* Notifications then Quizzes by content */
   height: auto;                    /* was: 100% */
   gap: 20px;
 }
@@ -739,19 +873,28 @@
 
 .centered-profile .profile-pic{
   width: 96px !important;
+  height: auto !important;
   margin-bottom: 8px;
+  border: 2px solid #ddd;
 }
 
-.centered-profile h4{ font-size: 18px; }
+.centered-profile h4{ font-size: 18px; margin: 2px 0; }
 .centered-profile .location{ font-size: 14px; }
 
 /* --- 2) NOTIFICATIONS CARD: shorter card with internal scroll --- */
 /* If Notifications is the first action-card in the right column */
-.action-cards > .action-card:nth-child(1){     /* target overall card height */
+.action-cards > .action-card:nth-child(1){
+  height: auto !important;
+  max-height: none !important;     /* target overall card height */
   padding: 14px 16px;
 }
 
 /* Scroll just the list/body so title line stays visible */
+.action-cards > .action-card:nth-child(1) .header-con1{
+  max-height: none !important;     /* shrink list area */
+  overflow: auto;
+  scrollbar-gutter: stable both-edges;
+}
 
 /* Keep the “Mark as read” button on one line */
 .header-con1 li{
@@ -764,6 +907,8 @@
 
 /* --- 3) Optional: make the Active Quizzes card slim too (second card) --- */
 .action-cards > .action-card:nth-child(2){
+  height: auto;
+  max-height: none;
   padding: 14px 16px;
 }
 
@@ -775,51 +920,79 @@
 }
 /* --- Match Profile Card Height with Notifications & Quizzes --- */
 .top-section {
-  grid-template-columns: clamp(230px, 20vw, 280px) minmax(0, 1fr); /* makes both columns align in height */
+  grid-template-columns: clamp(230px, 20vw, 280px) minmax(0, 1fr);
+  align-items: stretch; /* makes both columns align in height */
 }
 
 .centered-profile,
-.profile-card {      /* increased height */  /* cap slightly above */
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height:   auto !important;      /* increased height */
+  max-height: none !important;  /* cap slightly above */
   padding: 18px 14px;
 }
 
 .centered-profile .profile-pic {
   width: 110px !important;
+  height: auto !important;
   margin-bottom: 10px;
 }
 /* --- Compact & Balanced Dashboard Layout --- */
 
 /* Reduce the notifications card height */
+.action-cards > .action-card:nth-child(1) {
+  height: auto !important;
+  max-height: none !important;   /* smaller than before */
+  padding: 12px 14px;
+}
 
 /* Notifications list area scrolls properly */
 .action-cards > .action-card:nth-child(1) .header-con1 {
   max-height: none !important;   /* limit scroll area */
   overflow: auto;
+  scrollbar-gutter: stable both-edges;
 }
 
 /* Slightly reduce Active Quizzes height for balance */
 .action-cards > .action-card:nth-child(2) {
+  height: auto;
   max-height: none;
+  padding: 12px 14px;
 }
 
 /* Reduce profile card height to align with right column */
 .centered-profile,
 .profile-card {
   height: 360px !important;       /* reduced from 400+ */
+  max-height: none !important;
+  padding: 12px 10px;
 }
 
 /* Smaller profile picture */
 .centered-profile .profile-pic {
   width: 90px !important;
   height: auto !important;
+  margin-bottom: 6px;
+  border: 2px solid #ddd;
 }
 
 /* Compact text styling */
 .centered-profile h4 {
   font-size: 17px;
+  margin: 2px 0;
+}
+.centered-profile .location {
+  font-size: 13px;
+  margin: 1px 0;
 }
 
 /* Adjust grid alignment */
+.top-section {
+  grid-template-columns: clamp(230px, 20vw, 270px) minmax(0, 1fr);
+  align-items: stretch; /* both sides align vertically */
+}
 /* --- Final Compact & Auto-Aligned Dashboard Layout --- */
 
 /* Make both columns equal height */
@@ -836,7 +1009,8 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;       /* reduced slightly */
+  align-items: center;
+  height: auto !important;       /* reduced slightly */
   max-height: unset !important;
   padding: 12px 10px;
 }

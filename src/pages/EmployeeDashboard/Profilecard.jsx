@@ -287,70 +287,51 @@ const ActionCards = ({ activeQuizzes }) => {
         </div>
 
         <div className="header-con1">
-          <ul style={{ paddingLeft: 16 }}>
+          <ul className="notif-list">
             {loadingNotif ? (
-              <li>Loading notifications…</li>
+              <li className="notif-empty">Loading notifications…</li>
             ) : notifications.length > 0 ? (
               notifications.slice(0, 6).map((rec) => {
                 const n = rec.notification || {};
                 return (
-                  <li key={rec.id} style={{ marginBottom: 6 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      {!rec.is_read && (
-                        <span
-                          title="Unread"
-                          style={{
-                            width: 8,
-                            height: 8,
-                            background: "#203C6E",
-                            borderRadius: "50%",
-                            display: "inline-block",
-                          }}
-                        />
-                      )}
-                      <strong>{n.subject || "Notification"}</strong>
-                      <span style={{ marginLeft: "auto", fontSize: 12, color: "#6b7280" }}>
-                        {formatDate(n.created_at || rec.delivered_at)}
-                      </span>
+                  <li key={rec.id} className={`notif-item ${rec.is_read ? "read" : "unread"}`}>
+                    <div className="notif-head">
+                      {!rec.is_read && <span className="notif-dot" title="Unread" />}
+                      <strong className="notif-title">{n.subject || "Notification"}</strong>
+                      {/* <span className="notif-meta">{formatDate(n.created_at || rec.delivered_at)}</span> */}
                     </div>
-                    <div style={{ color: "#374151" }}>
-                      {n.message || "-"}
-                      {n.link && (
-                        <>
-                          {" "}
-                          —{" "}
-                          <a href={n.link} target="_blank" rel="noreferrer" style={{ color: "#1f6feb" }}>
-                            Open
-                          </a>
-                        </>
-                      )}
-                    </div>
-                    <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
-                      <span style={{ fontSize: 12, color: "#6b7280" }}>
-                        From: {n.sent_by ?? "—"}
-                      </span>
-                      {!rec.is_read && (
-                        <button
-                          onClick={() => handleMarkRead(n.id)}
-                          style={{
-                            marginLeft: "auto",
-                            background: "#e5e7eb",
-                            border: "none",
-                            borderRadius: 6,
-                            padding: "4px 8px",
-                            cursor: "pointer",
-                            fontSize: 12,
-                          }}
-                        >
-                          Mark as read
-                        </button>
-                      )}
+
+                    <div className="notif-body">
+                      <div className="notif-message">
+                        {n.message || "-"}
+                        {n.link && (
+                          <>
+                            {" "}—{" "}
+                            <a href={n.link} target="_blank" rel="noreferrer" className="notif-link">
+                              Open
+                            </a>
+                          </>
+                        )}
+                      </div>
+
+                      <div className="notif-footer">
+                        <span className="notif-from">From: {n.sent_by ?? "—"}</span>
+                        {!rec.is_read && (
+                          <button
+                            className="btn-mark-read"
+                            onClick={() => handleMarkRead(n.id)}
+                            aria-label="Mark notification as read"
+                          >
+                            Mark as read
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </li>
                 );
               })
             ) : (
-              <li>No notifications</li>
+              <li className="notif-empty">No notifications</li>
             )}
           </ul>
         </div>

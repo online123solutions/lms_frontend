@@ -1,1289 +1,1215 @@
-/* index.css - cleaned, desktop-first with safe mobile overlay */
-/* Google font */
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
-
-/* =========================
-   Root variables & reset
-   ========================= */
-:root{
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap");
+:root {
   --sidebar-w: 280px;
   --sidebar-w-collapsed: 70px;
-  --page-max: 1800px;       /* content max width to create the centered look */
+  --page-max: 1800px;
   --page-padding: 28px;
   --gap: 28px;
   --base-font: 16px;
-  --bg: #F5F5F5;
+  --bg: #f5f5f5;
   --card-bg: #fff;
   --muted: #666;
-  --sidebar-bg: #393939;    /* adjust to your theme */
-  --sidebar-contrast: #ffffff;
+  --sidebar-bg: #393939;
+  --sidebar-contrast: #fff;
 }
-
 *,
-*::before,
-*::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-html, body, #root {
-  height: 100%;
-  width: 100%;
-  font-size: var(--base-font);
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-  overflow-x: hidden; /* avoid horizontal scroll caused by 100vw usage */
+:after,
+:before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
-
+body,
+html {
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: 100%;
+}
+#root,
+body,
+html {
+  min-height: 100%;
+}
 body {
-  font-family: 'Lato', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  background: var(--bg);
-  color: #111;
-  line-height: 1.45;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: var(--bg);
+  color: #111;
+  font-family: Lato, system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue,
+    Arial;
+  line-height: 1.45;
 }
-
-/* =========================
-   Typography
-   ========================= */
-h1 { font-weight: 800; font-size: clamp(1.4rem, 2.2vw, 2.25rem); margin-bottom: .5rem; }
-h2 { font-weight: 800; font-size: clamp(1.2rem, 1.8vw, 1.75rem); margin-bottom: .5rem; }
-h3,h4,h5,h6 { font-weight: 700; margin-bottom: .4rem; }
-p, span, li, a { font-weight: 400; font-size: clamp(0.9rem, 1vw, 1rem); margin-bottom: .75rem; }
-
-/* =========================
-   Layout containers
-   ========================= */
-
-
-/* ------- SIDEBAR (desktop-first) ------- */
+h1 {
+  font-size: clamp(1.4rem, 2.2vw, 2.25rem);
+}
+h1,
+h2 {
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+h2 {
+  font-size: clamp(1.2rem, 1.8vw, 1.75rem);
+}
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+a,
+li,
+p,
+span {
+  font-size: clamp(0.9rem, 1vw, 1rem);
+  font-weight: 400;
+  margin-bottom: 0.75rem;
+}
 .sidebar {
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: var(--sidebar-w);
-  max-width: var(--sidebar-w);
-  background: var(--sidebar-bg);
-  color: var(--sidebar-contrast);
-  padding: 18px 14px;
-  z-index: 1200;
-  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  background: var(--sidebar-bg);
   border-radius: 0 12px 12px 0;
-  transition: width .28s ease, box-shadow .18s ease;
-  transform: none; /* desktop: no translate-based hiding */
+  bottom: 0;
+  color: var(--sidebar-contrast);
+  left: 0;
+  max-width: var(--sidebar-w);
+  overflow-y: auto;
+  padding: 18px 14px;
   pointer-events: auto;
+  position: fixed;
+  top: 0;
+  transform: none;
+  transition: width 0.28s ease, box-shadow 0.18s ease;
+  width: var(--sidebar-w);
+  z-index: 1200;
 }
-
-/* collapsed desktop state (if you use collapsed) */
 .sidebar.collapsed {
   width: var(--sidebar-w-collapsed);
 }
-
-/* small visual area for logo etc */
-.sidebar .sidebar-header { margin-bottom: 8px; }
-.sidebar .sidebar-logo { display: block; max-width: 100%; height: auto; }
-
-/* ensure sidebar links look good */
+.sidebar .sidebar-header {
+  margin-bottom: 8px;
+}
+.sidebar .sidebar-logo {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
 .sidebar .sidebar-item {
-  display: flex;
-  gap: 12px;
   align-items: center;
-  padding: 10px;
   border-radius: 8px;
   color: inherit;
   cursor: pointer;
+  display: flex;
+  gap: 12px;
+  padding: 10px;
   user-select: none;
 }
-.sidebar .sidebar-item:hover { filter: brightness(0.95); }
-.sidebar .sidebar-item.active { background: rgba(255,255,255,0.04); }
-
-/* Give icons and text better layout */
-.sidebar .sidebar-icon { min-width: 26px; text-align: center; }
-.sidebar .sidebar-text { display: inline-block; }
-
-/* ------- MAIN / CONTENT panel ------- */
-.main, .main-content, .content-panel {
-  margin-left: var(--sidebar-w);
-  padding: var(--page-padding);
-  max-width: calc(100% - var(--sidebar-w));
-  min-height: 100vh;
-  box-sizing: border-box;
-  transition: margin-left .28s ease;
-  background: transparent;
+.sidebar .sidebar-item:hover {
+  filter: brightness(0.95);
 }
-
-/* If sidebar collapsed, reduce main offset */
+.sidebar .sidebar-item.active {
+  background: #ffffff0a;
+}
+.sidebar .sidebar-icon {
+  min-width: 26px;
+  text-align: center;
+}
+.sidebar .sidebar-text {
+  display: inline-block;
+}
+.content-panel,
+.main,
+.main-content {
+  margin-left: var(--sidebar-w);
+  max-width: 100%;
+  width: calc(100% - var(--sidebar-w));
+}
+.main.collapsed-margin,
 .sidebar.collapsed ~ .main,
-.sidebar.collapsed ~ .main-content,
-.main.collapsed-margin {
+.sidebar.collapsed ~ .main-content {
   margin-left: var(--sidebar-w-collapsed);
   max-width: calc(100% - var(--sidebar-w-collapsed));
 }
-
-/* A simple content grid for main body + right column */
 .content-grid {
-  display: grid;
-  grid-template-columns: 1fr 360px;
-  gap: var(--gap);
   align-items: start;
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: 1fr 360px;
 }
-
-/* Constrained cards */
-.card, .banner, .carousel, .loader {
-  width: 100%;
+.banner,
+.card,
+.carousel,
+.loader {
   background: var(--card-bg);
-  padding: 18px;
   border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(20,20,40,0.04);
+  box-shadow: 0 6px 18px #1414280a;
   box-sizing: border-box;
+  padding: 18px;
+  width: 100%;
 }
-
-/* =========================
-   Responsive: mobile overlay
-   ========================= */
-
-/* On smaller viewports we switch sidebar into overlay (off-canvas) */
 @media (max-width: 900px) {
-  /* Sidebar becomes overlay off-canvas by default */
   .sidebar {
-    width: 320px;                /* overlay width on mobile (tweak as needed) */
-    max-width: 320px;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    height: 100vh;
-    transform: translateX(-110%); /* hidden */
-    transition: transform .28s ease;
-    z-index: 2200;
     border-radius: 0;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    bottom: 0;
+    box-shadow: 0 18px 40px #00000059;
+    height: 100vh;
+    left: 0;
+    max-width: 320px;
     pointer-events: auto;
+    top: 0;
+    transform: translateX(-110%);
+    transition: transform 0.28s ease;
+    width: 320px;
+    z-index: 2200;
   }
-
-  /* When open: slide in */
   .sidebar.open {
     transform: translateX(0) !important;
   }
-
-  /* main area should not be offset when overlay active */
-  .main, .main-content, .content-panel {
+  .content-panel,
+  .main,
+  .main-content {
     margin-left: 0 !important;
     max-width: 100% !important;
     padding: 12px;
   }
-
-  /* Backdrop that appears behind sidebar to block interactions with main content */
   .mobile-backdrop {
-    position: fixed;
+    background: #0000005c;
     inset: 0;
-    background: rgba(0,0,0,0.36);
-    z-index: 2100; /* below sidebar (2200) so sidebar remains topmost */
     opacity: 0;
     pointer-events: none;
-    transition: opacity .18s ease;
+    position: fixed;
+    transition: opacity 0.18s ease;
+    z-index: 2100;
   }
   .mobile-backdrop.show {
     opacity: 1;
     pointer-events: auto;
   }
-
-  /* Ensure sidebar content receives taps/clicks */
   .sidebar .sidebar-item,
   .sidebar a,
   .sidebar button {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.06);
     pointer-events: auto;
-    -webkit-tap-highlight-color: rgba(0,0,0,0.06);
   }
-
-  /* On very small phones reduce overlay width to avoid overflow */
   @media (max-width: 420px) {
-    .sidebar { width: 280px; max-width: 280px; }
+    .sidebar {
+      max-width: 280px;
+      width: 280px;
+    }
   }
 }
-
-/* =========================
-   Small helpers & safety
-   ========================= */
-
-/* neutralize problematic 100vw inline styles when present */
-*[style*="100vw"] {
-  width: 100% !important;
-  max-width: 100% !important;
+[style*="100vw"] {
   box-sizing: border-box !important;
 }
-
-/* make images and charts responsive */
-img, canvas, iframe, video { max-width: 100%; height: auto; display: block; }
-
-/* minor UI helpers */
-.row { display:flex; gap: var(--gap); align-items:center; }
-.col { flex: 1; }
-.lead { color: var(--muted); font-size: 1.05rem; }
-
-.hidden { display:none !important; }
-.text-center { text-align:center; }
-
-/* =========================
-   Accessibility helpers
-   ========================= */
-/* Ensure the mobile backdrop covers clicks but is not focusable by keyboard in normal flow */
-.mobile-backdrop[role="button"] { outline: none; }
-
-/* =========================
-   End of file
-   ========================= */
-
-   /* ===== Component: Trainee Dashboard fixes (header + notifications) ===== */
-
-/* Header + logo */
-.left-header {
-  display: flex;
+canvas,
+iframe,
+img,
+video {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+.row {
   align-items: center;
-  justify-content: space-between;
+  display: flex;
+  gap: var(--gap);
+}
+.col {
+  flex: 1;
+}
+.lead {
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+.hidden {
+  display: none !important;
+}
+.text-center {
+  text-align: center;
+}
+.mobile-backdrop[role="button"] {
+  outline: none;
+}
+.left-header {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
   gap: 12px;
-  width: 100%;
+  justify-content: space-between;
   margin: 0 0 12px;
   padding: 0;
-  box-sizing: border-box;
+  width: 100%;
 }
-.left-greeting { display:flex; flex-direction:column; min-width:0; }
-.greeting-name { font-weight:700; font-size:16px; color:#111827; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.sub-greet { font-size:14px; color:#374151; margin-top:4px; }
-
-/* header logo */
-.header-logo img { height: 72px; width: auto; object-fit: contain; display:block; }
-
-/* notifications icon-heading */
-.icon-heading {
-  display:flex;
-  align-items:center;
-  gap:10px;
+.left-greeting {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
 }
-.icon-heading .icon { font-size: 18px; color: #111827; }
-.icon-heading-title { margin: 0; font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-/* unread badge */
-.unread-badge {
-  margin-left: auto;
-  background: #e02424;
-  color: #fff;
-  border-radius: 999px;
-  padding: 0 8px;
-  font-size: 12px;
-  line-height: 18px;
-  height: 18px;
-  display: inline-flex;
-  align-items: center;
+.greeting-name {
+  color: #111827;
+  font-size: 16px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-/* notifications list container */
+.sub-greet {
+  color: #374151;
+  font-size: 14px;
+  margin-top: 4px;
+}
+.header-logo img {
+  display: block;
+  height: 72px;
+  object-fit: contain;
+  width: auto;
+}
+.icon-heading {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  min-width: 0;
+}
+.icon-heading .icon {
+  color: #111827;
+  font-size: 18px;
+}
+.icon-heading-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.unread-badge {
+  align-items: center;
+  background: #e02424;
+  border-radius: 999px;
+  color: #fff;
+  display: inline-flex;
+  font-size: 12px;
+  height: 18px;
+  line-height: 18px;
+  margin-left: auto;
+  padding: 0 8px;
+  white-space: nowrap;
+}
 .header-con1 {
-  padding: 8px 12px;
   box-sizing: border-box;
   min-width: 0;
   overflow: hidden;
+  padding: 8px 12px;
 }
-
-/* list reset */
-.notif-list { list-style: none; margin: 0; padding: 0; }
-
-/* each notification */
+.notif-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
 .notif-item {
+  border-bottom: 1px solid #f1f2f6;
+  min-width: 0;
+  padding: 10px 6px;
+}
+.notif-empty {
+  color: #6b7280;
+  padding: 8px 6px;
+}
+.notif-dot {
+  height: 10px;
+  width: 10px;
+}
+.notif-title {
+  min-width: 0;
+  white-space: nowrap;
+}
+.notif-meta {
+  margin-left: auto;
+}
+.notif-body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 10px 6px;
-  border-bottom: 1px solid #f1f2f6;
   min-width: 0;
 }
-.notif-empty { padding: 8px 6px; color: #6b7280; }
-
-/* head row: unread dot + title + meta */
-.notif-head { display:flex; align-items:center; gap:8px; min-width:0; }
-.notif-dot { width: 10px; height: 10px; border-radius: 50%; background: #203C6E; flex: 0 0 auto; }
-.notif-title { font-weight:700; color:#111827; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
-.notif-meta { margin-left:auto; font-size:12px; color:#6b7280; flex: 0 0 auto; white-space:nowrap; }
-
-/* body and footer */
-.notif-body { display:flex; flex-direction:column; gap:8px; min-width:0; }
-.notif-message { color:#374151; font-size:14px; line-height:1.35; word-break: break-word; }
-.notif-link { color:#1f6feb; text-decoration: underline; }
-.notif-footer { display:flex; align-items:center; gap:8px; margin-top:2px; min-width:0; }
-.notif-from { font-size:12px; color:#6b7280; }
-.btn-mark-read { margin-left:auto; background:#e5e7eb; border: none; border-radius: 6px; padding:6px 8px; cursor: pointer; font-size:12px; white-space:nowrap; }
-
-/* scroll inside the card */
+.notif-link {
+  color: #1f6feb;
+  text-decoration: underline;
+}
+.notif-footer {
+  margin-top: 2px;
+  min-width: 0;
+}
+.notif-from {
+  color: #6b7280;
+  font-size: 12px;
+}
+.btn-mark-read {
+  padding: 6px 8px;
+  white-space: nowrap;
+}
 .header-con1 .notif-list {
   max-height: 220px;
   overflow-y: auto;
-  scrollbar-gutter: stable both-edges;
   padding-right: 6px;
+  scrollbar-gutter: stable both-edges;
 }
-
-/* responsive tweaks */
 @media (max-width: 900px) {
-  .header-logo img { height: 48px; }
-  .left-greeting .greeting-name { white-space: normal; } /* allow wrap */
-  .header-con1 .notif-list { max-height: 260px; }
+  .header-logo img {
+    height: 48px;
+  }
+  .left-greeting .greeting-name {
+    white-space: normal;
+  }
+  .header-con1 .notif-list {
+    max-height: 260px;
+  }
 }
 @media (max-width: 420px) {
-  .header-logo img { height: 40px; }
-  .notif-item { padding: 8px 4px; }
-  .notif-meta { font-size: 11px; }
-  .btn-mark-read { padding: 5px 6px; font-size: 11px; }
-  .header-con1 .notif-list { max-height: 300px; }
+  .header-logo img {
+    height: 40px;
+  }
+  .notif-item {
+    padding: 8px 4px;
+  }
+  .notif-meta {
+    font-size: 11px;
+  }
+  .btn-mark-read {
+    font-size: 11px;
+    padding: 5px 6px;
+  }
+  .header-con1 .notif-list {
+    max-height: 300px;
+  }
 }
-/* ---------- Fix: notification title/date overlap & message overlap ---------- */
-
-/* Make the head a stable 3-col layout: dot | title (wraps) | meta (fixed) */
 .notif-head {
+  align-items: start;
   display: grid;
-  grid-template-columns: 18px 1fr auto; /* dot (fixed) | title (flexible) | date (auto) */
   gap: 8px;
-  align-items: start;   /* allow title to wrap onto multiple lines */
-  min-width: 0;         /* allow children to shrink inside flex/grid parents */
+  grid-template-columns: 18px 1fr auto;
+  min-width: 0;
 }
-
-/* Dot stays centered in its cell */
 .notif-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #203C6E;
-  margin-top: 4px;      /* visually center with wrapped lines */
   flex: 0 0 auto;
+  height: 12px;
+  margin-top: 4px;
+  width: 12px;
 }
-
-/* Title now can wrap; limit height to avoid huge items */
 .notif-title {
-  font-weight: 700;
+  -webkit-box-orient: vertical;
   color: #111827;
+  display: -webkit-box;
+  line-height: 1.25;
   margin: 0;
-  white-space: normal;        /* ALLOW wrap (previously nowrap caused overlap) */
+  max-height: calc(2.5em + 4px);
   overflow: hidden;
   text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  line-height: 1.25;
-  max-height: calc(1.25em * 2 + 4px);
 }
-
-/* Date/meta pinned to right and never wraps */
 .notif-meta {
-  margin-left: 0;
   justify-self: end;
-  font-size: 12px;
-  color: #6b7280;
-  white-space: nowrap;
-  flex: 0 0 auto;
+  margin-left: 0;
 }
-
-/* Ensure message sits below the head and cannot overlap */
 .notif-body {
-  margin-top: 6px;           /* gives breathing room from the title */
-  z-index: 0;                /* keep body at normal stacking */
+  margin-top: 6px;
+  z-index: 0;
 }
-
-/* Message safe wrapping and long-word breaking */
 .notif-message {
-  word-break: break-word;
-  overflow-wrap: anywhere;   /* support very long unbroken strings/URLs */
   color: #374151;
   font-size: 14px;
   line-height: 1.35;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
-
-/* Small-screen tweak: allow 3-line titles if necessary */
 @media (max-width: 420px) {
   .notif-title {
-    max-height: calc(1.25em * 3 + 6px);
+    max-height: calc(3.75em + 6px);
   }
-  .notif-dot { margin-top: 6px; }
-  .header-con1 .notif-list { max-height: 320px; } /* allow more scrolling */
+  .notif-dot {
+    margin-top: 6px;
+  }
+  .header-con1 .notif-list {
+    max-height: 320px;
+  }
 }
-
-/* Safety: prevent absolute/negative-margin children from overlapping */
-.notif-item { position: relative; }
-
-/* ---------------- Dashboard responsive & grid fixes ---------------- */
-
-/* dashboard container: left / center / right columns */
+.notif-item {
+  position: relative;
+}
 .dashboard-container {
-  display: grid;
-  grid-template-columns: 280px minmax(620px, 1fr) 360px; /* desktop layout */
-  gap: 28px;
   align-items: start;
+  display: grid;
+  gap: 28px;
+  grid-template-columns: 280px minmax(620px, 1fr) 360px;
   width: 100%;
+}
+.dashboard-container,
+.dashboard-container * {
   box-sizing: border-box;
 }
-
-/* ensure content doesn't overflow horizontally */
-.dashboard-container,
-.dashboard-container * { box-sizing: border-box; }
-
-/* Left container behavior (center column will take remaining space) */
-.left-container { width: 100%; }
-
-/* Right column container hold profile, notifications, etc. */
-.right-container { width: 100%; }
-
-/* For screens narrower than 1280px, reduce center width & shrink right column */
+.left-container,
+.right-container {
+  width: 100%;
+}
 @media (max-width: 1280px) {
   .dashboard-container {
     grid-template-columns: 260px minmax(520px, 1fr) 320px;
   }
 }
-
-/* For medium screens stack right column under center (mobile-first overlay is already in your CSS) */
 @media (max-width: 900px) {
   .dashboard-container {
     grid-template-columns: 1fr;
   }
-  .right-container { order: 2; }
-  .left-container { order: 1; }
-  .sidebar { transform: translateX(-110%); } /* overlay behavior preserved */
+  .right-container {
+    order: 2;
+  }
+  .left-container {
+    order: 1;
+  }
+  .sidebar {
+    transform: translateX(-110%);
+  }
 }
-
-/* ---------- Header / Logo alignment fixes ---------- */
 .header-row {
-  display: flex;
   align-items: center;
+  display: flex;
+  flex-wrap: wrap;
   gap: 16px;
-  width: 100%;
   margin-bottom: 12px;
-  flex-wrap: wrap; /* allow wrap on small screens */
+  width: 100%;
 }
-
-.header-left { flex: 1 1 auto; min-width: 220px; }
-.header-right { flex: 0 0 auto; display:flex; align-items:center; justify-content:flex-end; min-width: 120px; }
-
+.header-left {
+  flex: 1 1 auto;
+  min-width: 220px;
+}
+.header-right {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  min-width: 120px;
+}
 .header-logo {
-  height: 78px;
-  width: auto;
-  object-fit: contain;
-  display: block;
   border-radius: 6px;
+  display: block;
+  height: 78px;
+  object-fit: contain;
+  width: auto;
 }
-
-/* small subtext under greeting if needed */
 .greeting-line .subtext {
-  font-size: 0.95rem;
   color: #374151;
+  font-size: 0.95rem;
   margin-top: 6px;
 }
-
-/* ---------- Notifications layout safety ---------- */
-.action-card .notif-list { list-style: none; padding: 0; margin: 0; }
+.action-card .notif-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
 .notif-item {
+  background: #0000;
+  border-bottom: 1px solid #0f172a0a;
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   gap: 8px;
   padding: 12px;
-  border-radius: 10px;
-  background: transparent;
-  border-bottom: 1px solid rgba(15,23,42,0.04);
 }
-
-/* header of each notification */
 .notif-head {
+  align-items: center;
   display: flex;
   gap: 10px;
-  align-items: center;
 }
-
-/* small dot for unread */
 .notif-dot {
-  width: 9px;
-  height: 9px;
+  background: #203c6e;
   border-radius: 50%;
-  background: #203C6E;
   flex: 0 0 9px;
+  height: 9px;
+  width: 9px;
 }
-
-/* title should wrap, allow long titles to break */
 .notif-title {
-  font-weight: 700;
-  font-size: 0.95rem;
-  line-height: 1.1;
-  word-break: break-word;     /* allow wrapping words */
-  white-space: normal;
   flex: 1 1 auto;
-}
-
-/* time stays to the right; keep it small and single-line */
-.notif-meta {
-  margin-left: 12px;
-  font-size: 12px;
-  color: #6b7280;
-  white-space: nowrap;
-  flex: 0 0 auto;
-}
-
-/* message body: clamp to 3 lines */
-.notif-body .notif-message {
   font-size: 0.95rem;
-  color: #374151;
-  overflow: hidden;
-  display: -webkit-box;
-
+  font-weight: 700;
+  line-height: 1.1;
+  white-space: normal;
+  word-break: break-word;
+}
+.notif-meta {
+  color: #6b7280;
+  flex: 0 0 auto;
+  font-size: 12px;
+  margin-left: 12px;
+  white-space: nowrap;
+}
+.notif-body .notif-message {
   -webkit-box-orient: vertical;
+  color: #374151;
+  display: -webkit-box;
+  font-size: 0.95rem;
+  overflow: hidden;
   text-overflow: ellipsis;
   word-break: break-word;
 }
-
-/* footer (From + button) aligned with footer gap */
 .notif-footer {
+  align-items: center;
   display: flex;
   gap: 8px;
-  align-items: center;
 }
-
-/* mark as read button styling */
 .btn-mark-read {
-  margin-left: auto;
   background: #e5e7eb;
   border: none;
   border-radius: 6px;
-  padding: 4px 8px;
   cursor: pointer;
   font-size: 12px;
+  margin-left: auto;
+  padding: 4px 8px;
 }
-
-/* ---------- Quick Activities (icons on top) ---------- */
 .qa-card .qa-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
   align-items: stretch;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr;
 }
-
-/* single large button style shared across admin/trainer */
 .qa-btn {
-  display: flex;
-  flex-direction: column; /* icon on top, text below */
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 18px 12px;
-  border-radius: 12px;
-  border: none;
+  box-shadow: 0 6px 18px #1414280a;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(20,20,40,0.04);
   font-weight: 700;
+  gap: 10px;
   min-height: 64px;
+  padding: 18px 12px;
   text-align: center;
 }
-
-/* icon size */
-.qa-btn i {
-  font-size: 22px;
-  display: block;
+.qa-btn.purple {
+  background: linear-gradient(180deg, #fbf3ff, #f3e9ff);
+  color: #111;
 }
-
-/* color variations (reuse your class names) */
-.qa-btn.purple { background: linear-gradient(180deg,#fbf3ff,#f3e9ff); color:#111; }
-.qa-btn.pink   { background: linear-gradient(180deg,#ffeef2,#ffdfe8); color:#111; }
-.qa-btn.cyan   { background: linear-gradient(180deg,#e6fbff,#dff7fa); color:#111; }
-
-/* If there are more than 4 items (admin), allow grid to flow to 3 columns on wider screens */
+.qa-btn.pink {
+  background: linear-gradient(180deg, #ffeef2, #ffdfe8);
+  color: #111;
+}
+.qa-btn.cyan {
+  background: linear-gradient(180deg, #e6fbff, #dff7fa);
+  color: #111;
+}
 @media (min-width: 1400px) {
-  .qa-card .qa-grid { grid-template-columns: repeat(3, 1fr); }
+  .qa-card .qa-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
-
-/* ensure long labels wrap */
-.qa-btn span { white-space: normal; font-size: 0.95rem; }
-
-/* ---------- Chart safety / content widths ---------- */
-.content-card1, .card {
+.qa-btn span {
+  font-size: 0.95rem;
+  white-space: normal;
+}
+.card,
+.content-card1 {
   overflow: visible;
 }
-
-/* chart container should be height-controlled; charts should not force horizontal scroll */
-.chart-container1 { width: 100%; }
-.chart-inner1 { height: 220px; max-width: 100%; }
-
-/* preserve card padding + consistent border radius as in your theme */
-.content-card1 { padding: 18px; border-radius: 12px; }
-
-/* neutralize inline 100vw issues you saw earlier */
-*[style*="100vw"] { width: 100% !important; max-width: 100% !important; }
-
-/* small: keep sidebar visible and main content centred within page max width */
-/* ------------------------------------------- */
-/*  MATCH QUICK ACTIVITY COLORS WITH TOP-BAR   */
-/* ------------------------------------------- */
-
-/* reuse exact colors of top-bar cards */
+.chart-container1 {
+  width: 100%;
+}
+.chart-inner1 {
+  height: 220px;
+  max-width: 100%;
+}
+.content-card1 {
+  border-radius: 12px;
+  padding: 18px;
+}
+[style*="100vw"] {
+  max-width: 100% !important;
+  width: 100% !important;
+}
 .qa-btn.purple {
-  background: var(--purple-bg, #EBDFFF);   /* SAME AS top-bar purple */
-  color: var(--purple-text, #1F1142);
+  background: var(--purple-bg, #ebdfff);
+  color: var(--purple-text, #1f1142);
 }
-
 .qa-btn.pink {
-  background: var(--pink-bg, #FFE3EC);     /* SAME AS top-bar pink */
-  color: var(--pink-text, #4A1020);
+  background: var(--pink-bg, #ffe3ec);
+  color: var(--pink-text, #4a1020);
 }
-
 .qa-btn.cyan {
-  background: var(--cyan-bg, #DFF7FA);     /* SAME AS top-bar cyan */
+  background: var(--cyan-bg, #dff7fa);
   color: var(--cyan-text, #063445);
 }
-
-/* ensure size consistency */
 .qa-btn {
+  align-items: center;
+  border: none;
   border-radius: 12px;
-  padding: 15px 12px;
-  font-weight: 600;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  border: none;
-}
-
-/* icon centered above text */
-.qa-btn i {
-  font-size: 22px;
-  display: block;
-}
-/* ------------------------------------------- */
-/*  MATCH QUICK ACTIVITY COLORS WITH TOP-BAR   */
-/* ------------------------------------------- */
-
-/* reuse exact colors of top-bar cards */
-.qa-btn.purple {
-  background: var(--purple-bg, #EBDFFF);   /* SAME AS top-bar purple */
-  color: var(--purple-text, #1F1142);
-}
-
-.qa-btn.pink {
-  background: var(--pink-bg, #FFE3EC);     /* SAME AS top-bar pink */
-  color: var(--pink-text, #4A1020);
-}
-
-.qa-btn.cyan {
-  background: var(--cyan-bg, #DFF7FA);     /* SAME AS top-bar cyan */
-  color: var(--cyan-text, #063445);
-}
-
-/* ensure size consistency */
-.qa-btn {
-  border-radius: 12px;
-  padding: 15px 12px;
   font-weight: 600;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   gap: 6px;
-  border: none;
+  justify-content: center;
+  padding: 15px 12px;
 }
-
-/* icon centered above text */
 .qa-btn i {
-  font-size: 22px;
   display: block;
+  font-size: 22px;
 }
-/* -------------------------------------------------------------------
-   Make Quick Activities buttons match top-bar cards exactly
-   Paste this at the END of TDContent.css (or index.css) to override
-   ------------------------------------------------------------------- */
-
-/* --- exact colors used by top-bar cards --- */
-:root{
-  --brand-purple-bg: #EBDFFF;
-  --brand-purple-text: #1F1142;
-
-  --brand-pink-bg:   #FFE3EC;
-  --brand-pink-text: #4A1020;
-
-  --brand-cyan-bg:   #DFF7FA;
+:root {
+  --brand-purple-bg: #ebdfff;
+  --brand-purple-text: #1f1142;
+  --brand-pink-bg: #ffe3ec;
+  --brand-pink-text: #4a1020;
+  --brand-cyan-bg: #dff7fa;
   --brand-cyan-text: #063445;
-
-  /* shared card look */
   --brand-card-radius: 12px;
-  --brand-card-shadow: 0 6px 18px rgba(20,20,40,0.04);
+  --brand-card-shadow: 0 6px 18px #1414280a;
 }
-
-/* Target common quick-activity button selectors used in Trainer/Admin */
-.qa-grid .qa-btn,
 .qa-card .qa-btn,
 .qa-card button.qa-btn,
+.qa-grid .qa-btn,
 .qa-grid button.qa-btn {
-  /* layout */
-  display: flex !important;
-  flex-direction: column !important; /* icon above text */
   align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
-
-  /* sizing */
-  padding: 18px 14px !important;
-  min-height: 64px !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
-
-  /* visuals */
-  border-radius: var(--brand-card-radius) !important;
-  border: none !important;
-  box-shadow: var(--brand-card-shadow) !important;
-  font-weight: 700 !important;
-  font-size: 14px !important;
-  line-height: 1 !important;
-
-  /* ensure no unexpected gradient or background-image interferes */
   background-image: none !important;
+  border: none !important;
+  border-radius: var(--brand-card-radius) !important;
+  box-shadow: var(--brand-card-shadow) !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  gap: 8px !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  min-height: 64px !important;
+  padding: 18px 14px !important;
+  width: 100% !important;
 }
-
-/* icon styling: centered above the label */
-.qa-grid .qa-btn i,
-.qa-card .qa-btn i {
-  font-size: 20px !important;
+.qa-card .qa-btn i,
+.qa-grid .qa-btn i {
   display: block !important;
+  font-size: 20px !important;
   line-height: 1 !important;
 }
-
-/* label text */
-.qa-grid .qa-btn span,
-.qa-card .qa-btn span {
+.qa-card .qa-btn span,
+.qa-grid .qa-btn span {
   display: block !important;
   font-size: 13px !important;
-  text-align: center !important;
   margin: 0 !important;
+  text-align: center !important;
 }
-
-/* --- color variants (exact brand colors) --- */
 .qa-btn.purple {
   background: var(--brand-purple-bg) !important;
   color: var(--brand-purple-text) !important;
 }
-
 .qa-btn.pink {
   background: var(--brand-pink-bg) !important;
   color: var(--brand-pink-text) !important;
 }
-
 .qa-btn.cyan {
   background: var(--brand-cyan-bg) !important;
   color: var(--brand-cyan-text) !important;
 }
-
-/* make sure icon color is same as text (if icon is font-based) */
-.qa-btn.purple i { color: var(--brand-purple-text) !important; }
-.qa-btn.pink   i { color: var(--brand-pink-text) !important; }
-.qa-btn.cyan   i { color: var(--brand-cyan-text) !important; }
-
-/* subtle hover — same color but slight lift */
-.qa-btn:hover {
-  transform: translateY(-3px);
-  transition: transform .12s ease, box-shadow .12s ease;
-  box-shadow: 0 10px 22px rgba(20,20,40,0.06) !important;
+.qa-btn.purple i {
+  color: var(--brand-purple-text) !important;
 }
-
-/* Resist conflicting utility rules: make sure qa-grid layout keeps two buttons side-by-side 
-   on wide screens and stacks on smaller screens */
+.qa-btn.pink i {
+  color: var(--brand-pink-text) !important;
+}
+.qa-btn.cyan i {
+  color: var(--brand-cyan-text) !important;
+}
+.qa-btn:hover {
+  box-shadow: 0 10px 22px #1414280f !important;
+  transform: translateY(-3px);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
 .qa-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
-
-/* for admin where there are five items, allow grid to automatically fill */
+.qa-grid,
 .qa-grid.multi-5 {
   grid-template-columns: repeat(2, 1fr);
+}
+.qa-grid.multi-5 {
   grid-auto-rows: minmax(64px, auto);
 }
-
-/* stack buttons on small devices */
 @media (max-width: 900px) {
   .qa-grid,
   .qa-grid.multi-5 {
     grid-template-columns: 1fr !important;
   }
-
-  .qa-grid .qa-btn,
-  .qa-card .qa-btn {
+  .qa-card .qa-btn,
+  .qa-grid .qa-btn {
     min-height: 60px !important;
   }
-}
-/* =========================
-   Mobile/Tablet responsive fixes
-   Paste at the END of TDContent.css or index.css
-   ========================= */
-
-/* Ensure off-canvas sidebar on small screens */
-@media (max-width: 900px) {
-  /* sidebar becomes overlay hidden by default */
   .sidebar {
-    width: 260px !important;
-    max-width: 260px !important;
-    height: 100vh !important;
-    transform: translateX(-110%) !important; /* hidden by default */
-    transition: transform .28s ease, box-shadow .18s ease !important;
-    z-index: 2200 !important;
     border-radius: 0 !important;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.35) !important;
-    pointer-events: auto !important;
+    box-shadow: 0 18px 40px #00000059 !important;
+    height: 100vh !important;
+    max-width: 260px !important;
     padding: 14px 12px !important;
+    pointer-events: auto !important;
+    transform: translateX(-110%) !important;
+    transition: transform 0.28s ease, box-shadow 0.18s ease !important;
+    width: 260px !important;
+    z-index: 2200 !important;
   }
-
-  /* When toggled open (JS should add .open) it slides in */
   .sidebar.open {
     transform: translateX(0) !important;
   }
-
-  /* Backdrop to block interactions */
   .mobile-backdrop {
-    position: fixed;
+    background: #0000005c;
     inset: 0;
-    background: rgba(0,0,0,0.36);
-    z-index: 2100;
     opacity: 0;
     pointer-events: none;
-    transition: opacity .18s ease;
+    position: fixed;
+    transition: opacity 0.18s ease;
+    z-index: 2100;
   }
   .mobile-backdrop.show {
     opacity: 1;
     pointer-events: auto;
   }
-
-  /* Main/content should not be offset (use full width) */
-  .main, .main-content, .content-panel, .teacher-dashboard-content1 {
+  .content-panel,
+  .main,
+  .main-content,
+  .teacher-dashboard-content1 {
     margin-left: 0 !important;
     max-width: 100% !important;
     padding: 12px !important;
   }
-
-  /* header area: allow wrapping and reduce spacing */
   .top-bar1 {
+    align-items: center !important;
     display: flex !important;
     flex-wrap: wrap !important;
     gap: 12px !important;
-    align-items: center !important;
     padding: 8px 0 !important;
   }
-
-  .top-bar-left1, .top-bar-middle1, .top-bar-right1 {
+  .top-bar-left1,
+  .top-bar-middle1,
+  .top-bar-right1 {
     flex: 1 1 auto !important;
     min-width: 0 !important;
   }
-
-  /* top bar cards shrink on small screens */
   .top-bar-card1 {
+    font-size: 14px !important;
     min-width: 120px !important;
     padding: 10px 12px !important;
-    font-size: 14px !important;
   }
-
-  /* make profile picture smaller */
-  .profile-pic-frame img, .profile-pic-frame > div {
-    width: 48px !important;
-    height: 48px !important;
+  .profile-pic-frame img,
+  .profile-pic-frame > div {
     border-radius: 8px !important;
+    height: 48px !important;
+    width: 48px !important;
   }
-
-  /* Quick activities: stack single column and keep icon above label */
   .qa-grid {
     display: grid !important;
-    grid-template-columns: 1fr !important;
     gap: 10px !important;
+    grid-template-columns: 1fr !important;
   }
-
-  .qa-grid .qa-btn,
-  .qa-card .qa-btn {
+  .qa-card .qa-btn,
+  .qa-grid .qa-btn {
+    align-items: center !important;
     display: flex !important;
     flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 6px !important;
-    width: 100% !important;
-    padding: 12px 10px !important;
-    min-height: 56px !important;
     font-size: 14px !important;
+    gap: 6px !important;
+    justify-content: center !important;
+    min-height: 56px !important;
+    padding: 12px 10px !important;
+    width: 100% !important;
   }
-
-  .qa-grid .qa-btn i, .qa-card .qa-btn i { font-size: 18px !important; }
-
-  /* Right column cards should not be too tall on small screen */
+  .qa-card .qa-btn i,
+  .qa-grid .qa-btn i {
+    font-size: 18px !important;
+  }
   .right-column1 .content-card1 {
-    padding: 12px !important;
     margin-bottom: 12px !important;
+    padding: 12px !important;
   }
-
-  /* Make Overview cards inline stacked (shrink) */
   .overview-row1 {
     display: flex !important;
     flex-direction: column !important;
     gap: 12px !important;
   }
-
   .overview-card-item1 {
-    width: 160px !important;
     padding: 12px !important;
+    width: 160px !important;
   }
-
-  /* Reduce chart height a bit on small screens */
   .chart-container1 .chart-inner1 {
     height: 160px !important;
   }
-
-  /* Avoid content overflow caused by large fixed paddings/margins */
-  .cards-container1, .cards-container1 > .left-column1, .cards-container1 > .right-column1 {
-    padding: 0 !important;
+  .cards-container1,
+  .cards-container1 > .left-column1,
+  .cards-container1 > .right-column1 {
     margin: 0 !important;
+    padding: 0 !important;
   }
-
-  /* Make the sidebar nav items slightly smaller */
   .sidebar .sidebar-item {
-    padding: 10px 8px !important;
-    gap: 10px !important;
     font-size: 14px !important;
+    gap: 10px !important;
+    padding: 10px 8px !important;
   }
 }
-
-/* Extra small phones: tighten further */
 @media (max-width: 420px) {
-  .sidebar { width: 240px !important; max-width: 240px !important; }
-  .top-bar-card1 { min-width: 110px !important; font-size: 13px !important; padding: 8px 10px !important; }
-  .qa-grid .qa-btn, .qa-card .qa-btn { min-height: 52px !important; font-size: 13px !important; }
-  .chart-container1 .chart-inner1 { height: 140px !important; }
+  .sidebar {
+    max-width: 240px !important;
+    width: 240px !important;
+  }
+  .top-bar-card1 {
+    font-size: 13px !important;
+    min-width: 110px !important;
+    padding: 8px 10px !important;
+  }
+  .qa-card .qa-btn,
+  .qa-grid .qa-btn {
+    font-size: 13px !important;
+    min-height: 52px !important;
+  }
+  .chart-container1 .chart-inner1 {
+    height: 140px !important;
+  }
 }
-
-/* Safety: prevent the overlay sidebar accidentally staying visible
-   (if JS fails, user can toggle via your existing toggle button) */
 @media (max-width: 900px) {
-  body.sidebar-force-hide .sidebar { transform: translateX(-110%) !important; }
+  body.sidebar-force-hide .sidebar {
+    transform: translateX(-110%) !important;
+  }
 }
-
-/* small improvement: ensure the toggle control (if present) is always visible */
-.mobile-sidebar-toggle, .mobile-backdrop-toggle {
+.mobile-backdrop-toggle,
+.mobile-sidebar-toggle {
   z-index: 2300 !important;
 }
-
-/* If you want the sidebar to be closed automatically when user clicks backdrop,
-   ensure your JS toggles .mobile-backdrop.show and .sidebar.open together.
-   The CSS above expects your code to: 
-     document.querySelector('.sidebar').classList.toggle('open')
-     document.querySelector('.mobile-backdrop').classList.toggle('show')
-*/
-/* =========================
-   Tablet / 1024px responsive fixes
-   Paste at end of TDContent.css (no color changes)
-   ========================= */
-
-/* =========================
-   Tablet / 1024px refined responsive fixes
-   Paste at end of TDContent.css (no color changes)
-   ========================= */
-
 @media (min-width: 900px) and (max-width: 1100px) {
-
-  /* ensure top-level dashboard container does not overflow */
-  .dashboard-container, .teacher-dashboard-content1, .cards-container1 {
-    width: 100%;
-    max-width: 100%;
+  .cards-container1,
+  .dashboard-container,
+  .teacher-dashboard-content1 {
     box-sizing: border-box;
+    max-width: 100%;
+    width: 100%;
   }
-
-  /* GRID: main content + right rail */
   .cards-container1 {
-    display: grid;
-    grid-template-columns: 1fr 340px; /* give right column predictable width */
-    gap: 18px;
     align-items: start;
+    display: grid;
+    gap: 18px;
+    grid-template-columns: 1fr 340px;
     margin-top: 6px;
   }
-
-  /* left / right column safety */
-  .left-column1, .right-column1 {
-    min-width: 0; /* allow flex/grid children to shrink */
+  .left-column1,
+  .right-column1 {
+    min-width: 0;
   }
-
-  /* TOP BAR: compact layout to avoid wrapping */
   .top-bar1 {
-    display: grid;
-    grid-template-columns: 1fr auto; /* left side chips, right side profile */
-    gap: 12px;
     align-items: center;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: 1fr auto;
     padding: 10px 6px;
   }
-
-  /* Top chips container */
   .top-bar-left1 {
-    display: flex;
-    gap: 10px;
     align-items: center;
-    flex-wrap: wrap;         /* allow chips to go to next line if needed */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
     justify-content: flex-start;
   }
-
-  /* reduce chip size and spacing so they fit on one or two rows */
   .top-bar-card1 {
-    padding: 6px 10px;
-    min-width: 86px;
-    max-width: 140px;
-    font-size: 13px;
     border-radius: 10px;
-    box-shadow: 0 6px 14px rgba(10,10,30,0.06);
+    box-shadow: 0 6px 14px #0a0a1e0f;
+    font-size: 13px;
+    max-width: 140px;
+    min-width: 86px;
+    padding: 6px 10px;
   }
-
-  /* center logo smaller so it doesn't force header wrap */
   .top-bar-middle1 img {
-    height: 56px !important;
-    width: auto !important;
-    object-fit: contain;
     display: block;
+    height: 56px !important;
+    object-fit: contain;
+    width: auto !important;
   }
-
-  /* profile area aligned right with smaller avatar */
-  .top-bar-right1 { display:flex; align-items:center; gap:10px; justify-self:flex-end; }
-  .profile-pic-frame img { width:56px !important; height:56px !important; border-radius:8px !important; }
-
-  /* Make header card (with logo + chips) use internal padding & not push below */
-  .teacher-dashboard-content1 > .top-bar1 + .content-card1,
-  .teacher-dashboard-content1 .content-card1:first-of-type {
+  .top-bar-right1 {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+    justify-self: flex-end;
+  }
+  .profile-pic-frame img {
+    border-radius: 8px !important;
+    height: 56px !important;
+    width: 56px !important;
+  }
+  .teacher-dashboard-content1 .content-card1:first-of-type,
+  .teacher-dashboard-content1 > .top-bar1 + .content-card1 {
     margin-top: 4px;
   }
-
-  /* Overview: keep two small cards side-by-side, but shrink comfortably */
   .overview-row1 {
-    display:flex;
-    gap:12px;
-    align-items:center;
-    flex-wrap:wrap;
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
   }
   .overview-card-item1 {
     flex: 1 1 46%;
     min-width: 0;
     padding: 18px;
   }
-
-  /* Quick Activities: two-column grid in right column */
   .qa-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
     align-items: center;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(2, 1fr);
   }
-  .qa-card { padding: 12px; }
-  .qa-btn { padding: 12px 10px; font-size: 14px; border-radius: 10px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; min-height:64px; }
-
-  /* Put icon above label inside QA buttons */
-  .qa-btn i { font-size: 18px; display:block; }
-  .qa-btn span { display:block; font-size:13px; line-height:1.1; text-align:center; }
-
-  /* LMS chart height / spacing in right column */
-  .lms-engagement-card1 .chart-inner1,
-  .chart-container1 .chart-inner1 {
-    height: 180px !important; /* compact but readable */
+  .qa-card {
+    padding: 12px;
   }
-
-  /* Recent activities card: ensure readable padding and width */
+  .qa-btn {
+    align-items: center;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    gap: 6px;
+    justify-content: center;
+    min-height: 64px;
+    padding: 12px 10px;
+  }
+  .qa-btn i {
+    display: block;
+    font-size: 18px;
+  }
+  .qa-btn span {
+    display: block;
+    font-size: 13px;
+    line-height: 1.1;
+    text-align: center;
+  }
+  .chart-container1 .chart-inner1,
+  .lms-engagement-card1 .chart-inner1 {
+    height: 180px !important;
+  }
   .recent-activities-card1 {
     padding: 16px;
   }
-  .recent-activities-card1 ul { padding-left: 18px; margin-top:6px; }
-
-  /* Notice board / big cards should expand full width of left column */
-  .notice-board-card1, .recent-activities-card1, .overview-card1 {
-    width: 100%;
-    box-sizing: border-box;
+  .recent-activities-card1 ul {
+    margin-top: 6px;
+    padding-left: 18px;
   }
-
-  /* Trainer progress mini card sits under charts in right column with spacing */
+  .notice-board-card1,
+  .overview-card1,
+  .recent-activities-card1 {
+    box-sizing: border-box;
+    width: 100%;
+  }
   .trainer-progress-mini-card1 {
     margin-top: 12px;
   }
-
-  /* Reduce main inner padding to give more horizontal space */
   .content-card1 {
     padding: 14px;
   }
-
-  /* Small typographic reductions to avoid line breaks */
-  h3 { font-size: 1.02rem; }
-  .top-bar-card1 .number1 { font-size: 20px; }
-  .top-bar-card1 .text1 { font-size: 13px; }
-
-  /* Sidebar: keep same width but ensure content doesn't shift on tablet */
-  .sidebar {
-    width: var(--sidebar-w);
-    min-width: var(--sidebar-w);
+  h3 {
+    font-size: 1.02rem;
   }
-  .main, .main-content {
+  .top-bar-card1 .number1 {
+    font-size: 20px;
+  }
+  .top-bar-card1 .text1 {
+    font-size: 13px;
+  }
+  .sidebar {
+    min-width: var(--sidebar-w);
+    width: var(--sidebar-w);
+  }
+  .main,
+  .main-content {
     margin-left: var(--sidebar-w);
     max-width: calc(100% - var(--sidebar-w));
   }
-
-  /* Safety: avoid any internal fixed-width from overflowing */
-  .content-card1 img, .content-card1 .chart-inner1, .slider-card, .banner {
-    max-width: 100%;
+  .banner,
+  .content-card1 .chart-inner1,
+  .content-card1 img,
+  .slider-card {
+    box-sizing: border-box;
     height: auto;
-    box-sizing: border-box;
+    max-width: 100%;
   }
-
-  /* hide any accidental scrollbar caused by minor rounding */
-  html, body, #root { overflow-x: hidden; }
+  #root,
+  body,
+  html {
+    overflow-x: hidden;
+  }
 }
-
-/* Small fallback for slightly narrower tablets so header chips don't overlap */
 @media (max-width: 900px) {
-  .cards-container1 { grid-template-columns: 1fr; gap: 12px; }
-  .qa-grid { grid-template-columns: 1fr 1fr; }
-  .top-bar-left1 { justify-content: flex-start; }
-}
-
-/* =========================
-   Responsive fix for ~1024px (tablet / small laptop)
-   Paste at the END of TDContent.css (or index.css)
-   ========================= */
-
-@media (min-width: 960px) and (max-width: 1100px) {
-
-  /* Make the overall cards container a 2-column grid with a fixed right rail */
   .cards-container1 {
-    display: grid !important;
-    grid-template-columns: 1fr 360px; /* main | right rail */
-    gap: 18px;
+    gap: 12px;
+    grid-template-columns: 1fr;
+  }
+  .qa-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .top-bar-left1 {
+    justify-content: flex-start;
+  }
+}
+@media (min-width: 960px) and (max-width: 1100px) {
+  .cards-container1 {
     align-items: start;
-    width: 100%;
     box-sizing: border-box;
-  }
-
-  /* Make the left and right columns flexible but non-overflowing */
-  .left-column1, .right-column1 {
-    min-width: 0; /* allow children to shrink within grid column */
+    display: grid !important;
+    gap: 18px;
+    grid-template-columns: 1fr 360px;
     width: 100%;
-    box-sizing: border-box;
   }
-
-  /* Ensure right rail never exceeds its column (prevents horizontal overflow) */
+  .left-column1,
+  .right-column1 {
+    box-sizing: border-box;
+    min-width: 0;
+    width: 100%;
+  }
   .right-column1 {
     max-width: 360px;
   }
   .right-column1 > * {
+    box-sizing: border-box;
     max-width: 100%;
-    box-sizing: border-box;
   }
-
-  /* Quick Activities grid: keep two small buttons per row and ensure internal wrapping */
   .qa-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    width: 100%;
     box-sizing: border-box;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(2, 1fr);
+    width: 100%;
   }
-
-  .qa-card, .qa-header { padding: 12px; box-sizing: border-box; }
-
-  /* Make QA buttons vertical (icon above label) and force break if too long */
+  .qa-btn,
+  .qa-card,
+  .qa-header {
+    box-sizing: border-box;
+    padding: 12px;
+  }
   .qa-btn {
+    align-items: center;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
     gap: 6px;
-    padding: 12px;
-    min-height: 64px;
+    justify-content: center;
     line-height: 1.05;
-    white-space: normal;
+    min-height: 64px;
     text-align: center;
+    white-space: normal;
     word-break: break-word;
-    box-sizing: border-box;
   }
-
-  .qa-btn i { font-size: 18px; display:block; margin-bottom:4px; }
-  .qa-btn span { display:block; font-size:13px; }
-
-  /* Chart area: slightly reduce height to fit the rail comfortably */
-  .lms-engagement-card1 .chart-inner1,
-  .chart-container1 .chart-inner1 {
+  .qa-btn i {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+  .qa-btn span {
+    display: block;
+    font-size: 13px;
+  }
+  .chart-container1 .chart-inner1,
+  .lms-engagement-card1 .chart-inner1 {
+    box-sizing: border-box;
     height: 170px !important;
     max-height: 170px !important;
-    box-sizing: border-box;
   }
-
-  /* Reduce padding on content cards to free width */
   .content-card1 {
     padding: 12px !important;
   }
-
-  /* Overview small cards (left column) — let them wrap (prevent overflow) */
   .overview-row1 {
-    display:flex;
-    gap:12px;
-    flex-wrap:wrap;
-    align-items:center;
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
   }
   .overview-card-item1 {
+    box-sizing: border-box;
     flex: 1 1 48%;
     min-width: 0;
-    box-sizing: border-box;
   }
-
-  /* Prevent large fixed margins/inline pushes — enforce logo and avatar sizing */
-  .top-bar-middle1 img { height: 56px !important; width: auto !important; object-fit: contain; }
-  .profile-pic-frame img { width:56px !important; height:56px !important; border-radius:8px !important; }
-
-  /* If any element uses inline margin-left to position the logo (e.g. marginLeft: "300px")
-     this fallback prevents that from breaking the layout */
-  .left-container img[style*="margin-left"], .left-container [style*="margin-left"] {
+  .top-bar-middle1 img {
+    height: 56px !important;
+    object-fit: contain;
+    width: auto !important;
+  }
+  .profile-pic-frame img {
+    border-radius: 8px !important;
+    height: 56px !important;
+    width: 56px !important;
+  }
+  .left-container [style*="margin-left"],
+  .left-container img[style*="margin-left"] {
     margin-left: 0 !important;
   }
-
-  /* Recent activities: ensure list doesn't overflow */
-  .recent-activities-card1, .notice-board-card1 {
+  .notice-board-card1,
+  .recent-activities-card1 {
     overflow: visible;
     padding: 12px;
   }
-  .recent-activities-card1 ul { padding-left: 18px; margin-top: 6px; }
-
-  /* Small typographic / spacing tweaks */
-  h3 { font-size: 1.02rem; }
-  .top-bar-card1 .number1 { font-size: 20px; }
-  .top-bar-card1 .text1 { font-size: 13px; }
-
-  /* Safety: hide accidental horizontal scroll */
-  html, body, #root { overflow-x: hidden; }
+  .recent-activities-card1 ul {
+    margin-top: 6px;
+    padding-left: 18px;
+  }
+  h3 {
+    font-size: 1.02rem;
+  }
+  .top-bar-card1 .number1 {
+    font-size: 20px;
+  }
+  .top-bar-card1 .text1 {
+    font-size: 13px;
+  }
+  #root,
+  body,
+  html {
+    overflow-x: hidden;
+  }
 }
-
-/* fallback: at slightly smaller widths stack into single column */
 @media (max-width: 959px) {
-  .cards-container1 { grid-template-columns: 1fr; gap: 12px; }
-  .qa-grid { grid-template-columns: repeat(2,1fr); }
+  .cards-container1 {
+    gap: 12px;
+    grid-template-columns: 1fr;
+  }
+  .qa-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
-/* --- DEBUG OVERRIDE (temporary) --- */
-html, body, #root, .app-root, .dashboard-shell, .main-wrapper {
-  transform: none !important;
-  transform-origin: unset !important;
+#root,
+.app-root,
+.dashboard-shell,
+.main-wrapper,
+body,
+html {
   zoom: 1 !important;
-  width: 100% !important;
   max-width: 100% !important;
   min-width: 0 !important;
-}
-/* Ensure main content can grow on wide screens */
-#root, .app-root, .app-shell, .main-wrapper, .main, .content, .dashboard-container, /* SAFETY: make sure main content can grow on very wide screens */
-#root, .app-root, .app-shell, .main-wrapper, .main, .content, .dashboard-container, /* FORCE: final layout override — ensures wide screens use this width */
-/* safety for flex containers */
-#root, .app-root, .app-shell, .main-wrapper, .main, .content, .dashboard-container {
-  min-width: 0 !important;
-  max-width: none !important;
+  transform: none !important;
+  transform-origin: unset !important;
   width: 100% !important;
+}
+#root,
+.app-root,
+.app-shell,
+.content,
+.dashboard-container,
+.main,
+.main-wrapper {
   box-sizing: border-box !important;
-}
-
-/* ===== Canonical dashboard-shell (single source of truth) ===== */
-.dashboard-shell { max-width: 100% !important; width: 100% !important; margin: 0 auto !important; box-sizing: border-box; padding-left: 24px; padding-right: 24px; }
-
-/* SAFETY: ensure main/flex containers can grow on wide monitors */
-#root, .app-root, .app-shell, .main-wrapper, .main, .content, .dashboard-container {
+  max-width: none !important;
   min-width: 0 !important;
   width: 100% !important;
-  max-width: none !important;
+}
+.dashboard-shell {
+  box-sizing: border-box;
+  margin: 0 auto !important;
+  max-width: 100% !important;
+  padding-left: 24px;
+  padding-right: 24px;
+  width: 100% !important;
+}
+#root,
+.app-root,
+.app-shell,
+.content,
+.dashboard-container,
+.main,
+.main-wrapper {
   box-sizing: border-box !important;
   flex: 1 1 auto !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  width: 100% !important;
 }

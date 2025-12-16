@@ -396,30 +396,21 @@ useEffect(() => {
 
             {/* Updated: Sidebar styles for consistent width/animation */}
       <aside
-        className={`sidebar ${isMobile ? "mobile" : "desktop"} ${isCollapsed ? "collapsed" : ""} ${isSidebarOpen ? "open" : ""}`}
-        aria-label="Main navigation"
+        className={`sidebar ${isCollapsed ? "collapsed" : ""} ${isSidebarOpen ? "open" : ""}`}
         style={{
-          position: "fixed",
+          position: "fixed", 
           top: 0,
           left: 0,
-          width: sidebarWidth,                       // keep width for layout calculations
-          height: "100vh",
+          width: sidebarWidth,
+          height: isMobile ? "100vh" : "auto",
+          minHeight: "100vh",
           display: "flex",
           flexDirection: "column",
           zIndex: 2000,
-          transition: isMobile ? "transform 0.25s ease" : "width 0.4s ease-in-out",
-          overflow: "hidden",
-          paddingTop: 50,
-          margin: 0,
-          boxSizing: "border-box",
-          paddingLeft: 10, // if you need inner spacing instead of external margin
-          paddingRight: 10,
+          transition: sidebarTransition,
+          overflow: "visible",      // 🔥 KEY
+          paddingTop: 16,
           backgroundColor: "#393939",
-
-          /* CRITICAL: prevent desktop transforms (this neutralizes the earlier translateX that caused page shrink)
-             On mobile we still slide in/out by transform so mobile overlay works. */
-          transform: isMobile ? (isSidebarOpen ? "translateX(0)" : "translateX(-110%)") : "none",
-          WebkitTransform: isMobile ? (isSidebarOpen ? "translateX(0)" : "translateX(-110%)") : "none",
         }}
       >
         <div className="sidebar-header brand" title={name ? `Logged in as ${name}` : ""} style={{ background: "transparent", border: "none", padding: "0px 0 0 0", marginTop: 0, flexShrink: 0 }}>
@@ -434,9 +425,18 @@ useEffect(() => {
             ) : (
               <img
                 src={logoS1}
-                alt="SO"
-                className="sidebar-logo sidebar-logo--mini"
-                style={{ width: "50px", height: "auto", background: "transparent", border: "none", boxShadow: "none", filter: "none", opacity: 1, display: "block", margin: 0, padding: 0 }}
+                alt="Steel Study"
+                className="sidebar-logo"
+                style={{
+                  maxWidth: "190px",   // 🔥 increase from 160
+                  maxHeight: "70px",   // 🔥 increase from 60
+                  width: "100%",
+                  height: "auto",
+                  objectFit: "contain",
+                  margin: 0,
+                  padding: 0,
+                  display: "block",
+                }}
               />
             )}
           </div>
@@ -546,19 +546,11 @@ useEffect(() => {
       <main
         className="content-panel"
         style={{
-          marginLeft: isMobile ? 20 : sidebarWidth + 20,
+          marginLeft: isMobile ? 0 : sidebarWidth, // 🔥 offset for fixed sidebar
           padding: "20px",
-          backgroundColor: "#ffffff",
-          borderRadius: "25px",
-          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)",
-          minHeight: "100vh",
+          height: "100vh",
+          overflowY: "auto",      // 🔥 SCROLL HERE ONLY
           transition: "margin-left 0.3s ease",
-          overflowY: "auto",
-
-          /* added */
-          maxWidth: "calc(100% - 40px)",   // always fit within viewport
-          overflowX: "hidden",
-          boxSizing: "border-box",
         }}
       >
         {renderContent()}
