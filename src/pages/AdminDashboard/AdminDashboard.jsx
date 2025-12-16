@@ -438,42 +438,17 @@ const AdminDashboard = () => {
           }}
         >
           <div className="profile-chip" style={{ margin: 0, padding: 0 }}>
-            {!isCollapsed && (
-              <img 
-                src={logoS1} 
-                alt="SO" 
-                className="sidebar-logo" 
-                style={{ 
-                  width: '240px', 
-                  height: 'auto', 
-                  background: 'transparent', 
-                  border: 'none',
-                  boxShadow: 'none',
-                  filter: 'none',
-                  opacity: 1,
-                  display: 'block',
-                  margin: 0,
-                  padding: 0,
-                }} 
+            {!isCollapsed ? (
+              <img
+                src={logoS1}
+                alt="Steel Study"
+                className="sidebar-logo"
               />
-            )}
-            {isCollapsed && (
-              <img 
-                src={logoS1} 
-                alt="SO" 
-                className="sidebar-logo sidebar-logo--mini" 
-                style={{ 
-                  width: '50px', 
-                  height: 'auto', 
-                  background: 'transparent', 
-                  border: 'none',
-                  boxShadow: 'none',
-                  filter: 'none',
-                  opacity: 1,
-                  display: 'block',
-                  margin: 0,
-                  padding: 0,
-                }} 
+            ) : (
+              <img
+                src={logoS1}
+                alt="Steel Study"
+                className="sidebar-logo"
               />
             )}
           </div>

@@ -603,7 +603,7 @@ body {
 /* ===== FINAL LOGO VISIBILITY BOOST ===== */
 
 .sidebar-header.brand .sidebar-logo {
-  height: 80px;              /* ⬆️ slightly bigger */
+  height: 110px;              /* ⬆️ slightly bigger */
   max-width: 210px;
   width: auto;
   object-fit: contain;

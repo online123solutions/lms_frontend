@@ -418,25 +418,14 @@ useEffect(() => {
             {!isCollapsed ? (
               <img
                 src={logoS1}
-                alt="SO"
+                alt="Steel Study"
                 className="sidebar-logo"
-                style={{ width: "220px", height: "auto", background: "transparent", border: "none", boxShadow: "none", filter: "none", opacity: 1, display: "block", margin: 0, padding: 0 }}
               />
             ) : (
               <img
                 src={logoS1}
                 alt="Steel Study"
                 className="sidebar-logo"
-                style={{
-                  maxWidth: "190px",   // 🔥 increase from 160
-                  maxHeight: "70px",   // 🔥 increase from 60
-                  width: "100%",
-                  height: "auto",
-                  objectFit: "contain",
-                  margin: 0,
-                  padding: 0,
-                  display: "block",
-                }}
               />
             )}
           </div>
