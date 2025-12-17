@@ -434,13 +434,13 @@ const TraineeDashboard = () => {
           top: 0,
           left: 0,
           width: sidebarWidth,
-          height: "100vh",          // ALWAYS
+          height: isMobile ? "100vh" : "auto",
           minHeight: "100vh",
-          overflow: "hidden",      // IMPORTANT
           display: "flex",
           flexDirection: "column",
           zIndex: 2000,
           transition: sidebarTransition,
+          overflow: "visible",      // 🔥 KEY
           paddingTop: 16,
           backgroundColor: "#393939",
         }}
@@ -471,14 +471,7 @@ const TraineeDashboard = () => {
         <div className="sidebar-sep" style={{ flexShrink: 0 }} />
 
         {/* Menu */}
-        <div
-            className="sidebar-menu"
-            style={{
-              flex: "1 1 auto",
-              padding: "10px 0",
-              overflowY: isMobile ? "auto" : "visible", // 🔥 KEY
-            }}
-          >
+        <div style={{ flex: 1, overflowY: "auto", padding: "10px 0" }}>
           {MENU.map((item) => (
             <div
               key={item.key}

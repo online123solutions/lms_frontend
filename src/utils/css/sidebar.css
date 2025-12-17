@@ -801,3 +801,94 @@ body {
 .settings-menu-item i {
   font-size: 16px;
 }
+.sidebar-item {
+  display: flex;
+  align-items: center;     /* 🔥 fixes icon/text alignment */
+  gap: 12px;
+  height: 44px;            /* 🔥 fixed height = no compression */
+  padding: 0 16px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.sidebar-icon {
+  font-size: 18px;
+  width: 20px;             /* 🔥 aligns all icons vertically */
+  text-align: center;
+}
+.sidebar-header {
+  padding-top: 0px !important;   /* was too large */
+  margin-top: 0 !important;
+}
+.profile-chip {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+/* Default: NO scroll on sidebar */
+.sidebar {
+  overflow-y: hidden;
+}
+/* Allow sidebar scrolling only on shorter screens */
+@media (max-height: 899px) {
+  .sidebar {
+    overflow-y: auto;
+  }
+}
+.sidebar {
+  scrollbar-width: thin;          /* Firefox */
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.25);
+  border-radius: 6px;
+}
+.sidebar-bottom-section {
+  position: relative;
+}
+
+.sidebar-settings-menu {
+  position: absolute;
+  bottom: 52px;           /* opens upward */
+  left: 12px;
+  right: 12px;
+  background: #2f2f2f;
+  border-radius: 8px;
+  padding: 6px 0;
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.4);
+  z-index: 3000;
+}
+.settings-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.settings-menu-item:hover {
+  background: rgba(255,255,255,0.1);
+}
+.sidebar-item {
+  display: flex;
+  align-items: center;     /* 🔥 KEY */
+  gap: 12px;
+  min-height: 44px;
+  padding: 10px 16px;
+}
+
+.sidebar-icon {
+  width: 20px;
+  font-size: 18px;
+  text-align: center;
+}
+
+.sidebar-text {
+  line-height: 1;
+  white-space: nowrap;
+}
