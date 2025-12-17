@@ -51,7 +51,7 @@ export default function TraineeProgress() {
   };
 
   return (
-    <div className="container mt-4 trainee-progress">
+    <div className="container trainee-progress">
       {/* Header bar (same look as Planner) */}
       <div className="d-flex justify-content-between align-items-center mb-4 header">
         <h2 className="fw-bold text-white m-0 d-flex align-items-center gap-2">
@@ -75,7 +75,7 @@ export default function TraineeProgress() {
 
       {/* Overall row, Planner-like compact KPIs */}
       <div
-        className="row g-3 mb-3"
+        className="row g-3 mb-1"
         style={{ marginLeft: 0, marginRight: 0 }}
       >
         <div className="col-md-2">
@@ -97,7 +97,7 @@ export default function TraineeProgress() {
           </div>
         </div>
         <div className="col-md-6">
-          <div className="p-3 bg-white rounded-3 shadow-sm">
+          <div className="p-2 bg-white rounded-3 shadow-sm">
             <div className="d-flex justify-content-between">
               <div className="text-muted small">Overall Progress</div>
               <div className="fw-semibold">{totals.progress_pct}%</div>

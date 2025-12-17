@@ -149,3 +149,63 @@
 
 .tp-center { text-align: center; }
 
+/* ===============================
+   Trainee Progress – spacing fix
+================================ */
+
+.trainee-progress {
+  padding-top: 8px; /* replaces mt-4 */
+}
+
+/* Remove gap before table */
+.trainee-progress .table-responsive {
+  margin-top: 4px !important;
+  padding-top: 0 !important;
+}
+
+/* Remove Bootstrap table top margin */
+.trainee-progress table {
+  margin-top: 0 !important;
+}
+
+/* Macroplanner reuse sometimes adds margin */
+.trainee-progress .macro-planner-table {
+  margin-top: 0 !important;
+}
+
+/* Slightly tighten KPI cards */
+.trainee-progress .row.mb-2 {
+  margin-bottom: 6px !important;
+}
+@media (max-height: 768px) {
+  .trainee-progress {
+    padding-top: 4px;
+  }
+}
+
+@media (max-height: 552px) {
+  .trainee-progress {
+    padding-top: 2px;
+  }
+
+  .trainee-progress .row {
+    margin-bottom: 4px !important;
+  }
+}
+/* Progress page – tighten KPI → progress bar gap */
+.trainee-progress .row {
+  margin-bottom: 4px !important;
+}
+
+.trainee-progress .progress {
+  margin-top: 4px !important;
+}
+@media (max-height: 552px) {
+  .trainee-progress .row {
+    margin-bottom: 2px !important;
+  }
+
+  .trainee-progress .p-2 {
+    padding: 6px !important;
+  }
+}

@@ -1063,3 +1063,122 @@
   .sop-page .seg-btn { padding: 6px 10px !important; font-size: 13px !important; min-width: 80px; }
   .sop-page .sop-card, .sop-page .lib-card { padding: 10px !important; }
 }
+
+/* ===== Root height control ===== */
+.qc-root {
+  height: 100%;
+}
+
+.qc-shell {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.qc-topbar {
+  flex: 0 0 auto;
+  min-height: 56px;
+}
+.query-chat-container {
+  height: 100%;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Left query list */
+.query-list {
+  width: 320px;
+  min-width: 260px;
+  max-width: 360px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Right chat area */
+.chat-main {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Messages scroll only here */
+.message-area {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 8px;
+}
+
+/* Reply stays visible */
+.reply-box {
+  flex: 0 0 auto;
+}
+.concern-section {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.concern-section > * {
+  flex: 0 0 auto;
+}
+
+/* Allow scrolling for long content */
+.concern-list,
+.concern-detail {
+  flex: 1;
+  overflow-y: auto;
+}
+/* ===============================
+   Short screen fixes
+   =============================== */
+
+@media (max-height: 768px) {
+  .qc-topbar h2 {
+    font-size: 18px;
+  }
+
+  .query-options h3,
+  .feedback-section h3,
+  .concern-section h3 {
+    font-size: 16px;
+  }
+
+  .btn-option {
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+}
+
+@media (max-height: 552px) {
+  .qc-topbar h2 {
+    font-size: 16px;
+  }
+
+  .btn-option {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  textarea {
+    min-height: 60px;
+  }
+}
+/* Concern back button fix */
+.concern-back {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.btn-back-inline {
+  width: auto !important;
+  min-width: unset;
+  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}

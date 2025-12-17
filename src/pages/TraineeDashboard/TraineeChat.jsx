@@ -692,9 +692,14 @@ export default function TraineeChat() {
               </div>
             </div>
           )}
-            <button className="btn-back" onClick={() => setActiveSection(null)}>
-              ← Back to Options
-            </button>
+            <div className="concern-back">
+              <button
+                className="btn-back btn-back-inline"
+                onClick={() => setActiveSection(null)}
+              >
+                ← Back to Options
+              </button>
+            </div>
           </div>
         )}
       </div>

@@ -248,3 +248,186 @@
     text-align: center;
   }
 }
+.notif-container {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+/* ===============================
+   Notifications – height tuning
+   =============================== */
+
+/* 768px height */
+@media (max-height: 768px) {
+  .notif-header h2 {
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+
+  .notif-subtitle {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+}
+
+/* 552px height */
+@media (max-height: 552px) {
+  .notif-header h2 {
+    font-size: 16px;
+    margin-bottom: 2px;
+  }
+
+  .notif-subtitle {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+}
+@media (max-height: 768px) {
+  .notif-toolbar {
+    padding: 6px 8px;
+    margin-bottom: 6px;
+  }
+
+  .notif-tab {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+
+  .notif-btn {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+}
+
+@media (max-height: 552px) {
+  .notif-toolbar {
+    padding: 4px 6px;
+    margin-bottom: 4px;
+  }
+
+  .notif-tab {
+    font-size: 12px;
+    padding: 5px 8px;
+  }
+
+  .notif-btn {
+    font-size: 12px;
+    padding: 5px 8px;
+  }
+}
+.notification-list {
+  flex: 1;
+  overflow-y: auto;
+}
+.notif-container > :last-child {
+  flex: 1;
+  overflow-y: auto;
+}
+@media (max-height: 768px) {
+  .notification-card {
+    padding: 10px;
+    margin-bottom: 8px;
+  }
+
+  .notification-title {
+    font-size: 14px;
+  }
+
+  .notification-meta {
+    font-size: 12px;
+  }
+}
+
+@media (max-height: 552px) {
+  .notification-card {
+    padding: 8px;
+    margin-bottom: 6px;
+  }
+
+  .notification-title {
+    font-size: 13px;
+  }
+
+  .notification-meta {
+    font-size: 11px;
+  }
+}
+/* ===============================
+   LOGIN ACTIVITY – BASE
+================================ */
+.login-activity {
+  padding: 8px 12px;
+}
+
+/* Profile card */
+.login-activity .profile-card {
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+/* Headings */
+.login-activity h2 {
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+
+/* Dropdown row */
+.login-activity .filter-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+/* Chart card */
+.login-activity .chart-card {
+  padding: 12px;
+}
+
+/* ===============================
+   HEIGHT ≤ 768px
+================================ */
+@media (max-height: 768px) {
+  .login-activity h2 {
+    font-size: 16px;
+  }
+
+  .login-activity p {
+    font-size: 13px;
+  }
+
+  .login-activity .chart-card {
+    padding: 10px;
+  }
+
+  .login-activity .chart-wrapper {
+    height: 240px !important;
+  }
+}
+
+/* ===============================
+   HEIGHT ≤ 552px
+================================ */
+@media (max-height: 552px) {
+  .login-activity {
+    padding: 6px 10px;
+  }
+
+  .login-activity h2 {
+    font-size: 14px;
+  }
+
+  .login-activity p {
+    font-size: 12px;
+  }
+
+  .login-activity .chart-wrapper {
+    height: 200px !important;
+  }
+
+  .login-activity select {
+    font-size: 12px;
+    padding: 4px 6px;
+  }
+}
