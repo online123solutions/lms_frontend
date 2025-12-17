@@ -2814,3 +2814,299 @@ img, .profile-pic-frame img {
     transform: translateX(0);
   }
 }
+.teacher-dashboard-content1 {
+  height: calc(100vh - 16px);
+  overflow: hidden;
+}
+@media (max-height: 768px) {
+
+  .cards-container1 {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    grid-template-rows: auto 1fr;
+    gap: 12px;
+    height: calc(100vh - 160px); /* after top bar */
+  }
+
+  .left-column1,
+  .right-column1 {
+    height: 100%;
+    overflow: hidden;
+  }
+}
+@media (max-height: 768px) {
+
+  .recent-activities-card1,
+  .notice-board-card1 {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .recent-activities-scroll1,
+  .notice-board-scroll1 {
+    max-height: unset;
+  }
+}
+@media (max-height: 768px) {
+
+  .overview-card1 {
+    padding: 8px;
+  }
+
+  .overview-row1 {
+    gap: 8px;
+  }
+
+  .overview-card-item1 {
+    padding: 8px;
+    min-height: 60px;
+  }
+
+  .top-bar1 {
+    padding: 8px 12px;
+  }
+}
+@media (max-height: 552px) {
+
+  .cards-container1 {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    height: calc(100vh - 140px);
+  }
+
+  .right-column1 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .lms-engagement-card1 {
+    grid-column: span 2;
+    height: 160px;
+  }
+
+  .chart-container1 {
+    height: 140px;
+  }
+
+  .trainer-progress-mini-card1 {
+    padding: 8px;
+  }
+}
+@media (max-height: 768px) {
+  .content-panel {
+    padding: 8px 10px !important;
+  }
+}
+@media (max-height: 768px) {
+
+  .top-bar1 {
+    padding: 6px 12px;
+    min-height: unset;
+  }
+
+  .top-bar-middle1 img {
+    height: 56px !important;
+  }
+
+  .profile-pic-frame img,
+  .profile-pic-frame div {
+    width: 56px !important;
+    height: 56px !important;
+  }
+
+  .top-bar-card1 {
+    padding: 8px;
+    min-height: 60px;
+  }
+
+  .number1 {
+    font-size: 18px;
+  }
+
+  .text1 {
+    font-size: 11px;
+  }
+}
+@media (max-height: 768px) {
+
+  .overview-card1,
+  .qa-card {
+    padding: 8px;
+  }
+
+  .overview-row1,
+  .qa-grid {
+    gap: 8px;
+  }
+
+  .overview-card-item1,
+  .qa-btn {
+    padding: 10px;
+    min-height: 64px;
+  }
+
+  .qa-btn span {
+    font-size: 12px;
+  }
+}
+@media (max-height: 768px) {
+
+  .content-card1 {
+    margin-bottom: 8px !important;
+  }
+
+  h3 {
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+
+  h4 {
+    margin-bottom: 4px;
+    font-size: 12px;
+  }
+}
+@media (max-height: 768px) {
+
+  .recent-activities-card1 {
+    max-height: 160px;
+    overflow-y: auto;
+  }
+
+  .notice-board-card1 {
+    max-height: 140px;
+    overflow-y: auto;
+  }
+
+  .trainer-progress-mini-card1 {
+    max-height: 160px;
+    overflow: hidden;
+  }
+}
+@media (max-height: 768px) {
+  html, body {
+    overflow: hidden;
+  }
+}
+.cards-container1 {
+  display: grid;
+  grid-template-columns: 58% 42%;
+  gap: 18px;
+  align-items: start;
+}
+@media (max-width: 1024px) {
+  .cards-container1 {
+    grid-template-columns: 55% 45%;
+  }
+}
+
+@media (max-width: 768px) {
+  .cards-container1 {
+    grid-template-columns: 60% 40%;
+    gap: 14px;
+  }
+}
+
+@media (max-width: 552px) {
+  .cards-container1 {
+    grid-template-columns: 1fr;
+  }
+}
+/* Left-side cards tighter */
+.left-column1 .content-card1 {
+  padding: 14px;
+}
+
+/* Right-side cards slightly more spacious */
+.right-column1 .content-card1 {
+  padding: 16px;
+}
+.right-column1 .content-card1 {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+.left-column1 h3 {
+  font-size: 15px;
+}
+@media (max-height: 768px) {
+
+  .recent-activities-card1 {
+    max-height: 170px;
+    overflow-y: auto;
+  }
+
+  .notice-board-card1 {
+    max-height: 150px;
+    overflow-y: auto;
+  }
+}
+
+/* Parent container */
+.cards-container1 {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+/* LEFT COLUMN — make it narrower */
+.left-column1 {
+  flex: 0 0 56%;
+  max-width: 56%;
+}
+
+/* RIGHT COLUMN — give it more space */
+.right-column1 {
+  flex: 0 0 44%;
+  max-width: 44%;
+}
+@media (max-width: 1024px) {
+  .left-column1 {
+    flex: 0 0 54%;
+    max-width: 54%;
+  }
+  .right-column1 {
+    flex: 0 0 46%;
+    max-width: 46%;
+  }
+}
+
+@media (max-width: 768px) {
+  .left-column1 {
+    flex: 0 0 60%;
+    max-width: 60%;
+  }
+  .right-column1 {
+    flex: 0 0 40%;
+    max-width: 40%;
+  }
+}
+
+/* Mobile / short height */
+@media (max-width: 552px) {
+  .cards-container1 {
+    flex-direction: column;
+  }
+
+  .left-column1,
+  .right-column1 {
+    max-width: 100%;
+    flex: 0 0 100%;
+  }
+}
+/* Reduce card padding slightly */
+.content-card1 {
+  padding: 14px !important;
+}
+
+/* Reduce title spacing */
+.content-card1 h3 {
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+.right-column1 .content-card1 {
+  padding: 16px !important;
+}
+
+/* Charts should feel premium */
+.chart-container1 {
+  padding-top: 6px;
+}
