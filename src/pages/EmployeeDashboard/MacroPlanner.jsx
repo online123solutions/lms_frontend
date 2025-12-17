@@ -59,7 +59,7 @@ const MacroPlanner = () => {
     w.replace(/^week\s/, (m) => m.charAt(0).toUpperCase() + m.slice(1)); // "Week 2"
 
   return (
-    <div className="macro-planner container mt-4" style={{ paddingTop: '50px' }}>
+    <div className="macro-planner container">
       <div className="header d-flex justify-content-between align-items-center mb-4">
         <h2 className="fw-bold text-white mb-0" title="Road Map">
           {/* inline svg fallback for icon (safe if icon font not loaded) */}
@@ -73,9 +73,7 @@ const MacroPlanner = () => {
           >
             <rect x="3" y="5" width="18" height="16" rx="2" stroke="white" strokeWidth="1.6" fill="none" />
             <path d="M16 3v4M8 3v4" stroke="white" strokeWidth="1.6" strokeLinecap="round" />
-          </svg>
-          <span style={{ marginLeft: 4 }}>Road Map</span>
-        </h2>
+          </svg>Road Map</h2>
         {/* <Form.Select
           className="w-auto border-primary shadow-sm"
           onChange={(e) => setSelectedWeek(e.target.value)}

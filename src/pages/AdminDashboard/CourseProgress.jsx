@@ -162,7 +162,7 @@ export default function CourseProgress() {
   if (err) return <div className="error">{err}</div>;
 
   return (
-    <div className="training-report-container mt-4 mb-4 shadow-none rounded">
+    <div className="training-report-container mt-2 mb-4 shadow-none rounded">
       <div className="report-card">
         <h2 className="report-title m-0">
           <i className="bi bi-bar-chart-line-fill" style={{ color: "#FFFFFF" }}></i>{" "}

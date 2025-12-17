@@ -184,7 +184,7 @@ const EmployeeLoginActivity = ({ setActiveContent }) => {
       )}
 
       {/* Dropdowns for Year and Month */}
-      <div style={{ display: "flex", gap: "10px", marginBottom: "20px" ,paddingTop: "70px"}}>
+      <div className="mt-2" style={{ display: "flex", gap: "10px", marginBottom: "20px"}}>
         <select
           value={selectedYear}
           onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}

@@ -53,7 +53,7 @@ const MacroPlanner = () => {
   );
 
   return (
-    <div className="macro-planner container mt-4">
+    <div className="macro-planner container">
       {/* Header layout (matches Trainer visual layout) */}
       <div className="header d-flex justify-content-between align-items-center mb-4">
         <h2 className="fw-bold text-white mb-0" title="Road Map">
@@ -68,9 +68,7 @@ const MacroPlanner = () => {
           >
             <rect x="3" y="5" width="18" height="16" rx="2" stroke="white" strokeWidth="1.6" fill="none" />
             <path d="M16 3v4M8 3v4" stroke="white" strokeWidth="1.6" strokeLinecap="round" />
-          </svg>
-          <span style={{ marginLeft: 4 }}>Road Map</span>
-        </h2>
+          </svg>Road Map</h2>
 
         <Form.Select
           className="w-auto border-primary shadow-sm macro-filter-select"

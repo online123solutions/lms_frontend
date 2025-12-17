@@ -51,7 +51,7 @@ export default function EmployeeProgress() {
   };
 
   return (
-    <div className="container mt-4" style={{ paddingTop: '50px' }}>
+    <div className="container mt-2">
       {/* Header bar (same look as Planner) */}
       <div className="d-flex justify-content-between align-items-center mb-4 header">
         <h2 className="fw-bold text-white m-0 d-flex align-items-center gap-2">
