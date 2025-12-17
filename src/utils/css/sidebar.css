@@ -717,3 +717,87 @@ body {
   padding-bottom: 16px;
   background: rgba(0, 0, 0, 0.12);
 }
+@media (min-width: 1024px) {
+  .sidebar-item {
+    padding: 8px 14px;     /* ⬅ was probably 12–16px */
+    min-height: 40px;      /* ⬅ reduce height */
+    font-size: 14px;
+  }
+
+  .sidebar-icon {
+    font-size: 16px;
+  }
+}
+@media (max-height: 800px) {
+  .sidebar-bottom-section .sidebar-text {
+    display: none;
+  }
+}
+.sidebar-header {
+  padding: 10px 0 !important;
+}
+
+@media (min-width: 1024px) {
+  .sidebar-item {
+    padding: 6px 12px !important;
+    min-height: 36px !important;
+    line-height: 1.1;
+    font-size: 13px;
+  }
+
+  .sidebar-icon {
+    margin-bottom: 10px;
+    font-size: 15px;
+  }
+}
+.sidebar-sep {
+  margin: 2px 0 !important;
+}
+.sidebar-bottom-section {
+  padding-top: 6px !important;
+}
+
+.sidebar-bottom-section .sidebar-item {
+  min-height: 34px !important;
+  margin-left: 23px !important;
+}
+.settings-dropdown .dropdown-menu {
+  margin-bottom: 8px;
+  min-width: 180px;
+}
+
+.settings-dropdown .dropdown-item {
+  font-size: 14px;
+  padding: 8px 12px;
+}
+/* SETTINGS MENU (CUSTOM) */
+.sidebar-settings-menu {
+  position: absolute;
+  bottom: 60px;            /* opens UPWARD */
+  left: 12px;
+  width: calc(100% - 24px);
+  background: #2f2f2f;
+  border-radius: 8px;
+  padding: 6px 0;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  z-index: 3000;
+}
+
+.settings-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.settings-menu-item:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.settings-menu-item i {
+  font-size: 16px;
+}

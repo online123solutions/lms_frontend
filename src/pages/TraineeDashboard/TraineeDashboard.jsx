@@ -202,6 +202,12 @@ const TraineeDashboard = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const close = () => setShowDropdown(false);
+    document.addEventListener("click", close);
+    return () => document.removeEventListener("click", close);
+  }, []);
+
   // handlers
   const handleLogout = useCallback(async () => {
     const result = await logout();
@@ -428,13 +434,13 @@ const TraineeDashboard = () => {
           top: 0,
           left: 0,
           width: sidebarWidth,
-          height: isMobile ? "100vh" : "auto",
+          height: "100vh",          // ALWAYS
           minHeight: "100vh",
+          overflow: "hidden",      // IMPORTANT
           display: "flex",
           flexDirection: "column",
           zIndex: 2000,
           transition: sidebarTransition,
-          overflow: "visible",      // 🔥 KEY
           paddingTop: 16,
           backgroundColor: "#393939",
         }}
@@ -466,14 +472,13 @@ const TraineeDashboard = () => {
 
         {/* Menu */}
         <div
-          className="sidebar-menu"
-          style={{
-            flex: "1 1 auto",
-            overflowY: "auto",
-            padding: "10px 0",
-            minHeight: 0,          // 🔥 THIS IS THE KEY FIX
-          }}
-        >
+            className="sidebar-menu"
+            style={{
+              flex: "1 1 auto",
+              padding: "10px 0",
+              overflowY: isMobile ? "auto" : "visible", // 🔥 KEY
+            }}
+          >
           {MENU.map((item) => (
             <div
               key={item.key}
@@ -527,20 +532,38 @@ const TraineeDashboard = () => {
               paddingBottom: 12,
             }}
           >
-          <div className="sidebar-item" onClick={() => setShowDropdown(!showDropdown)}>
+          {/* Settings */}
+          <div
+            className={`sidebar-item settings-item ${showDropdown ? "open" : ""}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowDropdown(!showDropdown);
+            }}
+          >
             <i className="bi bi-gear sidebar-icon"></i>
-            {!isCollapsed && <span className="sidebar-text">Settings</span>}
-            <Dropdown show={showDropdown} onToggle={() => setShowDropdown(!showDropdown)} className="settings-dropdown">
-              <Dropdown.Menu align="end" className="bg-gray-800 text-white rounded-lg shadow-lg">
-                <Dropdown.Item as={Link} to="#/profile" className="hover:bg-gray-700 py-2 px-4">
-                  Profile
-                </Dropdown.Item>
-                <Dropdown.Item onClick={() => setShowResetRequestModal(true)}>
-                  Reset Password
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
+            <span className="sidebar-text">Settings</span>
           </div>
+
+          {/* Custom dropdown menu */}
+          {showDropdown && (
+            <div className="sidebar-settings-menu">
+              <Link to="/profile" className="settings-menu-item">
+                <i className="bi bi-person"></i>
+                <span>Profile</span>
+              </Link>
+
+              <div
+                className="settings-menu-item"
+                onClick={() => {
+                  setShowDropdown(false);
+                  setShowResetRequestModal(true);
+                }}
+              >
+                <i className="bi bi-key"></i>
+                <span>Reset Password</span>
+              </div>
+            </div>
+          )}
 
           <div
             className="sidebar-item"
