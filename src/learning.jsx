@@ -279,37 +279,31 @@ const Learning = () => {
   return (
     <div className="learning-container" key={currentCircle}> 
       <nav className="navbar1">
-        <button className="back-button" onClick={handleBack} aria-label="Go back">
-          <FontAwesomeIcon icon={faArrowLeft} className="back-icon" />
-          <span className="back-text">Back</span>
-        </button>
+        <div className="left-block">
+          <button className="back-button" onClick={handleBack}>
+            <FontAwesomeIcon icon={faArrowLeft} />
+            <span className="back-text">Back</span>
+          </button>
+          <div className="lesson-title">{lessonName || "Lesson"}</div>
+        </div>
 
         <div className="center-block">
           <div className="circle-container">
             {Array.from({ length: totalCircles }).map((_, index) => (
-              <div key={index} className="circle" style={{ backgroundColor: getCircleColor(index) }} onClick={() => handleCircleClick(index)}>
+              <div
+                key={index}
+                className="circle"
+                style={{ backgroundColor: getCircleColor(index) }}
+                onClick={() => handleCircleClick(index)}
+              >
                 {index + 1}
               </div>
             ))}
           </div>
-          <div className="navbar-text">{lessonName || "Lesson"}</div>
         </div>
 
-        <button
-          className="mark-completed-button"
-          onClick={handleMarkAsCompleted}
-          disabled={countdown > 0 || !allLessons.length}
-          aria-disabled={countdown > 0}
-          style={{
-            padding: "10px 15px",
-            backgroundColor: countdown > 0 ? "#ccc" : "#393939",
-            color: countdown > 0 ? "#555" : "#fff",
-            border: "none",
-            borderRadius: "15px",
-            cursor: countdown > 0 ? "not-allowed" : "pointer",
-          }}
-        >
-          {countdown > 0 ? `Wait ${countdown} sec` : "Mark as Completed"}
+        <button className="mark-completed-button" onClick={handleMarkAsCompleted}>
+          Mark as Completed
         </button>
       </nav>
 
