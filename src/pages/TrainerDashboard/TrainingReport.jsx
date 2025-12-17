@@ -49,7 +49,7 @@ const TrainingReport = () => {
   if (error) return <div className="error">{error}</div>;
 
   return (
-    <div className="training-report-container mt-4 mb-4 shadow-sm rounded">
+    <div className="training-report-container mb-4 shadow-sm rounded">
       <div className="report-card">
         <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
           <h2 className="report-title m-0">

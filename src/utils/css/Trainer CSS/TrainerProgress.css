@@ -176,3 +176,88 @@
   background: #fff;
   border-radius: 12px;
 }
+.training-report-container {
+  margin-top: 0;
+  padding-top: 0;
+}
+@media (max-height: 768px) {
+  .training-report-container {
+    margin-top: -8px;   /* subtle lift */
+  }
+
+  .report-card {
+    padding-top: 10px;
+  }
+}
+@media (max-height: 552px) {
+  .training-report-container {
+    margin-top: -12px;
+  }
+
+  .report-card {
+    padding-top: 8px;
+  }
+}
+@media (max-height: 768px) {
+  .report-title {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+}
+
+@media (max-height: 552px) {
+  .report-title {
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+}
+@media (max-height: 768px) {
+  .report-table th,
+  .report-table td {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+}
+
+@media (max-height: 552px) {
+  .report-table th,
+  .report-table td {
+    padding: 4px 6px;
+    font-size: 11px;
+  }
+}
+/* Base – desktop */
+.sop-page {
+  padding: 16px;
+  padding-top: 16px;
+}
+@media (max-height: 768px) {
+  .sop-page {
+    padding-top: 8px;
+  }
+}
+@media (max-height: 552px) {
+  .sop-page {
+    padding-top: 4px;
+  }
+}
+@media (max-height: 420px) {
+  .sop-page {
+    padding-top: 70;
+    padding-bottom: 8px;
+  }
+}
+.segmented {
+  margin-bottom: 8px;
+}
+
+@media (max-height: 552px) {
+  .segmented {
+    margin-bottom: 4px;
+  }
+
+  .seg-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}

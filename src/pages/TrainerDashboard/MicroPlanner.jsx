@@ -142,7 +142,7 @@ const MicroPlanner = () => {
   );
 
   return (
-    <div className="macro-planner container mt-4">
+    <div className="macro-planner container">
       <div className="d-flex justify-content-between align-items-center mb-4 header">
         <h2 className="fw-bold text-white">
           <i className="bi bi-calendar-check" style={{ color: "#FFFFFF" }}></i> Planner

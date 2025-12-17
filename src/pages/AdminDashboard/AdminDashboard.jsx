@@ -320,8 +320,7 @@ const AdminDashboard = () => {
 
       case "sops": {
         return (
-          <div style={{ padding: 16, paddingTop: 70 }}>
-
+          <div className="sop-page">
             <div
               style={{
                 display: "flex",

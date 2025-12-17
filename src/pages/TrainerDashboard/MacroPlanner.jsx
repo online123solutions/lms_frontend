@@ -100,7 +100,7 @@ const MacroPlanner = () => {
   );
 
   return (
-    <div className="macro-planner container mt-4">
+    <div className="macro-planner container">
       {/* HEADER: now responsive using flex-column on mobile */}
       <div className="header d-flex justify-content-between align-items-center mb-4">
         <h2 className="fw-bold text-white mb-0">

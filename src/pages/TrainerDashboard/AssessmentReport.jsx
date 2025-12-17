@@ -299,15 +299,14 @@ export default function TrainerAssessmentReports() {
                                 {r.results.map((row) => (
                                     <tr key={row.id || `${row.username}-${row.quiz}`}>
                                     <td>
-                                        <div className="user-cell">
-                                        <div className="avatar">
-                                            {(row.display_name || row.username || "-").slice(0,1).toUpperCase()}
-                                        </div>
-                                        <div className="user-meta">
-                                            <div className="name">{row.display_name || row.username || "-"}</div>
-                                            <div className="muted">@{row.username}</div>
-                                        </div>
-                                        </div>
+                                        <td>
+                                          <div className="user-cell no-avatar">
+                                            <div className="user-meta">
+                                              <div className="name">{row.display_name || row.username || "-"}</div>
+                                              <div className="muted">@{row.username}</div>
+                                            </div>
+                                          </div>
+                                        </td>
                                     </td>
                                     <td>{row.department || "-"}</td>
                                     <td>{row.designation || "-"}</td>

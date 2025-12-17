@@ -35,7 +35,7 @@ const TrainingReport = () => {
   if (error) return <div className="error">{error}</div>;
 
   return (
-    <div className="training-report-container mt-4 mb-4 shadow-sm rounded">
+    <div className="training-report-container mt-2 mb-4 shadow-sm rounded">
       <div className="report-card">
         <h2 className="report-title">
           <i className="bi bi-file-earmark-bar-graph" style={{ color: "#FFFFFF" }}></i>Training Report

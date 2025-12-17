@@ -235,3 +235,215 @@ grid-template-columns: 1fr !important; }
     grid-template-columns: 1fr;
   }
 }
+@media (max-height: 768px) {
+
+  /* Overall wrapper */
+  .ar-wrap {
+    padding: 10px 12px;
+  }
+
+  /* Toolbar */
+  .ar-toolbar {
+    padding: 8px 10px;
+    margin-bottom: 10px;
+  }
+
+  .ar-controls {
+    gap: 10px;
+  }
+
+  .ar-controls .field label {
+    font-size: 11px;
+    margin-bottom: 2px;
+  }
+
+  .ar-controls select {
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+
+  .ar-toolbar button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  /* Cards grid */
+  .ar-grid {
+    gap: 12px;
+  }
+
+  /* Card */
+  .ar-card {
+    padding: 12px;
+  }
+
+  .ar-title {
+    font-size: 14px;
+  }
+
+  .ar-sub {
+    font-size: 11px;
+  }
+
+  /* Metrics row */
+  .ar-metrics {
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .metric {
+    padding: 8px;
+  }
+
+  .metric-k {
+    font-size: 11px;
+  }
+
+  .metric-v {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  /* Divider */
+  .ar-divider {
+    margin: 10px 0;
+  }
+
+  /* Results button */
+  .btn-chip {
+    padding: 4px 10px;
+    font-size: 11px;
+  }
+}
+@media (max-height: 552px) {
+
+  .ar-wrap {
+    padding: 8px 10px;
+  }
+
+  /* Stack toolbar controls tighter */
+  .ar-controls {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ar-controls .field {
+    min-width: 140px;
+  }
+
+  /* Cards */
+  .ar-card {
+    padding: 10px;
+  }
+
+  .ar-title {
+    font-size: 13px;
+  }
+
+  .ar-sub {
+    font-size: 10.5px;
+  }
+
+  /* Metrics become tighter */
+  .ar-metrics {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  .metric {
+    padding: 6px;
+  }
+
+  .metric-v {
+    font-size: 13px;
+  }
+
+  /* Results table */
+  .results-table th,
+  .results-table td {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .user-meta .name {
+    font-size: 11px;
+  }
+
+  .user-meta .muted {
+    font-size: 10px;
+  }
+}
+.ar-empty {
+  padding: 30px 10px;
+}
+
+@media (max-height: 552px) {
+  .ar-empty {
+    padding: 20px 8px;
+  }
+}
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;              /* space between avatar & text */
+  min-width: 220px;
+}
+.avatar {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  border-radius: 50%;
+  background: #e9e6ff;
+  color: #5a4fcf;
+  font-weight: 600;
+  font-size: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.user-meta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.user-meta .name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #222;
+}
+
+.user-meta .muted {
+  font-size: 11px;
+  color: #777;
+}
+@media (max-height: 768px) {
+  .avatar {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    font-size: 14px;
+  }
+
+  .user-meta .name {
+    font-size: 12px;
+  }
+
+  .user-meta .muted {
+    font-size: 10px;
+  }
+}
+
+@media (max-height: 552px) {
+  .user-cell {
+    gap: 8px;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    font-size: 13px;
+  }
+}

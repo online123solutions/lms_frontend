@@ -3110,3 +3110,108 @@ img, .profile-pic-frame img {
 .chart-container1 {
   padding-top: 6px;
 }
+.ar-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end; /* 🔑 aligns buttons perfectly */
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.ar-controls,
+.ar-actions {
+  display: flex;
+  align-items: flex-end; /* 🔑 */
+  gap: 10px;
+}
+@media (max-height: 768px) {
+
+  .tn-wrap {
+    padding-top: 8px;
+  }
+
+  .tn-header {
+    margin-bottom: 8px;
+  }
+
+  .tn-header h5 {
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+
+  .tn-header select,
+  .tn-header input {
+    height: 34px;
+    font-size: 13px;
+  }
+
+  .tn-header .btn {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
+@media (max-height: 552px) {
+
+  /* Page spacing */
+  .tn-wrap {
+    padding-top: 4px;
+    padding-bottom: 8px;
+  }
+
+  /* Section titles */
+  .tn-wrap h5 {
+    font-size: 14px;
+    margin: 6px 0;
+  }
+
+  /* Cards */
+  .tn-card {
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  .tn-card-top {
+    margin-bottom: 4px;
+  }
+
+  .tn-title {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .tn-when {
+    font-size: 11px;
+  }
+
+  .tn-body {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  /* Chips */
+  .chip {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  /* Buttons */
+  .tn-card .btn {
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+}
+@media (max-height: 552px) {
+  .tn-grid {
+    gap: 8px;
+  }
+}
+@media (max-height: 552px) {
+  .modal-body {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  .modal-footer .btn {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}

@@ -218,3 +218,93 @@
     padding-inline: 4px;
   }
 }
+@media (max-height: 768px) {
+  .tn-header button,
+  .tn-send-btn,
+  .btn-primary,
+  .btn-outline {
+    height: 32px;
+    padding: 0 12px;
+    font-size: 12px;
+    border-radius: 18px;
+  }
+}
+@media (max-height: 552px) {
+  .tn-header button,
+  .tn-send-btn,
+  .btn-primary,
+  .btn-outline {
+    height: 28px;
+    padding: 0 10px;
+    font-size: 11px;
+    border-radius: 16px;
+  }
+}
+@media (max-height: 768px) {
+  .tn-card {
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  .tn-title {
+    font-size: 14px;
+  }
+
+  .tn-body {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+}
+@media (max-height: 552px) {
+  .tn-card {
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  .tn-title {
+    font-size: 13px;
+  }
+
+  .tn-body {
+    font-size: 11.5px;
+    line-height: 1.35;
+  }
+}
+@media (max-height: 768px) {
+  .chip {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 12px;
+  }
+}
+
+@media (max-height: 552px) {
+  .chip {
+    font-size: 10.5px;
+    padding: 2px 6px;
+  }
+}
+@media (max-height: 768px) {
+  .tn-search {
+    height: 32px;
+    font-size: 12px;
+  }
+}
+
+@media (max-height: 552px) {
+  .tn-search {
+    height: 28px;
+    font-size: 11px;
+  }
+}
+@media (max-height: 768px) {
+  .tn-grid {
+    gap: 12px;
+  }
+}
+
+@media (max-height: 552px) {
+  .tn-grid {
+    gap: 8px;
+  }
+}
