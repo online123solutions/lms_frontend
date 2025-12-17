@@ -1213,3 +1213,36 @@ html {
   min-width: 0 !important;
   width: 100% !important;
 }
+/* -------- SHORT SCREEN OPTIMIZATION -------- */
+@media (max-height: 700px) {
+  .content-panel {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+  }
+
+  /* Reduce gap between sections */
+  .maindash,
+  .dashboard-container {
+    gap: 12px !important;
+  }
+
+  /* Reduce card spacing */
+  .card,
+  .profile-card,
+  .latest-updates,
+  .my-progress {
+    margin-bottom: 12px !important;
+  }
+
+  /* Reduce heading spacing */
+  h1, h2, h3 {
+    margin-top: 6px !important;
+    margin-bottom: 6px !important;
+  }
+}
+@media (max-height: 700px) {
+  .dashboard-greeting,
+  .welcome-text {
+    margin-bottom: 6px !important;
+  }
+}

@@ -575,10 +575,10 @@ const TraineeDashboard = () => {
       <main
         className="content-panel"
         style={{
-          marginLeft: isMobile ? 0 : sidebarWidth, // 🔥 offset for fixed sidebar
-          padding: "20px",
-          height: "100vh",
-          overflowY: "auto",      // 🔥 SCROLL HERE ONLY
+          marginLeft: isMobile ? 0 : sidebarWidth,
+          padding: "16px",            // ⬅ reduced from 20px
+          height: "100dvh",           // ⬅ better than 100vh
+          overflowY: "auto",
           transition: "margin-left 0.3s ease",
         }}
       >

@@ -892,3 +892,50 @@ body {
   line-height: 1;
   white-space: nowrap;
 }
+/* ---------------- COMPACT DESKTOP (HEIGHT ≤ 600px) ---------------- */
+@media (max-height: 600px) {
+
+  /* Sidebar overall */
+  .sidebar {
+    padding-top: 4px !important;
+  }
+
+  /* Menu spacing */
+  .sidebar-item {
+    padding: 6px 12px;    /* reduce height */
+    font-size: 13px;
+  }
+
+  .sidebar-icon {
+    font-size: 15px;
+  }
+
+  .sidebar-text {
+    font-size: 13px;
+  }
+
+  /* Remove extra separators */
+  .sidebar-sep {
+    margin: 4px 0;
+  }
+
+  /* Bottom section tighter */
+  .sidebar-bottom-section {
+    padding-bottom: 6px;
+  }
+}
+@media (max-height: 600px) {
+  .content-panel {
+    padding-top: 12px !important;
+  }
+}
+@media (max-height: 600px) {
+  .sidebar-header {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+  }
+
+  .sidebar-menu {
+    padding-top: 2px !important;
+  }
+}
