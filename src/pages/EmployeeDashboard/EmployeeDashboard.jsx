@@ -502,21 +502,45 @@ const EmployeeDashboard = () => {
         </div>
 
         {/* Bottom settings / logout */}
-        <div className="sidebar-bottom-section" style={{ flexShrink: 0, marginTop: "auto" }}>
-          <div className="sidebar-item" onClick={() => setShowDropdown(!showDropdown)}>
+        <div
+            className="sidebar-bottom-section"
+            style={{
+              flexShrink: 0,
+              paddingBottom: 12,
+            }}
+          >
+          {/* Settings */}
+          <div
+            className={`sidebar-item settings-item ${showDropdown ? "open" : ""}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowDropdown(!showDropdown);
+            }}
+          >
             <i className="bi bi-gear sidebar-icon"></i>
-            {!isCollapsed && <span className="sidebar-text">Settings</span>}
-            <Dropdown show={showDropdown} onToggle={() => setShowDropdown(!showDropdown)} className="settings-dropdown">
-              <Dropdown.Menu align="end" className="bg-gray-800 text-white rounded-lg shadow-lg">
-                <Dropdown.Item as={Link} to="#/profile" className="hover:bg-gray-700 py-2 px-4">
-                  Profile
-                </Dropdown.Item>
-                <Dropdown.Item onClick={() => setShowResetRequestModal(true)}>
-                  Reset Password
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
+            <span className="sidebar-text">Settings</span>
           </div>
+
+          {/* Custom dropdown menu */}
+          {showDropdown && (
+            <div className="sidebar-settings-menu">
+              <Link to="/profile" className="settings-menu-item">
+                <i className="bi bi-person"></i>
+                <span>Profile</span>
+              </Link>
+
+              <div
+                className="settings-menu-item"
+                onClick={() => {
+                  setShowDropdown(false);
+                  setShowResetRequestModal(true);
+                }}
+              >
+                <i className="bi bi-key"></i>
+                <span>Reset Password</span>
+              </div>
+            </div>
+          )}
 
           <div
             className="sidebar-item"
