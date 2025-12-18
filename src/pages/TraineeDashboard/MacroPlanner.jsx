@@ -64,7 +64,7 @@ const MacroPlanner = () => {
             xmlns="http://www.w3.org/2000/svg"
             aria-hidden="true"
             focusable="false"
-            style={{ width: 18, height: 18, marginRight: 8 }}
+            style={{ width: 34, height: 34, marginRight: 8 }}
           >
             <rect x="3" y="5" width="18" height="16" rx="2" stroke="white" strokeWidth="1.6" fill="none" />
             <path d="M16 3v4M8 3v4" stroke="white" strokeWidth="1.6" strokeLinecap="round" />

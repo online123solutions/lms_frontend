@@ -51,7 +51,7 @@ const MicroPlanner = () => {
   );
 
   return (
-    <div className="micro-planner">
+    <div className="macro-planner container">
       <div className="header d-flex justify-content-between align-items-center mb-4">
         <div className="micro-title">
           <h2 className="fw-bold text-white mb-0">
