@@ -280,3 +280,85 @@ body .signup-wrapper {
     font-size: 14px;
   }
 }
+
+@media (max-height: 768px) {
+
+  /* Stop hover lift on short screens */
+  .form-panel:hover,
+  .info-panel:hover {
+    transform: none;
+  }
+
+  /* Reduce internal padding */
+  .form-panel,
+  .info-panel {
+    padding: 24px;
+    max-height: none;
+  }
+
+  /* Reduce logo size */
+  .signup-logo {
+    max-width: 240px;
+  }
+
+  /* Reduce title size */
+  .form-title {
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+
+  .info-text {
+    font-size: 14px;
+  }
+
+  /* Buttons smaller */
+  .submit-button {
+    padding: 10px;
+    font-size: 14px;
+  }
+}
+@media (max-height: 552px) {
+
+  body .signup-wrapper {
+    padding-top: 8px;
+  }
+
+  .signup-container.upgraded-card {
+    max-width: 780px;
+  }
+
+  .form-panel,
+  .info-panel {
+    padding: 18px;
+  }
+
+  .logo-container {
+    margin-bottom: 8px;
+  }
+
+  .signup-logo {
+    max-width: 200px;
+  }
+
+  .form-title {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  .input-field {
+    padding: 9px 12px;
+    margin: 6px 0;
+    font-size: 13px;
+  }
+
+  .submit-button {
+    margin-top: 12px;
+    padding: 9px;
+    font-size: 13px;
+  }
+
+  /* Remove decorative wave completely */
+  .wave-divider {
+    display: none;
+  }
+}
