@@ -577,9 +577,12 @@ const TraineeDashboard = () => {
         style={{
           marginLeft: isMobile ? 0 : sidebarWidth,
           padding: "16px",            // ⬅ reduced from 20px
-          height: "100dvh",           // ⬅ better than 100vh
-          overflowY: "auto",
+          height: "calc(100vh - 20px)", // Account for margin (10px top + 10px bottom)
+          maxHeight: "calc(100vh - 20px)",
+          overflowY: "auto",          // Allow scrolling
+          overflowX: "hidden",        // Prevent horizontal scroll
           transition: "margin-left 0.3s ease",
+          WebkitOverflowScrolling: "touch", // Smooth scrolling on iOS
         }}
       >
         {renderContent()}

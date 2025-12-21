@@ -326,3 +326,71 @@
   .micro-controls { width:100%; justify-content:flex-end; }
   .micro-planner-table { min-width: 640px; }
 }
+
+/* ===================== */
+/* 📏 SHORT HEIGHT OPTIMIZATION (552px) */
+/* ===================== */
+@media (max-height: 552px) {
+  .micro-planner {
+    padding: 8px;
+  }
+
+  .header {
+    padding: 8px 10px;
+    margin-bottom: 12px;
+  }
+
+  .header .micro-title {
+    font-size: 16px;
+  }
+
+  .micro-planner-table th,
+  .micro-planner-table td {
+    padding: 5px 6px;
+    font-size: 12px;
+  }
+
+  /* Header optimizations for short screens */
+  .header .micro-title h2 {
+    font-size: 16px !important;
+    margin: 0;
+  }
+
+  .header .micro-title h2 i {
+    font-size: 18px !important;
+  }
+
+  /* Modal optimizations for short screens */
+  .microplanner-modal .modal-content {
+    max-height: calc(100vh - 40px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .microplanner-modal .modal-body {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    padding: 12px;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .microplanner-modal .modal-header {
+    padding: 10px 12px;
+    flex-shrink: 0;
+  }
+
+  .microplanner-modal .modal-footer {
+    padding: 8px 12px;
+    flex-shrink: 0;
+  }
+
+  .microplanner-modal .modal-body .form-group {
+    margin-bottom: 10px;
+  }
+
+  .microplanner-modal .modal-body .microplanner-textarea {
+    min-height: 60px !important;
+    max-height: 80px;
+  }
+}

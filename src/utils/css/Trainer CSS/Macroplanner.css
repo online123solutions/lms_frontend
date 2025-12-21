@@ -235,3 +235,38 @@
     width: 100% !important;
   }
 }
+
+/* ===================== */
+/* 📏 SHORT HEIGHT OPTIMIZATION (552px) */
+/* ===================== */
+@media (max-height: 552px) {
+  .macro-planner {
+    padding: 8px;
+  }
+
+  .header {
+    padding: 8px 10px;
+    margin-bottom: 12px;
+  }
+
+  .header h2 {
+    font-size: 1.1rem;
+  }
+
+  .header h2 svg {
+    width: 24px !important;
+    height: 24px !important;
+    margin-right: 6px !important;
+  }
+
+  .macro-planner-table th,
+  .macro-planner-table td {
+    font-size: 0.8rem;
+    padding: 5px 4px;
+  }
+
+  .macro-filter-select {
+    font-size: 0.85rem;
+    padding: 6px 8px;
+  }
+}

@@ -135,11 +135,17 @@ const MicroPlanner = () => {
         </div>
       )}
 
-      <Modal show={showModal} onHide={handleCloseModal} centered>
+      <Modal 
+        show={showModal} 
+        onHide={handleCloseModal} 
+        centered
+        className="microplanner-modal"
+        style={{ maxHeight: "calc(100vh - 40px)" }}
+      >
         <Modal.Header closeButton>
           <Modal.Title>MicroPlanner Details</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={{ maxHeight: "calc(100vh - 200px)", overflowY: "auto" }}>
           {currentPlanner && (
             <Form>
               <Form.Group className="mb-3" controlId="formWeek">
@@ -161,7 +167,8 @@ const MicroPlanner = () => {
                       : "N/A"
                   }
                   readOnly
-                  style={{ height: "100px" }}
+                  className="microplanner-textarea"
+                  style={{ minHeight: "60px", maxHeight: "120px", resize: "vertical" }}
                 />
               </Form.Group>
 

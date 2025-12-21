@@ -1213,7 +1213,145 @@ html {
   min-width: 0 !important;
   width: 100% !important;
 }
-/* -------- SHORT SCREEN OPTIMIZATION -------- */
+/* -------- SHORT SCREEN OPTIMIZATION (768px) -------- */
+@media (max-height: 768px) {
+  /* Ensure content panel fits content without visible scrollbar */
+  .content-panel {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    position: relative !important;
+  }
+  
+  /* Hide scrollbar for better UI while keeping scroll functionality */
+  .content-panel::-webkit-scrollbar {
+    width: 0px;
+    display: none;
+    background: transparent;
+  }
+  
+  .content-panel {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+
+  /* Ensure maindash and dashboard-container allow scrolling */
+  .maindash,
+  .dashboard-container {
+    gap: 6px !important;
+    min-height: auto !important;
+    height: auto !important;
+  }
+
+  /* Reduce card spacing more aggressively */
+  .card,
+  .profile-card,
+  .latest-updates,
+  .my-progress {
+    margin-bottom: 6px !important;
+    padding: 10px !important;
+  }
+
+  /* Reduce heading spacing more aggressively */
+  h1, h2, h3 {
+    margin-top: 3px !important;
+    margin-bottom: 3px !important;
+    font-size: 1.1em !important;
+  }
+
+  h2 {
+    font-size: 1.2em !important;
+  }
+
+  h3 {
+    font-size: 1.05em !important;
+  }
+
+  .dashboard-greeting,
+  .welcome-text {
+    margin-bottom: 3px !important;
+    font-size: 0.9em !important;
+    padding: 2px 0 !important;
+  }
+
+  /* Increase banner height */
+  .slider-card {
+    padding: 10px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .slider-viewport {
+    height: 120px !important;
+    max-height: 120px !important;
+    margin-top: 8px !important;
+  }
+
+  .slide,
+  .carousel,
+  .carousel-item {
+    max-height: 120px !important;
+    height: 120px !important;
+  }
+
+  .slider-title {
+    font-size: 15px !important;
+  }
+
+  .slider-desc {
+    font-size: 12px !important;
+    margin: 4px 0 !important;
+  }
+
+  .slider-btn {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  /* Reduce performance card spacing */
+  .chart-section {
+    padding: 8px !important;
+    margin-bottom: 6px !important;
+  }
+
+  /* Reduce text sizes in cards */
+  .latest-updates h3,
+  .updates-card h3,
+  .mp-title {
+    font-size: 13px !important;
+  }
+
+  .latest-updates ul li,
+  .updates-card ul li {
+    font-size: 11px !important;
+    line-height: 1.15 !important;
+    margin-bottom: 3px !important;
+  }
+
+  /* Reduce top section spacing */
+  .top-section {
+    gap: 8px !important;
+    margin-bottom: 6px !important;
+  }
+  
+  /* Hide scrollbars globally for cleaner UI */
+  *::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    background: transparent;
+  }
+  
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+}
+
+/* -------- SHORT SCREEN OPTIMIZATION (700px) -------- */
 @media (max-height: 700px) {
   .content-panel {
     padding-top: 10px !important;
@@ -1244,5 +1382,99 @@ html {
   .dashboard-greeting,
   .welcome-text {
     margin-bottom: 6px !important;
+  }
+}
+
+/* -------- EXTRA SHORT SCREEN OPTIMIZATION (552px) -------- */
+@media (max-height: 552px) {
+  .content-panel {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* Reduce gap between sections more aggressively */
+  .maindash,
+  .dashboard-container {
+    gap: 8px !important;
+  }
+
+  /* Reduce card spacing more */
+  .card,
+  .profile-card,
+  .latest-updates,
+  .my-progress {
+    margin-bottom: 8px !important;
+    padding: 10px !important;
+  }
+
+  /* Reduce heading spacing more */
+  h1, h2, h3 {
+    margin-top: 4px !important;
+    margin-bottom: 4px !important;
+    font-size: 1.1em !important;
+  }
+
+  h2 {
+    font-size: 1.2em !important;
+  }
+
+  h3 {
+    font-size: 1.05em !important;
+  }
+
+  .dashboard-greeting,
+  .welcome-text {
+    margin-bottom: 4px !important;
+    font-size: 0.95em !important;
+  }
+
+  /* Modal optimizations */
+  .modal-dialog {
+    margin: 10px auto;
+    max-height: calc(100vh - 20px);
+  }
+
+  .modal-content {
+    max-height: calc(100vh - 20px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-header {
+    padding: 10px 12px;
+    flex-shrink: 0;
+  }
+
+  .modal-body {
+    overflow-y: auto;
+    padding: 12px;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .modal-footer {
+    padding: 8px 12px;
+    flex-shrink: 0;
+  }
+
+  .modal-body .form-group {
+    margin-bottom: 10px;
+  }
+
+  .modal-body .form-label {
+    font-size: 0.9em;
+    margin-bottom: 4px;
+  }
+
+  .modal-body .form-control {
+    padding: 6px 10px;
+    font-size: 0.9em;
+  }
+
+  .modal-body textarea.form-control {
+    min-height: 60px !important;
+    max-height: 80px;
   }
 }

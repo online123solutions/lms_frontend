@@ -17,6 +17,19 @@
 .maindash {
   display: flex;
   gap: 20px;
+  min-height: auto;
+  height: auto;
+}
+
+/* Ensure maindash doesn't constrain height at 768px */
+@media (max-height: 768px) {
+  .maindash {
+    flex-wrap: wrap;
+    gap: 10px;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+  }
 }
 
 /* Collapsed Sidebar */
@@ -146,7 +159,22 @@
   z-index: 2;
 
   min-height: auto;
-  overflow: visible;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100vh;
+  max-height: 100vh;
+}
+
+/* Hide scrollbars for cleaner UI while keeping scroll functionality */
+.content-panel::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  background: transparent;
+}
+
+.content-panel {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }
 
 /* Cards styling for grid layout */
@@ -551,7 +579,46 @@ body {
 .dashboard {
   display: flex;
   min-height: 100vh;
-  overflow: hidden;
+  height: 100vh;
+  overflow: hidden; /* Prevent dashboard itself from scrolling */
+  position: relative;
+}
+
+/* Ensure content panel can scroll within dashboard */
+.dashboard .content-panel {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  height: calc(100vh - 20px) !important; /* Account for margin */
+  max-height: calc(100vh - 20px) !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* At 768px height, ensure scrolling works */
+@media (max-height: 768px) {
+  .dashboard {
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .dashboard .content-panel {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: calc(100vh - 20px) !important;
+    max-height: calc(100vh - 20px) !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Hide scrollbar for cleaner UI while keeping scroll functionality */
+  .dashboard .content-panel::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    background: transparent;
+  }
+  
+  .dashboard .content-panel {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
 }
 
 /* desktop */
@@ -823,8 +890,8 @@ body {
 .sidebar {
   overflow-y: hidden;
 }
-/* Allow sidebar scrolling only on shorter screens */
-@media (max-height: 899px) {
+/* Allow sidebar scrolling only on shorter screens (below 768px) */
+@media (max-height: 767px) {
   .sidebar {
     overflow-y: auto;
   }
@@ -887,6 +954,76 @@ body {
   line-height: 1;
   white-space: nowrap;
 }
+/* ---------------- COMPACT DESKTOP (HEIGHT ≤ 768px) ---------------- */
+@media (max-height: 768px) {
+  /* Sidebar overall - prevent scrolling */
+  .sidebar {
+    overflow-y: hidden !important;
+    padding-top: 4px !important;
+  }
+
+  /* Logo smaller */
+  .sidebar-header.brand {
+    padding: 8px 10px !important;
+    min-height: 65px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .sidebar-header.brand .sidebar-logo {
+    height: 65px !important;
+    max-width: 160px !important;
+  }
+
+  .sidebar.collapsed .sidebar-logo {
+    height: 36px !important;
+    max-width: 36px !important;
+  }
+
+  /* Menu spacing - compact */
+  .sidebar-item {
+    padding: 7px 12px !important;
+    min-height: 36px !important;
+    font-size: 13px !important;
+    gap: 10px !important;
+  }
+
+  .sidebar-icon {
+    font-size: 16px !important;
+    width: 18px !important;
+  }
+
+  .sidebar-text {
+    font-size: 13px !important;
+  }
+
+  /* Separators tighter */
+  .sidebar-sep {
+    margin: 3px 0 !important;
+  }
+
+  /* Bottom section tighter */
+  .sidebar-bottom-section {
+    padding-top: 6px !important;
+    padding-bottom: 8px !important;
+  }
+
+  .sidebar-bottom-section .sidebar-item {
+    padding: 7px 12px !important;
+    min-height: 34px !important;
+  }
+
+  /* Sidebar menu spacing */
+  .sidebar-menu {
+    padding-top: 4px !important;
+  }
+
+  /* Settings menu item */
+  .settings-menu-item {
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+  }
+}
+
 /* ---------------- COMPACT DESKTOP (HEIGHT ≤ 600px) ---------------- */
 @media (max-height: 600px) {
 
@@ -932,5 +1069,76 @@ body {
 
   .sidebar-menu {
     padding-top: 2px !important;
+  }
+}
+
+/* ---------------- EXTRA COMPACT (HEIGHT ≤ 552px) ---------------- */
+@media (max-height: 552px) {
+  /* Sidebar overall - more aggressive reduction */
+  .sidebar {
+    padding-top: 2px !important;
+  }
+
+  /* Logo smaller */
+  .sidebar-header.brand {
+    padding: 8px 10px !important;
+    min-height: 60px !important;
+  }
+
+  .sidebar-header.brand .sidebar-logo {
+    height: 50px !important;
+    max-width: 140px !important;
+  }
+
+  .sidebar.collapsed .sidebar-logo {
+    height: 32px !important;
+    max-width: 32px !important;
+  }
+
+  /* Menu spacing - very compact */
+  .sidebar-item {
+    padding: 5px 10px !important;
+    min-height: 32px !important;
+    font-size: 12px !important;
+  }
+
+  .sidebar-icon {
+    font-size: 14px !important;
+    width: 18px !important;
+  }
+
+  .sidebar-text {
+    font-size: 12px !important;
+  }
+
+  /* Separators minimal */
+  .sidebar-sep {
+    margin: 2px 0 !important;
+  }
+
+  /* Bottom section very tight */
+  .sidebar-bottom-section {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+  }
+
+  .sidebar-bottom-section .sidebar-item {
+    padding: 6px 12px !important;
+    min-height: 30px !important;
+  }
+}
+
+@media (max-height: 552px) {
+  .sidebar-header {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+  }
+
+  .sidebar-menu {
+    padding-top: 0px !important;
+  }
+
+  .content-panel {
+    padding-top: 8px !important;
   }
 }
