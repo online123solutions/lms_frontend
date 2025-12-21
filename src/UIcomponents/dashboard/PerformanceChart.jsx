@@ -99,7 +99,7 @@ const PerformanceChart = () => {
       }}
     >
       {/* Chart Dropdown */}
-      <div style={{ position: "absolute", top: "10px", right: "10px", zIndex: 10 }}>
+      <div style={{ position: "absolute", top: "6px", right: "6px", zIndex: 10 }}>
         <Dropdown>
           <Dropdown.Toggle
             variant="light"
@@ -130,7 +130,7 @@ const PerformanceChart = () => {
       </div>
 
       {/* Chart Wrapper */}
-      <div style={{ width: "100%", height: "300px", marginTop: "40px" }}>
+      <div className="chart-wrapper" style={{ width: "100%", height: "280px", marginTop: "32px" }}>
         <Bar data={chartData} options={chartOptions} />
       </div>
     </div>

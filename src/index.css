@@ -1279,6 +1279,18 @@ html {
     padding: 2px 0 !important;
   }
 
+  /* Ensure greeting-name and h6 have consistent font sizes */
+  .greeting-name {
+    font-size: 14px !important;
+  }
+
+  .left-container h6,
+  .sub-greet {
+    font-size: 14px !important;
+    margin-bottom: 4px !important;
+    margin-top: 2px !important;
+  }
+
   /* Increase banner height */
   .slider-card {
     padding: 10px !important;
@@ -1330,6 +1342,13 @@ html {
     font-size: 11px !important;
     line-height: 1.15 !important;
     margin-bottom: 3px !important;
+  }
+
+  /* Ensure sub-headings (Module, Planner, Assessment) are smaller than main heading */
+  .latest-updates li strong,
+  .updates-card li strong {
+    font-size: 10px !important;
+    font-weight: 600 !important;
   }
 
   /* Reduce top section spacing */
@@ -1428,6 +1447,18 @@ html {
   .welcome-text {
     margin-bottom: 4px !important;
     font-size: 0.95em !important;
+  }
+
+  /* Ensure greeting-name and h6 have consistent font sizes at 552px */
+  .greeting-name {
+    font-size: 13px !important;
+  }
+
+  .left-container h6,
+  .sub-greet {
+    font-size: 13px !important;
+    margin-bottom: 3px !important;
+    margin-top: 2px !important;
   }
 
   /* Modal optimizations */

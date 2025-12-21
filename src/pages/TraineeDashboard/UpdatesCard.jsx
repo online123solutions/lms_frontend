@@ -30,7 +30,7 @@ export default function UpdatesCard({ data }) {
       <ul>
         {updates.map((update, index) => (
           <li key={index} style={{ color:"black" }}>
-            <strong style={{ fontSize:"18px"}}>{update.type}:</strong> {update.message} <br />
+            <strong style={{ fontSize:"14px"}}>{update.type}:</strong> {update.message} <br />
             <span style={{ fontSize:"14px", color:"#6b7280" }}>
               Ends on: {formatDate(update.endDate)}
             </span>

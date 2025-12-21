@@ -587,21 +587,33 @@
   border-radius: 15px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   /* Removed margin-top: 20px; gap in column handles spacing */
-  padding: 15px;
+  padding: 20px;
 }
 
 .notice-board-content1 {
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 .notice-board-scroll1 {
-  max-height: 200px;
+  max-height: 280px;
   overflow-y: auto;
+}
+
+.notice-board-card1 ul {
+  list-style: disc;
+  padding-left: 20px;
+}
+
+.notice-board-card1 li {
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 10px;
+  color: #1f2937;
 }
 
 .notice-date {
   color: #6b7280;
-  font-size: 0.9em;
+  font-size: 0.95em;
   margin-left: 10px;
 }
 
@@ -811,22 +823,35 @@
   .chart-inner1 { height: 160px !important; }
 }
 /* --- Trainer Progress Mini Card --- */
-.trainer-progress-mini-card1 { padding: 12px 14px; }
+.trainer-progress-mini-card1 { 
+  padding: 18px 20px; 
+}
 .trainer-progress-mini-header1 {
-  display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;
 }
 .trainer-progress-mini-card1 .overall-chip1 {
   background:#f4f6ff; border:1px solid rgba(0,0,0,.06);
-  padding:4px 10px; border-radius:999px; font-size:13px;
+  padding:6px 12px; border-radius:999px; font-size:15px;
+  font-weight: 600;
 }
 
-.tp-mini-list1 { display:grid; gap:10px; }
-.tp-mini-row1 { display:grid; grid-template-columns: 1fr; gap:6px; }
-.tp-mini-title1 { font-weight:600; display:flex; align-items:center; gap:4px; }
-.tp-mini-title1 .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-weight:700; }
+.tp-mini-list1 { display:grid; gap:14px; }
+.tp-mini-row1 { display:grid; grid-template-columns: 1fr; gap:8px; }
+.tp-mini-title1 { 
+  font-weight:600; 
+  display:flex; 
+  align-items:center; 
+  gap:4px; 
+  font-size: 15px;
+}
+.tp-mini-title1 .mono { 
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; 
+  font-weight:700; 
+  font-size: 15px;
+}
 
 .tp-mini-barwrap1 {
-  height:8px; border-radius:999px; background: #eef0f5; overflow:hidden;
+  height:10px; border-radius:999px; background: #eef0f5; overflow:hidden;
   border:1px solid rgba(0,0,0,.06);
 }
 .tp-mini-bar1 {
@@ -834,7 +859,12 @@
   background: linear-gradient(90deg, rgba(99,102,241,1) 0%, rgba(56,189,248,1) 100%);
 }
 
-.tp-mini-meta1 { display:flex; justify-content:space-between; font-size:12px; }
+.tp-mini-meta1 { 
+  display:flex; 
+  justify-content:space-between; 
+  font-size:14px; 
+  font-weight: 500;
+}
 /* --- LMS Engagement: ensure the card + chart have height --- */
 .lms-engagement-card1,
 .lms-engagement-card1 .chart-container1 {
@@ -1541,7 +1571,13 @@
 .qa-header > h3,
 .recent-activities-card1 > h3,
 .lms-engagement-header1 > h3,
-.notice-board-card1 > h3,
+.notice-board-card1 > h3 {
+    font-size: 19px !important;
+    font-weight: 700 !important;
+    margin-bottom: 12px;
+    color: #222;
+}
+
 .trainer-progress-mini-header1 > h3 {
     font-size: 18px !important;   /* Same as Quick Activities */
     font-weight: 600 !important;
@@ -1613,7 +1649,13 @@
 /* Make all section H3s match Quick Activities */
 .content-card1 h3,
 .recent-activities-card1 h3,
-.notice-board-card1 h3,
+.notice-board-card1 h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  line-height: 1.1;
+}
+
 .lms-engagement-header1 h3,
 .qa-header h3 {
   font-size: 15px;
@@ -2974,13 +3016,28 @@ img, .profile-pic-frame img {
   }
 
   .notice-board-card1 {
-    max-height: 140px;
+    max-height: 220px !important;
     overflow-y: auto;
+    padding: 16px 18px !important;
+  }
+
+  .notice-board-card1 li {
+    font-size: 14px !important;
+    margin-bottom: 8px !important;
   }
 
   .trainer-progress-mini-card1 {
-    max-height: 160px;
-    overflow: hidden;
+    max-height: 240px !important;
+    overflow: visible !important;
+    padding: 16px 18px !important;
+  }
+
+  .tp-mini-title1 {
+    font-size: 14px !important;
+  }
+
+  .tp-mini-meta1 {
+    font-size: 13px !important;
   }
 }
 @media (max-height: 768px) {
@@ -3035,8 +3092,9 @@ img, .profile-pic-frame img {
   }
 
   .notice-board-card1 {
-    max-height: 150px;
+    max-height: 220px !important;
     overflow-y: auto;
+    padding: 16px 18px !important;
   }
 }
 

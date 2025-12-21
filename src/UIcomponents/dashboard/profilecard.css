@@ -76,7 +76,7 @@
 
 .left-container h6 {
   color: black;
-  font-size: 18px;
+  font-size: 16px; /* Match greeting-name font-size */
 }
 
 .chart-section {
@@ -93,7 +93,7 @@
 /* At 768px height, reduce chart section spacing */
 @media (max-height: 768px) {
   .chart-section {
-    padding: 8px 10px !important;
+    padding: 6px 8px !important;
     margin-bottom: 6px !important;
     min-height: auto !important;
   }
@@ -101,6 +101,12 @@
   /* Remove extra spacing around charts */
   .chart-section > * {
     margin: 0 !important;
+  }
+
+  /* Reduce chart wrapper spacing inside chart-section - extend graph to fill space */
+  .chart-section .chart-wrapper {
+    margin-top: 20px !important;
+    height: 260px !important;
   }
 
   /* Performance card title spacing */
@@ -361,6 +367,13 @@
 }
 .updates-card ul{ margin: 0; }
 .updates-card li{ margin-bottom: 10px; }
+
+/* Ensure sub-headings are smaller than main heading by default */
+.updates-card li strong,
+.latest-updates li strong {
+  font-size: 14px;
+  font-weight: 600;
+}
 
 .mp-title{
   display:flex; align-items:center; gap:10px;
@@ -1582,11 +1595,21 @@ html, body {
   h2 { font-size: 15px !important; }
   h3 { font-size: 13px !important; }
 
-  /* Reduce greeting spacing */
+  /* Reduce greeting spacing - make greeting-name and h6 consistent */
   .dashboard-greeting,
   .welcome-text {
     margin-bottom: 3px !important;
     font-size: 0.85em !important;
+  }
+
+  /* Ensure greeting-name and h6 have consistent font sizes */
+  .greeting-name {
+    font-size: 14px !important;
+  }
+
+  .left-container h6 {
+    font-size: 14px !important;
+    margin-bottom: 4px !important;
   }
 
   /* Cards padding - more reduced */
@@ -1649,6 +1672,13 @@ html, body {
   .updates-card h3 {
     font-size: 13px !important;
     margin-bottom: 4px !important;
+  }
+
+  /* Ensure sub-headings (Module, Planner, Assessment) are smaller than main heading */
+  .latest-updates li strong,
+  .updates-card li strong {
+    font-size: 12px !important;
+    font-weight: 600 !important;
   }
 
   /* Reduce text sizes in right column to fit everything */
