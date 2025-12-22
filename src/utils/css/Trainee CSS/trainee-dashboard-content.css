@@ -183,3 +183,158 @@
       "login";
   }
 }
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .td-grid {
+    padding: 12px;
+    gap: 16px;
+  }
+
+  .td-hello h1 {
+    font-size: 24px;
+  }
+
+  .td-hello p {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .td-section-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .td-mini-select {
+    width: 100%;
+    font-size: 12px;
+  }
+
+  .td-perf-card {
+    min-height: 200px;
+    padding: 10px;
+  }
+
+  .follow-gradient {
+    height: 140px;
+  }
+
+  .follow-title {
+    font-size: 16px;
+  }
+
+  .follow-sub {
+    font-size: 12px;
+  }
+
+  .td-profile-top {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+  }
+
+  .td-profile-top img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .td-metrics {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .metric {
+    padding: 8px;
+  }
+
+  .metric .num {
+    font-size: 18px;
+  }
+
+  .metric .label {
+    font-size: 11px;
+  }
+
+  .td-notifs,
+  .td-assign {
+    padding: 14px 16px;
+    min-height: 140px;
+  }
+
+  .td-card-title {
+    font-size: 16px;
+  }
+
+  .td-list.lined li {
+    padding: 8px 0;
+    font-size: 13px;
+  }
+
+  .td-login-chart .td-card-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .td-grid {
+    padding: 10px;
+    gap: 12px;
+  }
+
+  .card {
+    padding: 12px;
+  }
+
+  .td-hello h1 {
+    font-size: 20px;
+  }
+
+  .td-hello p {
+    font-size: 13px;
+  }
+
+  .td-perf-card {
+    min-height: 180px;
+    padding: 8px;
+  }
+
+  .follow-gradient {
+    height: 120px;
+  }
+
+  .td-profile-top img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .td-metrics {
+    gap: 6px;
+  }
+
+  .metric {
+    padding: 6px;
+  }
+
+  .metric .num {
+    font-size: 16px;
+  }
+
+  .td-notifs,
+  .td-assign {
+    padding: 12px;
+    min-height: 120px;
+  }
+
+  .td-card-title {
+    font-size: 14px;
+  }
+
+  .td-list.lined li {
+    font-size: 12px;
+    padding: 6px 0;
+  }
+}

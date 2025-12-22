@@ -20,6 +20,62 @@
   .dashboard-container {
     flex-direction: column;
     height: auto;
+    padding: 10px !important;
+    gap: 12px !important;
+  }
+
+  /* Ensure no horizontal overflow */
+  .dashboard-container,
+  .left-container,
+  .right-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Stack all content vertically */
+  .left-container,
+  .right-container {
+    padding: 12px !important;
+  }
+
+  /* Make cards responsive */
+  .profile-card,
+  .centered-profile,
+  .action-card,
+  .updates-card,
+  .mp-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  /* Reduce font sizes */
+  .left-container h2 {
+    font-size: 18px !important;
+  }
+
+  .left-container h6 {
+    font-size: 14px !important;
+  }
+
+  /* Make charts responsive */
+  .chart-section {
+    padding: 10px !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Stack top section */
+  .top-section {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .action-cards {
+    width: 100% !important;
+    flex-direction: column !important;
   }
 }
 
@@ -41,6 +97,25 @@
   .left-container {
     padding: 10px;
     margin-top: 10px;
+  }
+
+  .dashboard-container {
+    padding: 8px !important;
+    gap: 10px !important;
+  }
+
+  .left-container,
+  .right-container {
+    padding: 10px !important;
+  }
+
+  .left-container h2 {
+    font-size: 16px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .chart-section {
+    padding: 8px !important;
   }
 }
 
@@ -504,9 +579,19 @@
   width: 100%;
 }
 
+/* Force single column on tablets and below */
 @media (max-width: 1024px){
   .dashboard-container{
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Force single column on mobile */
+@media (max-width: 768px){
+  .dashboard-container{
+    grid-template-columns: 1fr !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
 }
 
@@ -533,15 +618,40 @@
 
 /* 4) Top row uses Grid with fixed profile column */
 .top-section{
+  display: grid;
   grid-template-columns: 360px minmax(0, 1fr);
   margin-bottom: 0;
+  gap: 16px;
 }
 
 @media (max-width: 1200px){
   .top-section{ grid-template-columns: 320px minmax(0,1fr); }
 }
+
+/* Force single column on mobile for top-section */
 @media (max-width: 900px){
-  .top-section{ grid-template-columns: 1fr; }
+  .top-section{ 
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: none !important;
+    gap: 12px !important;
+  }
+}
+
+@media (max-width: 768px){
+  .top-section{
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: none !important;
+    gap: 12px !important;
+  }
+
+  /* Ensure ProfileCard and ActionCards stack vertically */
+  .top-section > * {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
 }
 
 /* 5) Profile card keeps a sane max, but no overflow forcing */
@@ -559,6 +669,25 @@
 .action-cards{             /* was 60% -> caused wrap on Linux */
   max-height: none;
   justify-content:unset;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Mobile: ensure action-cards is always visible and full width */
+@media (max-width: 768px) {
+  .action-cards {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    gap: 12px !important;
+    order: 2 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
 }
 
 /* 7) Card heights should be auto; avoid fixed heights */
@@ -1146,6 +1275,8 @@
 @media (max-width: 1100px) {
   .dashboard-container {
     grid-template-columns: 1fr !important; /* stack left + right */
+    display: flex !important;
+    flex-direction: column !important;
     gap: 18px !important;
   }
 
@@ -1169,10 +1300,10 @@
 /* 2) Ensure top-section stacks and centers at tablet sizes */
 @media (max-width: 1024px) {
   .top-section {
-    display: grid !important;
-    grid-template-columns: 1fr !important; /* profile above actions */
+    display: flex !important;
+    flex-direction: column !important;
     gap: 16px !important;
-    align-items: start !important;
+    align-items: stretch !important;
   }
 
   /* profile card become compact & centered */
@@ -1223,7 +1354,15 @@
 /* 3) Mobile tweaks: keep header compact and profile image smaller */
 @media (max-width: 768px) {
   .top-section {
-    grid-template-columns: 1fr !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .dashboard-container {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
   }
 
   .profile-card,
@@ -1244,11 +1383,27 @@
 
 /* 4) Small screens (420px) — stack and remove side paddings that cause overflow */
 @media (max-width: 420px) {
-  .dashboard-container,
+  .dashboard-container {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: 1fr !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    gap: 10px !important;
+  }
+
   .left-container,
   .right-container {
     padding-left: 8px !important;
     padding-right: 8px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .top-section {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
   }
 
   .header-con1, .header-con {
@@ -2219,6 +2374,25 @@ html, body {
     max-height: 140px !important;
   }
 
+  /* Force single column layout on mobile */
+  .dashboard-container {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: none !important;
+  }
+
+  .top-section {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: none !important;
+  }
+
+  .left-container,
+  .right-container {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
   /* Notification and quiz cards - compact */
   .notification-card,
   .quiz-card {
@@ -2235,5 +2409,354 @@ html, body {
     margin-bottom: 3px !important;
     line-height: 1.2 !important;
     font-size: 0.85em !important;
+  }
+}
+
+/* ============================================
+   FINAL MOBILE OVERRIDE - Force Single Column
+   ============================================ */
+@media (max-width: 768px) {
+  /* Force dashboard container to single column */
+  .dashboard-container {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Force top section to single column */
+  .top-section {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: none !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  /* Ensure all children of top-section are visible and full width */
+  .top-section > * {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Profile card comes first */
+  .top-section > .profile-card,
+  .top-section > .centered-profile {
+    order: 1 !important;
+  }
+
+  /* Action cards come second - ensure visibility */
+  .top-section > .action-cards {
+    order: 2 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* Ensure containers are full width */
+  .left-container,
+  .right-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 12px !important;
+  }
+
+  /* Force action cards to stack and display properly */
+  .action-cards {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    gap: 12px !important;
+    min-width: 0 !important;
+    order: 2 !important; /* Ensure it appears after profile card */
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* Profile card should come first */
+  .top-section > .profile-card,
+  .top-section > .centered-profile {
+    order: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Notification card (first child) */
+  .action-cards > .action-card:nth-child(1),
+  .action-card.set-target1 {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 14px 12px !important;
+    margin: 0 !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Active Quiz card (second child) */
+  .action-cards > .action-card:nth-child(2),
+  .action-card.set-target {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 14px 12px !important;
+    margin: 0 !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Header content areas */
+  .action-card .header-con1,
+  .action-card .header-con {
+    max-height: none !important;
+    overflow: visible !important;
+    padding-right: 0 !important;
+  }
+
+  /* Icon heading */
+  .action-card .icon-heading {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .action-card .icon-heading h4 {
+    font-size: 15px !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+
+  /* Notification items */
+  .action-card ul {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .action-card ul li {
+    padding: 8px 0 !important;
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+
+  /* Notification specific styles */
+  .notif-item {
+    padding: 10px 0 !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .notif-head {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+  }
+
+  .notif-title {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    word-wrap: break-word !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+
+  .notif-message {
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+    line-height: 1.4 !important;
+  }
+
+  .notif-footer {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    margin-top: 6px !important;
+  }
+
+  .notif-from {
+    font-size: 12px !important;
+  }
+
+  .btn-mark-read {
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+    margin-top: 4px !important;
+  }
+
+  /* Quiz items */
+  .action-card.set-target ul li {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    padding: 8px 0 !important;
+  }
+
+  .action-card.set-target ul li strong {
+    font-size: 13px !important;
+  }
+
+  .action-card.set-target ul li span {
+    font-size: 11px !important;
+    word-wrap: break-word !important;
+  }
+
+  /* Profile card adjustments */
+  .profile-card,
+  .centered-profile {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+}
+
+/* Extra small screens (420px and below) */
+@media (max-width: 420px) {
+  .dashboard-container {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: 1fr !important;
+    padding: 8px !important;
+    gap: 10px !important;
+  }
+
+  .top-section {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: none !important;
+    gap: 10px !important;
+  }
+
+  .left-container,
+  .right-container {
+    padding: 10px !important;
+  }
+
+  /* Action cards - even more compact */
+  .action-cards {
+    gap: 10px !important;
+  }
+
+  .action-cards > .action-card:nth-child(1),
+  .action-cards > .action-card:nth-child(2),
+  .action-card.set-target,
+  .action-card.set-target1 {
+    padding: 12px 10px !important;
+  }
+
+  .action-card .icon-heading h4 {
+    font-size: 14px !important;
+  }
+
+  .action-card ul li {
+    font-size: 12px !important;
+    padding: 6px 0 !important;
+  }
+
+  /* Notification items - extra compact */
+  .notif-item {
+    padding: 8px 0 !important;
+  }
+
+  .notif-title {
+    font-size: 13px !important;
+  }
+
+  .notif-message {
+    font-size: 12px !important;
+  }
+
+  .notif-from {
+    font-size: 11px !important;
+  }
+
+  /* Quiz items - extra compact */
+  .action-card.set-target ul li strong {
+    font-size: 12px !important;
+  }
+
+  .action-card.set-target ul li span {
+    font-size: 10px !important;
+  }
+}
+
+/* ============================================
+   ULTIMATE MOBILE SINGLE COLUMN OVERRIDE
+   ============================================ */
+@media (max-width: 768px) {
+  /* Force everything to single column */
+  .right-container {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .right-container > * {
+    width: 100% !important;
+    max-width: 100% !important;
+    order: initial !important;
+  }
+
+  /* Top section - single column */
+  .top-section {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 12px !important;
+  }
+
+  /* Profile card - first */
+  .top-section .profile-card,
+  .top-section .centered-profile {
+    width: 100% !important;
+    max-width: 100% !important;
+    order: 1 !important;
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  /* Action cards - second, always visible */
+  .top-section .action-cards {
+    width: 100% !important;
+    max-width: 100% !important;
+    order: 2 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+  }
+
+  /* Individual action cards */
+  .action-cards .action-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 }
