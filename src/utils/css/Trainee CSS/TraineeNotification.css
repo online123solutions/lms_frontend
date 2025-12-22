@@ -430,4 +430,43 @@
     font-size: 12px;
     padding: 4px 6px;
   }
+
+  .login-activity .bg-white > div[style] {
+    height: 180px !important;
+  }
+}
+
+/* TraineeLoginActivity - Additional optimizations */
+.login-activity .bg-white > div[style*="height: 300px"] {
+  height: 300px;
+}
+
+@media (max-height: 768px) {
+  .login-activity .bg-white > div[style*="height: 300px"] {
+    height: 220px !important;
+  }
+
+  .login-activity .bg-white {
+    padding: 12px !important;
+  }
+
+  .login-activity .bg-white h2 {
+    font-size: 16px !important;
+    margin-bottom: 8px !important;
+  }
+}
+
+@media (max-height: 552px) {
+  .login-activity .bg-white > div[style*="height: 300px"] {
+    height: 180px !important;
+  }
+
+  .login-activity .bg-white {
+    padding: 8px !important;
+  }
+
+  .login-activity .bg-white h2 {
+    font-size: 14px !important;
+    margin-bottom: 6px !important;
+  }
 }

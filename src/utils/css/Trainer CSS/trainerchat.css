@@ -681,3 +681,153 @@
     height: 34px;
   }
 }
+
+/* ===============================
+   Height-based optimizations
+   =============================== */
+
+/* 768px height */
+@media (max-height: 768px) {
+  .trainer-queries-scope {
+    padding-top: 8px !important;
+  }
+
+  .qc-topbar {
+    padding: 12px 14px !important;
+  }
+
+  .qc-topbar h2 {
+    font-size: 17px !important;
+  }
+
+  .filter-bar {
+    margin: 8px 0 12px !important;
+    gap: 10px !important;
+  }
+
+  .filter label {
+    font-size: 11px !important;
+  }
+
+  .filter select {
+    height: 32px !important;
+    font-size: 13px !important;
+    padding: 5px 8px !important;
+  }
+
+  .list-search input {
+    height: 34px !important;
+    font-size: 13px !important;
+    padding: 6px 10px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .trainer-queries-scope .list-items {
+    height: calc(65vh - 120px) !important;
+  }
+
+  .trainer-queries-scope .chat-main {
+    min-height: 65vh !important;
+  }
+
+  .chat-list-item {
+    padding: 10px 12px !important;
+  }
+
+  .item-title {
+    font-size: 14px !important;
+  }
+
+  .item-sub {
+    font-size: 13px !important;
+  }
+
+  .reply-box input {
+    padding: 10px 12px !important;
+    font-size: 13px !important;
+  }
+
+  .reply-box button {
+    padding: 10px 14px !important;
+    font-size: 13px !important;
+  }
+}
+
+/* 552px height */
+@media (max-height: 552px) {
+  .trainer-queries-scope {
+    padding-top: 6px !important;
+  }
+
+  .qc-topbar {
+    padding: 8px 10px !important;
+  }
+
+  .qc-topbar h2 {
+    font-size: 15px !important;
+  }
+
+  .filter-bar {
+    margin: 6px 0 10px !important;
+    gap: 8px !important;
+  }
+
+  .filter label {
+    font-size: 10px !important;
+  }
+
+  .filter select {
+    height: 30px !important;
+    font-size: 12px !important;
+    padding: 4px 6px !important;
+  }
+
+  .list-search input {
+    height: 32px !important;
+    font-size: 12px !important;
+    padding: 5px 8px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .trainer-queries-scope .list-items {
+    height: calc(60vh - 100px) !important;
+  }
+
+  .trainer-queries-scope .chat-main {
+    min-height: 60vh !important;
+  }
+
+  .chat-list-item {
+    padding: 8px 10px !important;
+  }
+
+  .item-title {
+    font-size: 13px !important;
+  }
+
+  .item-sub {
+    font-size: 12px !important;
+  }
+
+  .item-meta {
+    font-size: 11px !important;
+  }
+
+  .bubble {
+    padding: 8px 10px !important;
+  }
+
+  .bubble-text {
+    font-size: 13px !important;
+  }
+
+  .reply-box input {
+    padding: 8px 10px !important;
+    font-size: 12px !important;
+  }
+
+  .reply-box button {
+    padding: 8px 12px !important;
+    font-size: 12px !important;
+  }
+}

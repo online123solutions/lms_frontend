@@ -10,6 +10,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import "../../utils/css/Trainee CSS/TraineeNotification.css"; // For login-activity styles
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
@@ -169,7 +170,7 @@ const EmployeeLoginActivity = ({ setActiveContent }) => {
   if (error) return <div className="text-red-500">{error}</div>;
 
   return (
-    <div>
+    <div className="login-activity">
       {/* Employee Profile Display */}
       {employeeProfile && (
         <div className="bg-white shadow-md rounded-lg p-6 mb-6">
@@ -211,9 +212,9 @@ const EmployeeLoginActivity = ({ setActiveContent }) => {
       </div>
 
       {/* Login Trends Bar Graph */}
-      <div className="bg-white shadow-md rounded-lg p-6 mt-6">
+      <div className="bg-white shadow-md rounded-lg p-6 mt-6 chart-card">
         <h2 className="text-xl font-semibold mb-4">Login Trends</h2>
-        <div style={{ height: "300px", width: "100%" }}>
+        <div className="chart-wrapper" style={{ height: "300px", width: "100%" }}>
           <Bar data={getBarChartData()} options={barChartOptions} />
         </div>
       </div>

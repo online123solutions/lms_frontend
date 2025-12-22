@@ -245,14 +245,14 @@ const MicroPlanner = () => {
         </div>
       )}
 
-      <Modal show={showModal} onHide={handleCloseModal} centered>
+      <Modal show={showModal} onHide={handleCloseModal} centered className="microplanner-modal">
         <Modal.Header closeButton>
           <Modal.Title>
             {currentPlanner ? "Modify MicroPlanner" : "Add MicroPlanner"}
           </Modal.Title>
         </Modal.Header>
         <Form onSubmit={handleSavePlanner}>
-          <Modal.Body>
+          <Modal.Body className="modal-body-scroll">
             <Form.Group className="mb-3" controlId="formMonth">
               <Form.Label>Month</Form.Label>
               <Form.Select

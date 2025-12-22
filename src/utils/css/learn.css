@@ -774,33 +774,97 @@ body {
   }
 }
 
-/* 768px height */
+/* Assessment Report - Height-based optimizations */
 @media (max-height: 768px) {
+  .assessment-report {
+    padding: 12px !important;
+  }
+
+  .assessment-report .chart-section {
+    height: 220px !important;
+    padding: 8px !important;
+  }
+
   .assessment-report h4 {
-    font-size: 16px;      /* was ~20px */
+    font-size: 16px !important;
     font-weight: 600;
     margin-bottom: 8px;
   }
+
+  .assessment-report h5 {
+    font-size: 13px !important;
+    margin-top: 12px !important;
+  }
+
+  .assessment-report > div[style*="display: flex"] {
+    margin-top: 12px !important;
+    height: auto !important;
+    min-height: 280px !important;
+  }
+
+  .assessment-report > div[style*="display: flex"] > div {
+    padding: 8px !important;
+  }
+
+  .assessment-report > div[style*="display: flex"] > div > div[style*="maxHeight"] {
+    max-height: 240px !important;
+    margin-top: 6px !important;
+  }
+
+  .assessment-report p {
+    font-size: 13px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .assessment-report strong {
+    font-size: 14px !important;
+  }
 }
 
-/* 572px height (extra compact) */
-@media (max-height: 572px) {
+@media (max-height: 552px) {
+  .assessment-report {
+    padding: 8px !important;
+  }
+
+  .assessment-report .chart-section {
+    height: 180px !important;
+    padding: 6px !important;
+  }
+
   .assessment-report h4 {
-    font-size: 15px;
+    font-size: 15px !important;
     font-weight: 600;
     margin-bottom: 6px;
   }
-}
-@media (max-height: 768px) {
-  .assessment-report h5 {
-    font-size: 13px;
-    margin-top: 12px;
-  }
-}
 
-@media (max-height: 572px) {
   .assessment-report h5 {
-    font-size: 12px;
-    margin-top: 8px;
+    font-size: 12px !important;
+    margin-top: 8px !important;
+  }
+
+  .assessment-report > div[style*="display: flex"] {
+    margin-top: 8px !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .assessment-report > div[style*="display: flex"] > div {
+    width: 100% !important;
+    padding: 6px !important;
+    height: auto !important;
+  }
+
+  .assessment-report > div[style*="display: flex"] > div > div[style*="maxHeight"] {
+    max-height: 180px !important;
+    margin-top: 4px !important;
+  }
+
+  .assessment-report p {
+    font-size: 12px !important;
+    margin-bottom: 3px !important;
+  }
+
+  .assessment-report strong {
+    font-size: 13px !important;
   }
 }

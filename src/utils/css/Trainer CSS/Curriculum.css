@@ -278,3 +278,102 @@ html, body, #root {
     height: 45vh;
   }
 }
+
+/* ===============================
+   Height-based optimizations
+   =============================== */
+
+/* 768px height */
+@media (max-height: 768px) {
+  .container1 {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .sidebar1 {
+    padding: 14px;
+    width: 220px;
+  }
+
+  .sidebar1 h2 {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  .sidebar1 select {
+    padding: 6px;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .content1 {
+    padding: 12px;
+  }
+
+  .lesson-title {
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+
+  .viewer-wrapper {
+    min-height: 55vh;
+  }
+
+  .viewer-frame {
+    height: 55vh;
+  }
+
+  .viewer-footer {
+    margin-top: 6px;
+  }
+}
+
+/* 552px height */
+@media (max-height: 552px) {
+  .container1 {
+    padding: 8px;
+    gap: 6px;
+  }
+
+  .sidebar1 {
+    padding: 10px;
+    width: 200px;
+  }
+
+  .sidebar1 h2 {
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+
+  .sidebar1 select {
+    padding: 5px;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .content1 {
+    padding: 10px;
+  }
+
+  .lesson-title {
+    font-size: 16px;
+    margin-bottom: 3px;
+  }
+
+  .viewer-wrapper {
+    min-height: 50vh;
+  }
+
+  .viewer-frame {
+    height: 50vh;
+  }
+
+  .viewer-footer {
+    margin-top: 4px;
+  }
+
+  .empty-space1 {
+    padding: 20px 8px;
+    font-size: 14px;
+  }
+}

@@ -619,11 +619,14 @@ const AdminDashboard = () => {
       <main 
         className="content-panel" 
         style={{ 
-          marginLeft: isMobile ? 20 : sidebarWidth + 20,  // Mobile: small left margin; Desktop: full sidebar offset
-          padding: '20px',
-          minHeight: '100vh',
-          transition: 'margin-left 0.3s ease',
+          marginLeft: isMobile ? 0 : sidebarWidth,
+          padding: '16px',
+          height: 'calc(100vh - 20px)',
+          maxHeight: 'calc(100vh - 20px)',
           overflowY: 'auto',
+          overflowX: 'hidden',
+          transition: 'margin-left 0.3s ease',
+          WebkitOverflowScrolling: 'touch',
         }}
       >
         {renderContent()}

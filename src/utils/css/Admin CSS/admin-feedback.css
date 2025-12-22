@@ -86,3 +86,111 @@
   .afp-filters { grid-template-columns: 1fr; }
   .afp-averages { flex-wrap: wrap; }
 }
+
+/* ===============================
+   Height-based optimizations
+   =============================== */
+
+/* 768px height */
+@media (max-height: 768px) {
+  .afp-wrap {
+    height: calc(100vh - 100px);
+    gap: 10px;
+  }
+
+  .afp-header {
+    padding: 10px 14px;
+  }
+
+  .afp-header h2 {
+    font-size: 18px;
+  }
+
+  .afp-averages {
+    font-size: 13px;
+    gap: 12px;
+  }
+
+  .afp-filters {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .afp-filters input {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  .afp-card {
+    padding: 12px;
+  }
+
+  .afp-table {
+    font-size: 13px;
+  }
+
+  .afp-table th,
+  .afp-table td {
+    padding: 10px 8px;
+  }
+}
+
+/* 552px height */
+@media (max-height: 552px) {
+  .afp-wrap {
+    height: calc(100vh - 80px);
+    gap: 8px;
+  }
+
+  .afp-header {
+    padding: 8px 12px;
+  }
+
+  .afp-header h2 {
+    font-size: 16px;
+  }
+
+  .afp-averages {
+    font-size: 12px;
+    gap: 10px;
+  }
+
+  .afp-filters {
+    padding: 8px;
+    gap: 6px;
+  }
+
+  .afp-filters input {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .afp-card {
+    padding: 10px;
+  }
+
+  .afp-table {
+    font-size: 12px;
+  }
+
+  .afp-table th,
+  .afp-table td {
+    padding: 8px 6px;
+  }
+
+  .afp-table td.truncate {
+    max-width: 300px;
+  }
+}

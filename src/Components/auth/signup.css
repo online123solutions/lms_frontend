@@ -282,6 +282,18 @@ body .signup-wrapper {
 }
 
 @media (max-height: 768px) {
+  .signup-wrapper {
+    padding: 10px;
+    min-height: 100vh;
+    align-items: flex-start;
+    padding-top: 20px;
+  }
+
+  .signup-container.upgraded-card {
+    max-width: 850px;
+    max-height: calc(100vh - 20px);
+    overflow: hidden;
+  }
 
   /* Stop hover lift on short screens */
   .form-panel:hover,
@@ -292,69 +304,139 @@ body .signup-wrapper {
   /* Reduce internal padding */
   .form-panel,
   .info-panel {
-    padding: 24px;
-    max-height: none;
+    padding: 20px;
+    max-height: calc(100vh - 20px);
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .form-panel::-webkit-scrollbar,
+  .info-panel::-webkit-scrollbar {
+    display: none;
+  }
+
+  .logo-container {
+    margin-bottom: 12px;
   }
 
   /* Reduce logo size */
   .signup-logo {
-    max-width: 240px;
+    max-width: 200px;
   }
 
   /* Reduce title size */
-  .form-title {
-    font-size: 22px;
-    margin-bottom: 12px;
+  .form-title,
+  .info-title {
+    font-size: 20px;
+    margin-bottom: 10px;
   }
 
   .info-text {
-    font-size: 14px;
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .input-field {
+    padding: 10px 12px;
+    margin: 6px 0;
+    font-size: 13px;
   }
 
   /* Buttons smaller */
   .submit-button {
     padding: 10px;
     font-size: 14px;
+    margin-top: 12px;
+  }
+
+  .toggle-button {
+    padding: 8px 20px;
+    font-size: 13px;
+  }
+
+  .toggle-text {
+    margin-top: 12px;
+    font-size: 13px;
+  }
+
+  .error-text {
+    font-size: 12px;
+    margin-top: 8px;
   }
 }
 @media (max-height: 552px) {
-
   body .signup-wrapper {
-    padding-top: 8px;
+    padding: 8px;
+    min-height: 100vh;
+    align-items: flex-start;
+    padding-top: 10px;
   }
 
   .signup-container.upgraded-card {
-    max-width: 780px;
+    max-width: 750px;
+    max-height: calc(100vh - 16px);
+    overflow: hidden;
   }
 
   .form-panel,
   .info-panel {
-    padding: 18px;
+    padding: 12px;
+    max-height: calc(100vh - 16px);
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .form-panel::-webkit-scrollbar,
+  .info-panel::-webkit-scrollbar {
+    display: none;
   }
 
   .logo-container {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
 
   .signup-logo {
-    max-width: 200px;
+    max-width: 160px;
   }
 
-  .form-title {
-    font-size: 20px;
-    margin-bottom: 8px;
+  .form-title,
+  .info-title {
+    font-size: 18px;
+    margin-bottom: 6px;
+  }
+
+  .info-text {
+    font-size: 12px;
+    margin-bottom: 10px;
   }
 
   .input-field {
-    padding: 9px 12px;
-    margin: 6px 0;
-    font-size: 13px;
+    padding: 8px 10px;
+    margin: 4px 0;
+    font-size: 12px;
   }
 
   .submit-button {
-    margin-top: 12px;
-    padding: 9px;
-    font-size: 13px;
+    margin-top: 10px;
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  .toggle-button {
+    padding: 6px 16px;
+    font-size: 12px;
+  }
+
+  .toggle-text {
+    margin-top: 10px;
+    font-size: 12px;
+  }
+
+  .error-text {
+    font-size: 11px;
+    margin-top: 6px;
   }
 
   /* Remove decorative wave completely */

@@ -257,3 +257,110 @@
     background: #007BFF; /* Primary color */
     color: white;
 }
+
+/* Height-based optimizations for QuizComponent */
+@media (max-height: 768px) {
+  .quiz-container {
+    padding: 12px !important;
+    padding-top: 20px !important;
+  }
+
+  .quiz-cards-container {
+    gap: 16px !important;
+  }
+
+  .quiz-card {
+    padding: 14px !important;
+  }
+
+  .quiz-card h3 {
+    font-size: 17px !important;
+  }
+
+  .quiz-card p {
+    font-size: 14px !important;
+  }
+
+  .quiz-card img {
+    height: 140px !important;
+  }
+
+  .question-navigation {
+    gap: 8px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .question-circle {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 14px !important;
+  }
+
+  .navigation-buttons {
+    margin-top: 12px !important;
+  }
+
+  .prev-btn, .next-btn, .submit-btn {
+    padding: 10px 20px !important;
+    font-size: 14px !important;
+    width: 130px !important;
+  }
+
+  .countdown-timer {
+    font-size: 28px !important;
+    margin-top: 30px !important;
+  }
+}
+
+@media (max-height: 552px) {
+  .quiz-container {
+    padding: 8px !important;
+    padding-top: 16px !important;
+  }
+
+  .quiz-cards-container {
+    gap: 12px !important;
+  }
+
+  .quiz-card {
+    padding: 10px !important;
+  }
+
+  .quiz-card h3 {
+    font-size: 15px !important;
+  }
+
+  .quiz-card p {
+    font-size: 13px !important;
+  }
+
+  .quiz-card img {
+    height: 120px !important;
+  }
+
+  .question-navigation {
+    gap: 6px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .question-circle {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 12px !important;
+  }
+
+  .navigation-buttons {
+    margin-top: 8px !important;
+  }
+
+  .prev-btn, .next-btn, .submit-btn {
+    padding: 8px 16px !important;
+    font-size: 13px !important;
+    width: 110px !important;
+  }
+
+  .countdown-timer {
+    font-size: 24px !important;
+    margin-top: 20px !important;
+  }
+}

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Spinner } from "react-bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
-// Temporarily comment out the CSS import to isolate the issue
-// import "../../utils/css/Trainer CSS/Microplanner.css";
+import "../../utils/css/Trainee CSS/Microplanner.css";
 import {
   fetchMicroPlanner,
 } from "../../api/employeeAPIservice";
@@ -134,11 +133,11 @@ const MicroPlanner = () => {
         </div>
       )}
 
-      <Modal show={showModal} onHide={handleCloseModal} centered>
+      <Modal show={showModal} onHide={handleCloseModal} centered className="microplanner-modal">
         <Modal.Header closeButton>
           <Modal.Title>MicroPlanner Details</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="modal-body-scroll">
           {currentPlanner && (
             <Form>
               <Form.Group className="mb-3" controlId="formWeek">
@@ -164,7 +163,7 @@ const MicroPlanner = () => {
                       : "N/A"
                   }
                   readOnly
-                  style={{ height: "100px" }}
+                  style={{ height: "auto", minHeight: "60px", maxHeight: "120px", overflowY: "auto" }}
                 />
               </Form.Group>
 

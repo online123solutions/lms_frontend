@@ -157,6 +157,72 @@ const AdminUserImportCard = () => {
         .alert{padding:10px 12px;border-radius:10px;font-size:14px}
         .alert.success{background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0}
         .alert.danger{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+
+        @media (max-height: 768px) {
+          .bulk-users-card {
+            padding: 12px;
+          }
+          .bulk-users-header h3 {
+            font-size: 16px;
+          }
+          .subtitle {
+            font-size: 12px;
+          }
+          .bulk-users-body {
+            gap: 10px;
+          }
+          .file-row {
+            gap: 10px;
+          }
+          .btn {
+            padding: 8px 12px;
+            font-size: 13px;
+          }
+          .alert {
+            padding: 8px 10px;
+            font-size: 13px;
+          }
+        }
+
+        @media (max-height: 552px) {
+          .bulk-users-card {
+            padding: 10px;
+          }
+          .bulk-users-header {
+            margin-bottom: 10px;
+            gap: 10px;
+          }
+          .bulk-users-header h3 {
+            font-size: 15px;
+          }
+          .subtitle {
+            font-size: 11px;
+            margin-top: 2px;
+          }
+          .bulk-users-body {
+            gap: 8px;
+          }
+          .file-row {
+            gap: 8px;
+          }
+          .file-info {
+            min-width: 180px;
+          }
+          .file-name {
+            font-size: 14px;
+          }
+          .file-hint {
+            font-size: 11px;
+          }
+          .btn {
+            padding: 6px 10px;
+            font-size: 12px;
+          }
+          .alert {
+            padding: 6px 8px;
+            font-size: 12px;
+          }
+        }
       `}</style>
     </div>
   );

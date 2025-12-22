@@ -112,3 +112,78 @@
 .error {
   color: #E53E3E;
 }
+
+/* ===============================
+   Height-based optimizations
+   =============================== */
+
+/* 768px height */
+@media (max-height: 768px) {
+  .training-report-container {
+    padding: 12px;
+  }
+
+  .report-card {
+    padding: 16px;
+  }
+
+  .report-title {
+    font-size: 20px;
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+
+  .report-table th,
+  .report-table td {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  .report-table th {
+    font-size: 13px;
+    padding: 10px 14px;
+  }
+
+  .no-data {
+    font-size: 14px;
+    padding: 16px;
+  }
+}
+
+/* 552px height */
+@media (max-height: 552px) {
+  .training-report-container {
+    padding: 8px;
+  }
+
+  .report-card {
+    padding: 12px;
+  }
+
+  .report-title {
+    font-size: 18px;
+    padding: 10px;
+    margin-bottom: 12px;
+  }
+
+  .report-table th,
+  .report-table td {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .report-table th {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+
+  .lesson-list li {
+    margin: 3px 0;
+    font-size: 13px;
+  }
+
+  .no-data {
+    font-size: 13px;
+    padding: 12px;
+  }
+}

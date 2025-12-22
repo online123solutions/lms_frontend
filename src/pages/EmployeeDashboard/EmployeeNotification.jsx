@@ -5,6 +5,7 @@ import {
   fetchEmployeeNotifications, 
   markNotificationRead,        
 } from "../../api/employeeAPIservice";
+import "../../utils/css/Trainee CSS/TraineeNotification.css";
 
 function Toolbar({ unreadOnly, setUnreadOnly, onRefresh }) {
   return (

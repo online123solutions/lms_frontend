@@ -147,3 +147,148 @@
 .notif-empty-icon { font-size: 28px; margin-bottom: 6px; }
 .notif-empty-title { font-weight: 600; margin-bottom: 4px; color: #111827; }
 .notif-empty-desc { font-size: 14px; }
+
+/* ===============================
+   Height-based optimizations
+   =============================== */
+
+/* 768px height */
+@media (max-height: 768px) {
+  .notif-container {
+    padding: 6px 10px 20px;
+  }
+
+  .notif-header h2 {
+    font-size: 18px;
+    margin: 6px 0 2px;
+  }
+
+  .notif-subtitle {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .notif-toolbar {
+    margin: 4px 0 10px;
+    padding: 6px 10px;
+  }
+
+  .notif-tab {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  .notif-btn {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+
+  .notif-list {
+    gap: 10px;
+  }
+
+  .notif-card {
+    border-radius: 12px;
+  }
+
+  .notif-content {
+    padding: 10px 12px;
+  }
+
+  .notif-title {
+    font-size: 13px;
+    gap: 6px;
+  }
+
+  .notif-text {
+    margin: 6px 0 4px;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .notif-when,
+  .notif-from {
+    font-size: 11px;
+  }
+
+  .notif-actions {
+    gap: 6px;
+  }
+
+  .notif-skel-card {
+    height: 70px;
+  }
+}
+
+/* 552px height */
+@media (max-height: 552px) {
+  .notif-container {
+    padding: 4px 8px 16px;
+  }
+
+  .notif-header h2 {
+    font-size: 16px;
+    margin: 4px 0 2px;
+  }
+
+  .notif-subtitle {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  .notif-toolbar {
+    margin: 3px 0 8px;
+    padding: 4px 8px;
+  }
+
+  .notif-tab {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  .notif-btn {
+    padding: 4px 6px;
+    font-size: 10px;
+  }
+
+  .notif-list {
+    gap: 8px;
+  }
+
+  .notif-card {
+    border-radius: 10px;
+  }
+
+  .notif-content {
+    padding: 8px 10px;
+  }
+
+  .notif-title {
+    font-size: 12px;
+    gap: 5px;
+  }
+
+  .notif-dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .notif-text {
+    margin: 4px 0 3px;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .notif-when,
+  .notif-from {
+    font-size: 10px;
+  }
+
+  .notif-actions {
+    gap: 5px;
+  }
+
+  .notif-skel-card {
+    height: 60px;
+  }
+}

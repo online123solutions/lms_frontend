@@ -2,3 +2,87 @@
     background-color: black; /* Custom green color */
     color: white; /* Text color */
 }
+
+/* ===============================
+   Modal height optimizations
+   =============================== */
+
+.microplanner-modal .modal-body-scroll {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.microplanner-modal .modal-body-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+/* 768px height */
+@media (max-height: 768px) {
+    .microplanner-modal .modal-dialog {
+        margin: 10px auto;
+        max-height: calc(100vh - 20px);
+    }
+
+    .microplanner-modal .modal-content {
+        max-height: calc(100vh - 20px);
+        overflow-y: auto;
+    }
+
+    .microplanner-modal .modal-body {
+        padding: 10px;
+    }
+
+    .microplanner-modal .modal-footer {
+        padding: 8px 10px;
+    }
+
+    .microplanner-modal .form-control,
+    .microplanner-modal .form-select {
+        font-size: 13px;
+        padding: 6px 8px;
+    }
+
+    .microplanner-modal .form-label {
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+}
+
+/* 552px height */
+@media (max-height: 552px) {
+    .microplanner-modal .modal-dialog {
+        margin: 10px auto;
+        max-height: calc(100vh - 20px);
+    }
+
+    .microplanner-modal .modal-content {
+        max-height: calc(100vh - 20px);
+        overflow-y: auto;
+    }
+
+    .microplanner-modal .modal-body {
+        padding: 8px;
+    }
+
+    .microplanner-modal .modal-footer {
+        padding: 6px 8px;
+    }
+
+    .microplanner-modal .form-control,
+    .microplanner-modal .form-select {
+        font-size: 12px;
+        padding: 5px 6px;
+    }
+
+    .microplanner-modal .form-label {
+        font-size: 12px;
+        margin-bottom: 3px;
+    }
+
+    .microplanner-modal .btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}
