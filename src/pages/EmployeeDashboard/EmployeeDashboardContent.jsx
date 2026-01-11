@@ -11,6 +11,8 @@ export default function EmployeeDashboardContent({ data }) {
   const pic    = data?.profile?.profile_pic || "";
   const courses = data?.courses_count ?? data?.courses?.length ?? 0;
   const certs   = data?.certifications_count ?? 0;
+  const [imageError, setImageError] = useState(false);
+  const firstLetter = name.charAt(0).toUpperCase();
 
   const notifications = Array.isArray(data?.notifications) ? data.notifications : [];
   const activeHW      = Array.isArray(data?.active_homework) ? data.active_homework : [];
@@ -102,7 +104,32 @@ export default function EmployeeDashboardContent({ data }) {
       <aside className="card td-profile">
         <div className="td-profile-banner" />
         <div className="td-profile-top">
-          <img src={pic || "/placeholder-avatar.png"} alt="profile" />
+          {pic && !imageError ? (
+            <img 
+              src={pic} 
+              alt="profile" 
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <div
+              style={{
+                width: "76px",
+                height: "76px",
+                borderRadius: "50%",
+                backgroundColor: "#6366f1",
+                color: "#fff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "2rem",
+                fontWeight: "bold",
+                border: "3px solid #fff",
+                boxShadow: "0 6px 20px rgba(0,0,0,.1)",
+              }}
+            >
+              {firstLetter}
+            </div>
+          )}
           <div>
             <h3>{name}</h3>
             {/* <div className="muted">Class — {grade}</div> */}

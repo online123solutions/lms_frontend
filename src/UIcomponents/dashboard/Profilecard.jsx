@@ -168,6 +168,7 @@ const ProfileCard = ({ username }) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
 
   const isAuthenticated = localStorage.getItem("isAuthenticated");
 
@@ -206,15 +207,39 @@ const ProfileCard = ({ username }) => {
     data?.profile?.user?.profile_picture ||
     "";
 
-  const profilePic = mediaUrl(profilePicRaw) || "https://via.placeholder.com/100";
+  const profilePic = mediaUrl(profilePicRaw);
 
   const courseCount = data?.subjects_count || 0;
   const certCount = data?.certifications?.length || 0;
+  const userName = data?.profile?.name || "Trainee";
+  const firstLetter = userName.charAt(0).toUpperCase();
 
   return (
     <div className="profile-card centered-profile">
-      <img src={profilePic} alt="Profile" className="profile-pic centered" />
-      <h4>{data?.profile?.name || "Trainee"}</h4>
+      {profilePic && !imageError ? (
+        <img 
+          src={profilePic} 
+          alt="Profile" 
+          className="profile-pic centered" 
+          onError={() => setImageError(true)}
+        />
+      ) : (
+        <div 
+          className="profile-pic centered"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#6366f1",
+            color: "#fff",
+            fontSize: "2.5rem",
+            fontWeight: "bold",
+          }}
+        >
+          {firstLetter}
+        </div>
+      )}
+      <h4>{userName}</h4>
       <p className="location"><b>Department</b> - {data?.profile?.department || "-"}</p>
       <p className="location"><b>Designation</b> - {data?.profile?.designation || "-"}</p>
 

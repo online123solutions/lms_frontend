@@ -1726,6 +1726,17 @@ html, body {
   /* strip inline transforms that may come from JS */
   transform: none !important;
 }
+
+/* Center initials in profile-pic div (when used as fallback for missing images) */
+.centered-profile .profile-pic:not(img),
+.profile-card .profile-pic:not(img) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  line-height: 1 !important;
+  object-fit: none !important;
+}
 /* ===============================
    COMPACT MODE FOR SHORT HEIGHTS (768px)
    =============================== */
