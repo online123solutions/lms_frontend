@@ -32,6 +32,25 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Handle response errors - clear cache on auth errors
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // If we get 401 (Unauthorized) or 403 (Forbidden), clear localStorage and redirect to login
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      // Only clear if we're not already on the login page
+      if (!window.location.pathname.includes("/login") && !window.location.pathname.includes("/signup")) {
+        console.warn("Authentication error detected. Clearing cache and redirecting to login.");
+        localStorage.clear();
+        sessionStorage.clear();
+        // Force page reload with cache-busting to clear any cached JavaScript
+        window.location.href = "/login?cache_clear=" + Date.now();
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Utility to extract error message
 const handleError = (error, defaultMessage) => {
   return error.response?.data?.error || defaultMessage;
