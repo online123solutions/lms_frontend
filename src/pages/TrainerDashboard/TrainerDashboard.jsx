@@ -17,6 +17,7 @@ import TrainerNotification from "./TrainerNotification";
 import TrainingReport from "./TrainingReport";
 import TrainerProgress from "./TrainerProgress";
 import TrainerTaskReviews from "./TrainerTaskReviews";
+import TrainerProfileEdit from "./TrainerProfileEdit";
 import HamButton from "../../Components/Hamburger";
 import logoS1 from "../../assets/sol_logo.png";
 
@@ -323,6 +324,37 @@ useEffect(() => {
   const renderContent = () => {
     switch (activeContent) {
       case "dashboard": return <TeacherDashboardContent data={data} />;
+      case "profile":
+        return (
+          <TrainerProfileEdit 
+            username={username}
+            dashboardData={data}
+            onCancel={() => setActiveContent("dashboard")}
+            onUpdate={(updatedData) => {
+              // Refresh dashboard data when profile is updated
+              if (data?.profile) {
+                setData({
+                  ...data,
+                  profile: {
+                    ...data.profile,
+                    ...updatedData,
+                  },
+                });
+              }
+              // Reload dashboard to get fresh data in background
+              const fetchData = async () => {
+                try {
+                  const result = await fetchTrainerDashboard(username);
+                  if (result.success) setData(result.data);
+                } catch (err) {
+                  console.error("Failed to refresh dashboard:", err);
+                }
+              };
+              fetchData();
+              // Stay on profile page - don't redirect to dashboard
+            }}
+          />
+        );
       case "macroPlanner": return <MacroPlanner />;
       case "microPlanner": return <MicroPlanner />;
       case "report": return <TrainingReport />;
@@ -493,10 +525,19 @@ useEffect(() => {
           {/* Custom dropdown menu */}
           {showDropdown && (
             <div className="sidebar-settings-menu">
-              <Link to="/profile" className="settings-menu-item">
+              <div
+                className="settings-menu-item"
+                onClick={() => {
+                  setActiveContent("profile");
+                  setShowDropdown(false);
+                  if (isMobile && isSidebarOpen) {
+                    setTimeout(() => setIsSidebarOpen(false), 150);
+                  }
+                }}
+              >
                 <i className="bi bi-person"></i>
                 <span>Profile</span>
-              </Link>
+              </div>
 
               <div
                 className="settings-menu-item"

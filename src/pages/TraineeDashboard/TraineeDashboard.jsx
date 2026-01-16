@@ -25,6 +25,7 @@ import TraineeNotificationPage from "./TraineeNotification";
 import { Dropdown, Form, Button, Modal } from "react-bootstrap";
 import TraineeProgress from "./TraineeProgress";
 import TraineeTasks from "./TraineeTasks";
+import TraineeProfileEdit from "./TraineeProfileEdit";
 import logoS1 from "../../assets/sol_logo.png";
 
 /* ---------------- MENU to mirror Trainer ---------------- */
@@ -349,6 +350,36 @@ const TraineeDashboard = () => {
         return <TraineeProgress />;
       case "tasks":
         return <TraineeTasks />;
+      case "profile":
+        return (
+          <TraineeProfileEdit 
+            username={username}
+            dashboardData={data}
+            onCancel={() => setActiveContent("dashboard")}
+            onUpdate={(updatedData) => {
+              // Refresh dashboard data when profile is updated
+              if (data?.profile) {
+                setData({
+                  ...data,
+                  profile: {
+                    ...data.profile,
+                    ...updatedData,
+                  },
+                });
+              }
+              // Reload dashboard to get fresh data
+              const fetchData = async () => {
+                try {
+                  const result = await fetchTraineeDashboard(username);
+                  if (result.success) setData(result.data);
+                } catch (err) {
+                  console.error("Failed to refresh dashboard:", err);
+                }
+              };
+              if (username) fetchData();
+            }}
+          />
+        );
       case "sops": {
         return (
           <div className="sop-page" style={{ padding: 16 }}>
@@ -540,10 +571,32 @@ const TraineeDashboard = () => {
           {/* Custom dropdown menu */}
           {showDropdown && (
             <div className="sidebar-settings-menu">
-              <Link to="/profile" className="settings-menu-item">
+              <div
+                className="settings-menu-item"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setActiveContent("profile");
+                  setShowDropdown(false);
+                  if (isMobile && isSidebarOpen) {
+                    setTimeout(() => setIsSidebarOpen(false), 150);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setActiveContent("profile");
+                    setShowDropdown(false);
+                    if (isMobile && isSidebarOpen) {
+                      setTimeout(() => setIsSidebarOpen(false), 150);
+                    }
+                  }
+                }}
+              >
                 <i className="bi bi-person"></i>
                 <span>Profile</span>
-              </Link>
+              </div>
 
               <div
                 className="settings-menu-item"

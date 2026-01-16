@@ -37,14 +37,31 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     // If we get 401 (Unauthorized) or 403 (Forbidden), clear localStorage and redirect to login
+    // But only for certain endpoints to avoid false positives
     if (error.response?.status === 401 || error.response?.status === 403) {
-      // Only clear if we're not already on the login page
-      if (!window.location.pathname.includes("/login") && !window.location.pathname.includes("/signup")) {
+      const url = error.config?.url || "";
+      const baseURL = error.config?.baseURL || "";
+      const fullUrl = (baseURL + url).toLowerCase();
+      const currentPath = window.location.pathname.toLowerCase();
+      
+      // Don't redirect for profile endpoints - let the component handle the error
+      // Don't redirect if already on login/signup page or profile page
+      if (
+        !fullUrl.includes("/profile/") &&
+        !url.includes("/profile/") &&
+        !url.includes("/account/login") &&
+        !url.includes("/account/register") &&
+        !currentPath.includes("/login") &&
+        !currentPath.includes("/signup") &&
+        !currentPath.includes("profile")
+      ) {
         console.warn("Authentication error detected. Clearing cache and redirecting to login.");
         localStorage.clear();
         sessionStorage.clear();
         // Force page reload with cache-busting to clear any cached JavaScript
         window.location.href = "/login?cache_clear=" + Date.now();
+      } else {
+        console.log("Skipping redirect for:", { url, fullUrl, currentPath });
       }
     }
     return Promise.reject(error);
@@ -257,7 +274,7 @@ export const markLessonCompleted = async (lessonSlug) => {
 };
 
 // Helper to get CSRF token (if using Django CSRF protection)
-const getCsrfToken = () => {
+export const getCsrfToken = () => {
   return document.cookie
     .split("; ")
     .find((row) => row.startsWith("csrftoken="))

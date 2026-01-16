@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ok, fail } from "./apiHelpers";
+import { initCsrf, getCsrfToken } from "./apiservice";
 
 const BASE_URL = "https://lms.steel.study/trainer";
 
@@ -451,5 +452,141 @@ export const updateTrainerLessonProgress = async (lessonPk, action) => {
   } catch (error) {
     console.error("updateTrainerLessonProgress error:", error?.response?.data || error);
     return { success: false, error: error?.response?.data || error.message || error };
+  }
+};
+
+// ---------- Trainer Profile API ----------
+
+/**
+ * Fetch current trainer profile
+ * GET /trainer/profile/
+ */
+export const fetchTrainerProfile = async () => {
+  try {
+    console.log("Fetching trainer profile from:", apiClient.defaults.baseURL + "/profile/");
+    const response = await apiClient.get("/profile/");
+    console.log("Profile response:", response);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error fetching trainer profile:", error);
+    console.error("Error details:", {
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data,
+      message: error.message,
+    });
+    // Return error object with status for component to handle
+    const errorData = error.response?.data || {};
+    return { 
+      success: false, 
+      error: {
+        ...errorData,
+        status: error.response?.status,
+        message: error.message,
+        // Extract detail, error, or message from response
+        detail: errorData.detail || errorData.error || errorData.message || error.message,
+      }
+    };
+  }
+};
+
+/**
+ * Update trainer profile (partial update)
+ * PATCH /trainer/profile/
+ * @param {Object} profileData - Profile data to update
+ * @param {string} profileData.name - Name (optional)
+ * @param {string} profileData.department - Department (required)
+ * @param {string} profileData.designation - Designation (required)
+ * @param {File} profileData.profile_picture - Profile picture file (optional)
+ */
+export const updateTrainerProfile = async (profileData) => {
+  try {
+    // Initialize CSRF token if needed
+    if (!getCsrfToken()) {
+      await initCsrf();
+    }
+    
+    const formData = new FormData();
+    
+    // Add fields to FormData
+    if (profileData.name !== undefined) {
+      formData.append("name", profileData.name);
+    }
+    if (profileData.department !== undefined) {
+      formData.append("department", profileData.department);
+    }
+    if (profileData.designation !== undefined) {
+      formData.append("designation", profileData.designation);
+    }
+    if (profileData.profile_picture instanceof File) {
+      formData.append("profile_picture", profileData.profile_picture);
+    }
+    
+    const headers = {
+      "Content-Type": "multipart/form-data",
+    };
+    
+    // Add CSRF token if available
+    const csrfToken = getCsrfToken();
+    if (csrfToken) {
+      headers["X-CSRFToken"] = csrfToken;
+    }
+    
+    // Log the request details for debugging
+    const endpoint = "/profile/";
+    const fullUrl = apiClient.defaults.baseURL + endpoint;
+    console.log("Updating trainer profile:", {
+      method: "PATCH",
+      url: fullUrl,
+      baseURL: apiClient.defaults.baseURL,
+      endpoint: endpoint,
+      headers: { ...headers, Authorization: "Token ***" }, // Don't log full token
+      formDataKeys: Array.from(formData.keys()),
+    });
+    
+    // Try PATCH first (as confirmed working in backend), fallback to PUT if needed
+    let response;
+    try {
+      response = await apiClient.patch(endpoint, formData, {
+        headers,
+      });
+      console.log("Profile update successful (PATCH):", response.data);
+    } catch (patchError) {
+      // If PATCH fails with method not allowed, try PUT
+      if (patchError.response?.status === 405 || 
+          patchError.response?.data?.detail?.toLowerCase().includes("not allowed")) {
+        console.log("PATCH not allowed, trying PUT...");
+        try {
+          response = await apiClient.put(endpoint, formData, {
+            headers,
+          });
+          console.log("Profile update successful (PUT):", response.data);
+        } catch (putError) {
+          throw putError; // Re-throw PUT error
+        }
+      } else {
+        throw patchError; // Re-throw if it's not a method error
+      }
+    }
+    
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error updating trainer profile:", error);
+    console.error("Error details:", {
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data,
+      message: error.message,
+      config: {
+        method: error.config?.method,
+        url: error.config?.url,
+        baseURL: error.config?.baseURL,
+        fullURL: error.config?.baseURL + error.config?.url,
+      },
+    });
+    return { 
+      success: false, 
+      error: error?.response?.data || error.message || "Failed to update profile" 
+    };
   }
 };

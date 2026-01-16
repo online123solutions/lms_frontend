@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ok, fail } from "./apiHelpers";
-import { apiClient as defaultApiClient } from "./apiservice"; 
+import { apiClient as defaultApiClient, initCsrf, getCsrfToken } from "./apiservice"; 
 
 const BASE_URL = "https://lms.steel.study/trainee";
 
@@ -21,6 +21,31 @@ apiClient.interceptors.request.use(
     return config;
   },
   (error) => Promise.reject(error)
+);
+
+// Response interceptor - don't auto-redirect for profile endpoints
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // For profile endpoints, let the component handle errors
+    // Don't auto-redirect to login
+    const url = error.config?.url || "";
+    const baseURL = error.config?.baseURL || "";
+    const fullUrl = baseURL + url;
+    
+    console.log("Trainee API error:", { url, baseURL, fullUrl, status: error.response?.status });
+    
+    if (url.includes("/profile/") || fullUrl.includes("/profile/")) {
+      // Just return the error, let the component handle it
+      // Don't redirect for profile endpoints
+      console.log("Profile endpoint error - not redirecting");
+      return Promise.reject(error);
+    }
+    
+    // For other endpoints, you can add redirect logic here if needed
+    // For now, just reject the error
+    return Promise.reject(error);
+  }
 );
 
 const handleError = (error) => {
@@ -270,6 +295,142 @@ export async function fetchBanners(params = {}) {
   // Return plain array
   return Array.isArray(res.data) ? res.data : [];
 }
+
+// ---------- Trainee Profile API ----------
+
+/**
+ * Fetch current trainee profile
+ * GET /trainee/profile/
+ */
+export const fetchTraineeProfile = async () => {
+  try {
+    console.log("Fetching trainee profile from:", apiClient.defaults.baseURL + "/profile/");
+    const response = await apiClient.get("/profile/");
+    console.log("Profile response:", response);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error fetching trainee profile:", error);
+    console.error("Error details:", {
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data,
+      message: error.message,
+    });
+    // Return error object with status for component to handle
+    const errorData = error.response?.data || {};
+    return { 
+      success: false, 
+      error: {
+        ...errorData,
+        status: error.response?.status,
+        message: error.message,
+        // Extract detail, error, or message from response
+        detail: errorData.detail || errorData.error || errorData.message || error.message,
+      }
+    };
+  }
+};
+
+/**
+ * Update trainee profile (partial update)
+ * PATCH /trainee/profile/
+ * @param {Object} profileData - Profile data to update
+ * @param {string} profileData.name - Name (optional)
+ * @param {string} profileData.department - Department (required)
+ * @param {string} profileData.designation - Designation (required)
+ * @param {File} profileData.profile_picture - Profile picture file (optional)
+ */
+export const updateTraineeProfile = async (profileData) => {
+  try {
+    // Initialize CSRF token if needed
+    if (!getCsrfToken()) {
+      await initCsrf();
+    }
+    
+    const formData = new FormData();
+    
+    // Add fields to FormData
+    if (profileData.name !== undefined) {
+      formData.append("name", profileData.name);
+    }
+    if (profileData.department !== undefined) {
+      formData.append("department", profileData.department);
+    }
+    if (profileData.designation !== undefined) {
+      formData.append("designation", profileData.designation);
+    }
+    if (profileData.profile_picture instanceof File) {
+      formData.append("profile_picture", profileData.profile_picture);
+    }
+    
+    const headers = {
+      "Content-Type": "multipart/form-data",
+    };
+    
+    // Add CSRF token if available
+    const csrfToken = getCsrfToken();
+    if (csrfToken) {
+      headers["X-CSRFToken"] = csrfToken;
+    }
+    
+    // Log the request details for debugging
+    const endpoint = "/profile/";
+    const fullUrl = apiClient.defaults.baseURL + endpoint;
+    console.log("Updating trainee profile:", {
+      method: "PATCH",
+      url: fullUrl,
+      baseURL: apiClient.defaults.baseURL,
+      endpoint: endpoint,
+      headers: { ...headers, Authorization: "Token ***" }, // Don't log full token
+      formDataKeys: Array.from(formData.keys()),
+    });
+    
+    // Try PATCH first (as confirmed working in backend), fallback to PUT if needed
+    let response;
+    try {
+      response = await apiClient.patch(endpoint, formData, {
+        headers,
+      });
+      console.log("Profile update successful (PATCH):", response.data);
+    } catch (patchError) {
+      // If PATCH fails with method not allowed, try PUT
+      if (patchError.response?.status === 405 || 
+          patchError.response?.data?.detail?.toLowerCase().includes("not allowed")) {
+        console.log("PATCH not allowed, trying PUT...");
+        try {
+          response = await apiClient.put(endpoint, formData, {
+            headers,
+          });
+          console.log("Profile update successful (PUT):", response.data);
+        } catch (putError) {
+          throw putError; // Re-throw PUT error
+        }
+      } else {
+        throw patchError; // Re-throw if it's not a method error
+      }
+    }
+    
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error updating trainee profile:", error);
+    console.error("Error details:", {
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data,
+      message: error.message,
+      config: {
+        method: error.config?.method,
+        url: error.config?.url,
+        baseURL: error.config?.baseURL,
+        fullURL: error.config?.baseURL + error.config?.url,
+      },
+    });
+    return { 
+      success: false, 
+      error: error?.response?.data || error.message || "Failed to update profile" 
+    };
+  }
+};
 
 
 export async function createTaskAssignment(formData) {
