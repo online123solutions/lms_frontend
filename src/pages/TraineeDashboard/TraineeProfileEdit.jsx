@@ -4,6 +4,30 @@ import { fetchTraineeProfile, updateTraineeProfile, mediaUrl } from "../../api/t
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../utils/css/sidebar.css";
 
+// Helper function to sanitize HTML error messages
+const sanitizeError = (errorText) => {
+  if (typeof errorText !== "string") {
+    return errorText?.detail || errorText?.error || errorText?.message || "An error occurred";
+  }
+  
+  // Check if it's HTML
+  if (errorText.includes("<!doctype") || errorText.includes("<html") || errorText.includes("<body")) {
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(errorText, "text/html");
+      const textContent = doc.body?.textContent || doc.documentElement?.textContent;
+      if (textContent && textContent.trim()) {
+        return textContent.trim();
+      }
+    } catch (e) {
+      console.error("Error parsing HTML error:", e);
+    }
+    return "Server returned an error page. Please check your connection and try again.";
+  }
+  
+  return errorText;
+};
+
 const TraineeProfileEdit = ({ username, dashboardData, onCancel, onUpdate }) => {
   // Check authentication before loading
   useEffect(() => {
@@ -82,12 +106,7 @@ const TraineeProfileEdit = ({ username, dashboardData, onCancel, onUpdate }) => 
           // Handle different error formats
           let errorMsg = "Failed to load profile";
           if (typeof result.error === "string") {
-            // Check if it's HTML
-            if (result.error.includes('<!doctype html>') || result.error.includes('<html')) {
-              errorMsg = "Server returned an error page. Please check the endpoint URL or contact support.";
-            } else {
-              errorMsg = result.error;
-            }
+            errorMsg = result.error;
           } else if (result.error?.detail) {
             errorMsg = result.error.detail;
           } else if (result.error?.error) {
@@ -103,7 +122,8 @@ const TraineeProfileEdit = ({ username, dashboardData, onCancel, onUpdate }) => 
             errorMsg = `Profile endpoint not found (404). URL: ${result.error.fullURL}. Please verify the endpoint exists on the server.`;
           }
           
-          setError(errorMsg);
+          // Sanitize HTML errors
+          setError(sanitizeError(errorMsg));
           // If it's an authentication error, show a more helpful message
           if (result.error?.status === 401 || result.error?.status === 403) {
             setError("Authentication failed. Please try logging in again.");
@@ -125,7 +145,8 @@ const TraineeProfileEdit = ({ username, dashboardData, onCancel, onUpdate }) => 
           errorMsg = err.message;
         }
         
-        setError(errorMsg);
+        // Sanitize HTML errors
+        setError(sanitizeError(errorMsg));
         // Don't let errors cause redirect - just show error message
       } finally {
         setLoading(false);
@@ -261,7 +282,7 @@ const TraineeProfileEdit = ({ username, dashboardData, onCancel, onUpdate }) => 
         <div className="card-body">
           {error && (
             <Alert variant="danger" dismissible onClose={() => setError("")}>
-              {typeof error === "string" ? error : error?.detail || error?.error || error?.message || "An error occurred"}
+              {sanitizeError(error)}
             </Alert>
           )}
           {success && (
