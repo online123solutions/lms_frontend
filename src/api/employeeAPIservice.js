@@ -128,7 +128,7 @@ export const fetchActiveHomeworkAssignments = async () => {
 
 // somewhere central, e.g. src/api/url.js
 export const API_BASE =
-  (process.env.REACT_APP_API_BASE_URL || "http://localhost:8000").replace(/\/+$/, "");
+  (process.env.REACT_APP_API_BASE_URL || "https://lms.steel.study").replace(/\/+$/, "");
 
 export function mediaUrl(path) {
   if (!path) return "";
