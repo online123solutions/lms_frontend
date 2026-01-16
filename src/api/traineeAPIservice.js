@@ -384,9 +384,14 @@ export const fetchTraineeProfile = async () => {
  */
 export const updateTraineeProfile = async (profileData) => {
   try {
-    // Initialize CSRF token if needed
+    // Initialize CSRF token if needed (gracefully handle if endpoint doesn't exist)
     if (!getCsrfToken()) {
-      await initCsrf();
+      try {
+        await initCsrf();
+      } catch (csrfError) {
+        // CSRF initialization failed, but continue anyway - might not be required
+        console.warn("CSRF token initialization failed, continuing without it:", csrfError.message);
+      }
     }
     
     const formData = new FormData();
@@ -455,6 +460,7 @@ export const updateTraineeProfile = async (profileData) => {
     return { success: true, data: response.data };
   } catch (error) {
     console.error("Error updating trainee profile:", error);
+    const fullURL = error.config?.baseURL + error.config?.url;
     console.error("Error details:", {
       status: error.response?.status,
       statusText: error.response?.statusText,
@@ -464,12 +470,40 @@ export const updateTraineeProfile = async (profileData) => {
         method: error.config?.method,
         url: error.config?.url,
         baseURL: error.config?.baseURL,
-        fullURL: error.config?.baseURL + error.config?.url,
+        fullURL: fullURL,
       },
     });
+    
+    // Handle HTML error responses (404 Not Found pages)
+    let errorMessage = "Failed to update profile";
+    if (error.response?.status === 404) {
+      // Check if response is HTML
+      const responseData = error.response?.data;
+      if (typeof responseData === 'string' && responseData.includes('<!doctype html>')) {
+        errorMessage = `Profile endpoint not found (404). URL: ${fullURL}. Please verify the endpoint exists on the server.`;
+        console.error("404 Error - Endpoint may not exist on server:", fullURL);
+      } else if (responseData?.detail) {
+        errorMessage = responseData.detail;
+      } else {
+        errorMessage = `Profile not found (404). Endpoint: ${fullURL}`;
+      }
+    } else if (error.response?.data) {
+      // Check if response is HTML
+      const responseData = error.response.data;
+      if (typeof responseData === 'string' && responseData.includes('<!doctype html>')) {
+        errorMessage = `Server returned HTML error page. Endpoint may not exist: ${fullURL}`;
+      } else if (typeof responseData === 'object') {
+        errorMessage = responseData.detail || responseData.error || responseData.message || error.message;
+      } else if (typeof responseData === 'string') {
+        errorMessage = responseData;
+      }
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
     return { 
       success: false, 
-      error: error?.response?.data || error.message || "Failed to update profile" 
+      error: errorMessage
     };
   }
 };

@@ -15,9 +15,21 @@ export const apiClient = axios.create({
 let CSRF_TOKEN = null;
 
 export async function initCsrf() {
-  const res = await apiClient.get("/account/csrf/"); // sets cookie + returns token
-  CSRF_TOKEN = res.data?.csrfToken || null;
-  return CSRF_TOKEN;
+  try {
+    const res = await apiClient.get("/account/csrf/"); // sets cookie + returns token
+    CSRF_TOKEN = res.data?.csrfToken || null;
+    return CSRF_TOKEN;
+  } catch (error) {
+    // If CSRF endpoint doesn't exist (404), try to get from cookies
+    if (error.response?.status === 404) {
+      console.warn("CSRF endpoint not found, trying to get from cookies");
+      CSRF_TOKEN = getCsrfToken(); // Try to get from cookies
+      return CSRF_TOKEN;
+    }
+    // For other errors, log but don't throw - CSRF might not be required
+    console.warn("Failed to initialize CSRF token:", error.message);
+    return null;
+  }
 }
 
 // Attach token to every request

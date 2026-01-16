@@ -501,9 +501,14 @@ export const fetchTrainerProfile = async () => {
  */
 export const updateTrainerProfile = async (profileData) => {
   try {
-    // Initialize CSRF token if needed
+    // Initialize CSRF token if needed (gracefully handle if endpoint doesn't exist)
     if (!getCsrfToken()) {
-      await initCsrf();
+      try {
+        await initCsrf();
+      } catch (csrfError) {
+        // CSRF initialization failed, but continue anyway - might not be required
+        console.warn("CSRF token initialization failed, continuing without it:", csrfError.message);
+      }
     }
     
     const formData = new FormData();
