@@ -199,6 +199,13 @@ const TrainerProfileEdit = ({ username, dashboardData, onCancel, onUpdate }) => 
           // If it's an object, try to extract a meaningful message
           errorMsg = result.error.detail || result.error.error || result.error.message || JSON.stringify(result.error);
         }
+        
+        // Log the full error for debugging
+        console.error("Profile update error details:", {
+          error: result.error,
+          errorMsg: errorMsg,
+        });
+        
         setError(errorMsg);
       }
     } catch (err) {

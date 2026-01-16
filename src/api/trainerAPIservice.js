@@ -572,6 +572,7 @@ export const updateTrainerProfile = async (profileData) => {
     return { success: true, data: response.data };
   } catch (error) {
     console.error("Error updating trainer profile:", error);
+    const fullURL = error.config?.baseURL + error.config?.url;
     console.error("Error details:", {
       status: error.response?.status,
       statusText: error.response?.statusText,
@@ -581,12 +582,30 @@ export const updateTrainerProfile = async (profileData) => {
         method: error.config?.method,
         url: error.config?.url,
         baseURL: error.config?.baseURL,
-        fullURL: error.config?.baseURL + error.config?.url,
+        fullURL: fullURL,
       },
     });
+    
+    // Handle HTML error responses (404 Not Found pages)
+    let errorMessage = "Failed to update profile";
+    if (error.response?.status === 404) {
+      errorMessage = `Endpoint not found: ${fullURL}. Please verify the endpoint exists on the server.`;
+      console.error("404 Error - Endpoint may not exist on server:", fullURL);
+    } else if (error.response?.data) {
+      // Check if response is HTML (404 page)
+      const responseData = error.response.data;
+      if (typeof responseData === 'string' && responseData.includes('<!doctype html>')) {
+        errorMessage = `Server returned HTML error page. Endpoint may not exist: ${fullURL}`;
+      } else {
+        errorMessage = error.response.data;
+      }
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
     return { 
       success: false, 
-      error: error?.response?.data || error.message || "Failed to update profile" 
+      error: errorMessage
     };
   }
 };

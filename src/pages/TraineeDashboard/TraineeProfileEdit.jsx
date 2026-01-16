@@ -82,7 +82,12 @@ const TraineeProfileEdit = ({ username, dashboardData, onCancel, onUpdate }) => 
           // Handle different error formats
           let errorMsg = "Failed to load profile";
           if (typeof result.error === "string") {
-            errorMsg = result.error;
+            // Check if it's HTML
+            if (result.error.includes('<!doctype html>') || result.error.includes('<html')) {
+              errorMsg = "Server returned an error page. Please check the endpoint URL or contact support.";
+            } else {
+              errorMsg = result.error;
+            }
           } else if (result.error?.detail) {
             errorMsg = result.error.detail;
           } else if (result.error?.error) {
@@ -93,6 +98,11 @@ const TraineeProfileEdit = ({ username, dashboardData, onCancel, onUpdate }) => 
             errorMsg = result.error.join(", ");
           }
           
+          // If it's a 404, show the full URL for debugging
+          if (result.error?.status === 404 && result.error?.fullURL) {
+            errorMsg = `Profile endpoint not found (404). URL: ${result.error.fullURL}. Please verify the endpoint exists on the server.`;
+          }
+          
           setError(errorMsg);
           // If it's an authentication error, show a more helpful message
           if (result.error?.status === 401 || result.error?.status === 403) {
@@ -101,7 +111,20 @@ const TraineeProfileEdit = ({ username, dashboardData, onCancel, onUpdate }) => 
         }
       } catch (err) {
         console.error("Profile load error:", err);
-        const errorMsg = err?.response?.data?.detail || err?.response?.data?.error || err?.message || "An error occurred while loading profile";
+        let errorMsg = "An error occurred while loading profile";
+        
+        // Check if response data is HTML
+        const responseData = err?.response?.data;
+        if (typeof responseData === 'string' && (responseData.includes('<!doctype html>') || responseData.includes('<html'))) {
+          errorMsg = "Server returned an error page. Please check the endpoint URL or contact support.";
+        } else if (responseData?.detail) {
+          errorMsg = responseData.detail;
+        } else if (responseData?.error) {
+          errorMsg = responseData.error;
+        } else if (err?.message) {
+          errorMsg = err.message;
+        }
+        
         setError(errorMsg);
         // Don't let errors cause redirect - just show error message
       } finally {

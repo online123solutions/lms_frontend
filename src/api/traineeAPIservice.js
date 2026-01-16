@@ -304,28 +304,70 @@ export async function fetchBanners(params = {}) {
  */
 export const fetchTraineeProfile = async () => {
   try {
-    console.log("Fetching trainee profile from:", apiClient.defaults.baseURL + "/profile/");
-    const response = await apiClient.get("/profile/");
+    const endpoint = "/profile/";
+    const fullURL = apiClient.defaults.baseURL + endpoint;
+    const token = localStorage.getItem("authToken");
+    
+    console.log("Fetching trainee profile:", {
+      endpoint: endpoint,
+      baseURL: apiClient.defaults.baseURL,
+      fullURL: fullURL,
+      hasToken: !!token,
+      tokenLength: token ? token.length : 0,
+    });
+    
+    const response = await apiClient.get(endpoint);
     console.log("Profile response:", response);
     return { success: true, data: response.data };
   } catch (error) {
     console.error("Error fetching trainee profile:", error);
+    const fullURL = apiClient.defaults.baseURL + "/profile/";
     console.error("Error details:", {
       status: error.response?.status,
       statusText: error.response?.statusText,
       data: error.response?.data,
       message: error.message,
+      fullURL: fullURL,
+      config: {
+        method: error.config?.method,
+        url: error.config?.url,
+        baseURL: error.config?.baseURL,
+      },
     });
-    // Return error object with status for component to handle
-    const errorData = error.response?.data || {};
+    
+    // Handle HTML error responses (404 pages, etc.)
+    let errorMessage = "Failed to load profile";
+    const responseData = error.response?.data;
+    
+    if (error.response?.status === 404) {
+      // Check if response is HTML
+      if (typeof responseData === 'string' && responseData.includes('<!doctype html>')) {
+        errorMessage = `Profile endpoint not found (404). Please verify the endpoint exists: ${fullURL}`;
+      } else if (responseData?.detail) {
+        errorMessage = responseData.detail;
+      } else {
+        errorMessage = `Profile not found (404). Endpoint: ${fullURL}`;
+      }
+    } else if (responseData) {
+      // Check if response is HTML
+      if (typeof responseData === 'string' && responseData.includes('<!doctype html>')) {
+        errorMessage = `Server returned HTML error page. Status: ${error.response?.status}. Endpoint: ${fullURL}`;
+      } else if (typeof responseData === 'object') {
+        errorMessage = responseData.detail || responseData.error || responseData.message || error.message;
+      } else if (typeof responseData === 'string') {
+        errorMessage = responseData;
+      }
+    } else {
+      errorMessage = error.message || "Failed to load profile";
+    }
+    
     return { 
       success: false, 
       error: {
-        ...errorData,
         status: error.response?.status,
-        message: error.message,
-        // Extract detail, error, or message from response
-        detail: errorData.detail || errorData.error || errorData.message || error.message,
+        message: errorMessage,
+        detail: errorMessage,
+        fullURL: fullURL,
       }
     };
   }
