@@ -226,6 +226,12 @@ const TraineeDashboard = () => {
       return;
     }
     
+    // Check if password contains only numbers
+    if (/^\d+$/.test(newPassword)) {
+      setChangePasswordMessage("Password cannot be only numbers. Please use a combination of numbers and characters.");
+      return;
+    }
+    
     try {
       const result = await changePassword({
         old_password: oldPassword,
@@ -245,10 +251,28 @@ const TraineeDashboard = () => {
           setChangePasswordMessage("");
         }, 2000);
       } else {
-        setChangePasswordMessage(`Error: ${result.error || "Failed to change password."}`);
+        // Check if error message mentions numeric password
+        const errorMsg = result.error || "Failed to change password.";
+        if (typeof errorMsg === 'string' && (
+          errorMsg.toLowerCase().includes('numeric') || 
+          errorMsg.toLowerCase().includes('number') ||
+          errorMsg.toLowerCase().includes('digit')
+        )) {
+          setChangePasswordMessage("Password cannot be only numbers. Please use a combination of numbers and characters.");
+        } else {
+          setChangePasswordMessage(`Error: ${errorMsg}`);
+        }
       }
     } catch (error) {
-      setChangePasswordMessage(`Error: ${error.message || "Failed to change password."}`);
+      const errorMsg = error.message || "Failed to change password.";
+      // Check if error message mentions numeric password
+      if (errorMsg.toLowerCase().includes('numeric') || 
+          errorMsg.toLowerCase().includes('number') ||
+          errorMsg.toLowerCase().includes('digit')) {
+        setChangePasswordMessage("Password cannot be only numbers. Please use a combination of numbers and characters.");
+      } else {
+        setChangePasswordMessage(`Error: ${errorMsg}`);
+      }
     }
   };
 
