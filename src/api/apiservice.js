@@ -229,6 +229,48 @@ export const confirmPasswordReset = async (data) => {
   }
 };
 
+/**
+ * Change password for authenticated user
+ * POST /account/change-password/
+ * @param {Object} data - Password change data
+ * @param {string} data.old_password - Current password
+ * @param {string} data.new_password - New password
+ * @param {string} data.confirm_password - Confirm new password
+ */
+export const changePassword = async (data) => {
+  try {
+    // Initialize CSRF token if needed (gracefully handle if endpoint doesn't exist)
+    if (!getCsrfToken()) {
+      try {
+        await initCsrf();
+      } catch (csrfError) {
+        console.warn("CSRF token initialization failed, continuing without it:", csrfError.message);
+      }
+    }
+    
+    const headers = {};
+    const csrfToken = getCsrfToken();
+    if (csrfToken) {
+      headers["X-CSRFToken"] = csrfToken;
+    }
+    
+    const response = await apiClient.post("/account/change-password/", {
+      old_password: data.old_password,
+      new_password: data.new_password,
+      confirm_password: data.confirm_password,
+    }, { headers });
+    
+    return { success: true, data: response.data };
+  } catch (error) {
+    const errorMessage = error.response?.data?.detail || 
+                        error.response?.data?.error || 
+                        error.response?.data?.message ||
+                        error.message || 
+                        "Failed to change password.";
+    return { success: false, error: errorMessage };
+  }
+};
+
 export const trainerClient = axios.create({
   baseURL: "https://lms.steel.study/trainer",
   headers: { "Content-Type": "application/json", Accept: "application/json" },

@@ -1509,3 +1509,75 @@ html {
     max-height: 80px;
   }
 }
+
+/* Change Password Modal - Ensure proper containment */
+.change-password-modal {
+  z-index: 1050 !important;
+}
+
+.change-password-modal .modal-dialog {
+  margin: 1.75rem auto !important;
+  max-width: 500px !important;
+  position: relative !important;
+  width: 100% !important;
+  max-height: calc(100vh - 3.5rem) !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.change-password-modal .modal-content {
+  border-radius: 0.5rem !important;
+  border: 1px solid rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  max-height: calc(100vh - 3.5rem) !important;
+}
+
+.change-password-modal .modal-header {
+  border-bottom: 1px solid #dee2e6 !important;
+  padding: 1rem 1.5rem !important;
+  flex-shrink: 0 !important;
+}
+
+.change-password-modal .modal-body {
+  padding: 1.5rem !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+}
+
+.change-password-modal .modal-footer {
+  border-top: 1px solid #dee2e6 !important;
+  padding: 0.75rem 1.5rem !important;
+  flex-shrink: 0 !important;
+}
+
+/* Ensure modal doesn't overflow on mobile */
+@media (max-width: 576px) {
+  .change-password-modal .modal-dialog {
+    margin: 0.5rem !important;
+    max-width: calc(100% - 1rem) !important;
+    max-height: calc(100vh - 1rem) !important;
+  }
+  
+  .change-password-modal .modal-content {
+    max-height: calc(100vh - 1rem) !important;
+  }
+  
+  .change-password-modal .modal-body {
+    padding: 1rem !important;
+  }
+  
+  .change-password-modal .modal-header {
+    padding: 0.75rem 1rem !important;
+  }
+  
+  .change-password-modal .modal-footer {
+    padding: 0.5rem 1rem !important;
+  }
+}

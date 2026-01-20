@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { fetchTrainerDashboard, mediaUrl, fetchSOP, fetchStandardLibrary } from "../../api/trainerAPIservice";
-import { logout, requestPasswordReset, confirmPasswordReset } from "../../api/apiservice";
+import { logout, changePassword } from "../../api/apiservice";
 import { Dropdown, Button, Modal, Form } from "react-bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Loader from "../../UIcomponents/dashboard/loader";
@@ -63,16 +63,12 @@ const TrainerDashboard = () => {
   const name = data?.profile?.name || (username ? username : "Trainer");
   const initial = useMemo(() => (username ? username[0].toUpperCase() : "T"), [username]);
 
-  // Password Reset
-  const [showResetRequestModal, setShowResetRequestModal] = useState(false);
-  const [resetEmail, setResetEmail] = useState("");
-  const [resetRequestMessage, setResetRequestMessage] = useState("");
-  const [showResetConfirmModal, setShowResetConfirmModal] = useState(false);
-  const [uidb64, setUidb64] = useState("");
-  const [token, setToken] = useState("");
+  // Change Password
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+  const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [resetConfirmMessage, setResetConfirmMessage] = useState("");
+  const [changePasswordMessage, setChangePasswordMessage] = useState("");
 
   // near the top of the component (after hooks)
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
@@ -241,45 +237,51 @@ useEffect(() => {
     } else setError("Logout failed.");
   }, [navigate]);
 
-  const handleResetRequest = async (e) => {
+  const handleChangePassword = async (e) => {
     e.preventDefault();
-    try {
-      const result = await requestPasswordReset({ email: resetEmail });
-      if (result.success) setResetRequestMessage("Password reset email sent successfully. Check your inbox.");
-      else setResetRequestMessage(`Error: ${result.error || "Failed to send reset email."}`);
-    } catch (e2) {
-      setResetRequestMessage(`Error: ${e2.message || "Failed to send reset email."}`);
-    }
-  };
-
-  const handleResetConfirm = async (e) => {
-    e.preventDefault();
-    if (newPassword !== confirmPassword) {
-      setResetConfirmMessage("Passwords do not match.");
+    setChangePasswordMessage("");
+    
+    // Validation
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      setChangePasswordMessage("All fields are required.");
       return;
     }
+    
+    if (newPassword !== confirmPassword) {
+      setChangePasswordMessage("New password and confirm password do not match.");
+      return;
+    }
+    
+    if (newPassword.length < 8) {
+      setChangePasswordMessage("New password must be at least 8 characters long.");
+      return;
+    }
+    
     try {
-      const result = await confirmPasswordReset({ uidb64, token, new_password: newPassword });
+      const result = await changePassword({
+        old_password: oldPassword,
+        new_password: newPassword,
+        confirm_password: confirmPassword,
+      });
+      
       if (result.success) {
-        setResetConfirmMessage("Password reset successfully. You can now log in.");
-        setTimeout(() => { window.location.href = "/login"; }, 2000);
-      } else setResetConfirmMessage(`Error: ${result.error || "Failed to reset password."}`);
-    } catch (e2) {
-      setResetConfirmMessage(`Error: ${e2.message || "Failed to reset password."}`);
+        setChangePasswordMessage("Password changed successfully!");
+        // Clear form
+        setOldPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        // Close modal after 2 seconds
+        setTimeout(() => {
+          setShowChangePasswordModal(false);
+          setChangePasswordMessage("");
+        }, 2000);
+      } else {
+        setChangePasswordMessage(`Error: ${result.error || "Failed to change password."}`);
+      }
+    } catch (error) {
+      setChangePasswordMessage(`Error: ${error.message || "Failed to change password."}`);
     }
   };
-
-  // read uid/token from query and open confirm modal (like Admin)
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const uid = urlParams.get("uidb64");
-    const tok = urlParams.get("token");
-    if (uid && tok) {
-      setUidb64(uid);
-      setToken(tok);
-      setShowResetConfirmModal(true);
-    }
-  }, []);
 
   // --- Renderers (unchanged) ---
   const renderSOPItem = (sop) => (
@@ -543,11 +545,11 @@ useEffect(() => {
                 className="settings-menu-item"
                 onClick={() => {
                   setShowDropdown(false);
-                  setShowResetRequestModal(true);
+                  setShowChangePasswordModal(true);
                 }}
               >
                 <i className="bi bi-key"></i>
-                <span>Reset Password</span>
+                <span>Change Password</span>
               </div>
             </div>
           )}
@@ -565,39 +567,79 @@ useEffect(() => {
         </div>
       </aside>
 
-      {/* Password Reset Modals (unchanged) */}
-      <Modal show={showResetRequestModal} onHide={() => setShowResetRequestModal(false)}>
-        <Modal.Header closeButton><Modal.Title>Request Password Reset</Modal.Title></Modal.Header>
+      {/* Change Password Modal */}
+      <Modal 
+        show={showChangePasswordModal} 
+        onHide={() => {
+          setShowChangePasswordModal(false);
+          setOldPassword("");
+          setNewPassword("");
+          setConfirmPassword("");
+          setChangePasswordMessage("");
+        }}
+        centered
+        size="md"
+        className="change-password-modal"
+        style={{ zIndex: 1050 }}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Change Password</Modal.Title>
+        </Modal.Header>
         <Modal.Body>
-          <Form onSubmit={handleResetRequest}>
-            <Form.Group controlId="resetEmail">
-              <Form.Label>Email Address</Form.Label>
-              <Form.Control type="email" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} placeholder="Enter your email" required />
+          <Form onSubmit={handleChangePassword}>
+            <Form.Group controlId="oldPassword">
+              <Form.Label>Current Password</Form.Label>
+              <Form.Control
+                type="password"
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+                placeholder="Enter your current password"
+                required
+              />
             </Form.Group>
-            <Button variant="primary" type="submit" className="mt-3">Send Reset Email</Button>
-          </Form>
-          {resetRequestMessage && <p className={resetRequestMessage.includes("Error") ? "text-danger" : "text-success"}>{resetRequestMessage}</p>}
-        </Modal.Body>
-        <Modal.Footer><Button variant="secondary" onClick={() => setShowResetRequestModal(false)}>Close</Button></Modal.Footer>
-      </Modal>
-
-      <Modal show={showResetConfirmModal} onHide={() => setShowResetConfirmModal(false)}>
-        <Modal.Header closeButton><Modal.Title>Reset Your Password</Modal.Title></Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={handleResetConfirm}>
-            <Form.Group controlId="newPassword">
+            <Form.Group controlId="newPassword" className="mt-3">
               <Form.Label>New Password</Form.Label>
-              <Form.Control type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Enter new password" required />
+              <Form.Control
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Enter new password"
+                required
+                minLength={8}
+              />
             </Form.Group>
             <Form.Group controlId="confirmPassword" className="mt-3">
-              <Form.Label>Confirm Password</Form.Label>
-              <Form.Control type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm new password" required />
+              <Form.Label>Confirm New Password</Form.Label>
+              <Form.Control
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm new password"
+                required
+                minLength={8}
+              />
             </Form.Group>
-            <Button variant="primary" type="submit" className="mt-3">Reset Password</Button>
+            {changePasswordMessage && (
+              <div className={`mt-3 ${changePasswordMessage.includes("Error") ? "text-danger" : "text-success"}`}>
+                {changePasswordMessage}
+              </div>
+            )}
+            <Button variant="primary" type="submit" className="mt-3">
+              Change Password
+            </Button>
           </Form>
-          {resetConfirmMessage && <p className={resetConfirmMessage.includes("Error") ? "text-danger" : "text-success"}>{resetConfirmMessage}</p>}
         </Modal.Body>
-        <Modal.Footer><Button variant="secondary" onClick={() => setShowResetConfirmModal(false)}>Close</Button></Modal.Footer>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => {
+            setShowChangePasswordModal(false);
+            setOldPassword("");
+            setNewPassword("");
+            setConfirmPassword("");
+            setChangePasswordMessage("");
+          }}>
+            Close
+          </Button>
+        </Modal.Footer>
       </Modal>
 
       {/* Updated: Main content margin only for desktop */}
