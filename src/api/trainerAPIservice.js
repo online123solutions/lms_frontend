@@ -260,6 +260,19 @@ export const fetchActiveEmployees = async () => {
   }
 };
 
+export const fetchTrainees = async () => {
+  try {
+    const response = await apiClient.get("/trainees/");
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error fetching trainees:", error);
+    return {
+      success: false,
+      error: error.response?.data || error.message || "Failed to fetch trainees",
+    };
+  }
+};
+
 export const fetchRecentActivity = async () => {
   return apiClient.get("/recent_activity/")
     .then(response => ({ success: true, data: response.data }))

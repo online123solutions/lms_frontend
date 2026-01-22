@@ -70,7 +70,7 @@ const CourseModal = ({ show, handleClose, courses }) => (
   </Modal>
 );
 
-const TeacherDashboardContent = () => {
+const TeacherDashboardContent = ({ onNavigate }) => {
   const navigate = useNavigate();
   const [selectedMonth, setSelectedMonth] = useState("");
   const [availableMonths, setAvailableMonths] = useState([]);
@@ -101,6 +101,11 @@ const TeacherDashboardContent = () => {
   const [activeLearners, setActiveLearners] = useState([]);
   const [showActiveLearnersModal, setShowActiveLearnersModal] = useState(false);
   const [showActiveLearnersPage, setShowActiveLearnersPage] = useState(false);
+
+  // Notifications state
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [notificationsLoading, setNotificationsLoading] = useState(false);
 
   const username = localStorage.getItem("username") || "";
 
@@ -362,6 +367,35 @@ const TeacherDashboardContent = () => {
     loadRecent();
   }, []);
 
+  // Fetch notifications for overview card
+  useEffect(() => {
+    const loadNotifications = async () => {
+      setNotificationsLoading(true);
+      try {
+        const res = await apiClient.get("/notifications/", {
+          params: {
+            box: "inbox",
+            page: 1,
+            page_size: 5, // Get only 5 recent notifications
+          },
+        });
+        const data = res.data || {};
+        const results = Array.isArray(data.results) ? data.results : [];
+        setNotifications(results);
+        // Count unread notifications
+        const unread = results.filter((n) => !n.read_at).length;
+        setUnreadCount(unread);
+      } catch (err) {
+        console.error("Failed to load notifications:", err);
+        setNotifications([]);
+        setUnreadCount(0);
+      } finally {
+        setNotificationsLoading(false);
+      }
+    };
+    loadNotifications();
+  }, []);
+
   const handleActiveLearnersClick = () => setShowActiveLearnersPage(true);
   const handleBackToDashboard = () => setShowActiveLearnersPage(false);
 
@@ -598,7 +632,7 @@ const TeacherDashboardContent = () => {
           {[
             { number: activeLearnerCount, text: "Active Learners", className: "purple", onClick: () => setShowActiveLearnersPage(true) },
             { number: courseCount, text: "Courses", className: "pink", onClick: () => setShowModal(true) },
-            { number: traineeCount, text: "Total Trainees", className: "cyan" },
+            { number: traineeCount, text: "Total Trainees", className: "cyan", onClick: () => onNavigate && onNavigate("trainees") },
           ].map((item, index) => (
             <div
               key={index}
@@ -736,6 +770,127 @@ const TeacherDashboardContent = () => {
                     <div className="text1">{item.text}</div>
                   </div>
                 ))}
+                
+                {/* Notifications Card as 3rd card */}
+                <div
+                  className="overview-card-item1"
+                  style={{
+                    backgroundColor: "#0ba3e6",
+                    borderRadius: "15px",
+                    padding: "12px",
+                    cursor: "pointer",
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "100%",
+                    minHeight: "120px",
+                    transition: "transform 0.2s, box-shadow 0.2s",
+                    textAlign: "left",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.5)"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-2px)";
+                    e.currentTarget.style.boxShadow = "0 4px 8px rgba(0,0,0,0.1)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
+                  onClick={() => onNavigate && onNavigate("notifications")}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                    <div style={{ fontSize: "14px", fontWeight: "600", color: "#000", display: "flex", alignItems: "center" }}>
+                      <i className="bi bi-bell" style={{ marginRight: "6px", color: "#000" }}></i>
+                      Notifications
+                    </div>
+                    {unreadCount > 0 && (
+                      <span 
+                        style={{
+                          backgroundColor: "#e74c3c",
+                          color: "#fff",
+                          borderRadius: "10px",
+                          padding: "2px 8px",
+                          fontSize: "10px",
+                          fontWeight: "600"
+                        }}
+                      >
+                        {unreadCount}
+                      </span>
+                    )}
+                  </div>
+                  {notificationsLoading ? (
+                    <div className="text-center py-2" style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <div className="spinner-border spinner-border-sm text-primary" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                    </div>
+                  ) : notifications.length === 0 ? (
+                    <div className="text-center py-2" style={{ fontSize: "12px", flex: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "#000", opacity: 0.7 }}>
+                      No notifications
+                    </div>
+                  ) : (
+                    <div style={{ 
+                      maxHeight: "150px", 
+                      overflowY: "auto",
+                      flex: 1,
+                      paddingRight: "4px"
+                    }}>
+                      {notifications.map((notification, idx) => (
+                        <div 
+                          key={notification.id || idx}
+                          style={{
+                            padding: "6px 0",
+                            borderBottom: idx < notifications.length - 1 ? "1px solid rgba(0,0,0,0.1)" : "none",
+                            paddingLeft: "4px",
+                            paddingRight: "4px",
+                            marginBottom: idx < notifications.length - 1 ? "4px" : "0"
+                          }}
+                        >
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "2px" }}>
+                            <div style={{ 
+                              fontWeight: !notification.read_at ? "600" : "400", 
+                              fontSize: "11px", 
+                              color: "#000",
+                              lineHeight: "1.3"
+                            }}>
+                              {notification.subject || "(No subject)"}
+                            </div>
+                            {!notification.read_at && (
+                              <span 
+                                style={{
+                                  width: "6px",
+                                  height: "6px",
+                                  backgroundColor: "#e74c3c",
+                                  borderRadius: "50%",
+                                  display: "inline-block",
+                                  marginLeft: "4px",
+                                  flexShrink: 0,
+                                  marginTop: "4px"
+                                }}
+                              ></span>
+                            )}
+                          </div>
+                          {notification.message && (
+                            <div 
+                              style={{ 
+                                fontSize: "10px", 
+                                color: "#333", 
+                                marginTop: "2px",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                display: "-webkit-box",
+                                WebkitLineClamp: 1,
+                                WebkitBoxOrient: "vertical",
+                                lineHeight: "1.2"
+                              }}
+                            >
+                              {notification.message}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 

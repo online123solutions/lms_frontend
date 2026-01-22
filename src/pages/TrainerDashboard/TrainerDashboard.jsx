@@ -18,6 +18,7 @@ import TrainingReport from "./TrainingReport";
 import TrainerProgress from "./TrainerProgress";
 import TrainerTaskReviews from "./TrainerTaskReviews";
 import TrainerProfileEdit from "./TrainerProfileEdit";
+import TraineesList from "./TraineesList";
 import HamButton from "../../Components/Hamburger";
 import logoS1 from "../../assets/sol_logo.png";
 
@@ -28,6 +29,7 @@ const MENU = [
   { label: "Planner", key: "microPlanner", icon: "bi-calendar-check" },
   { label: "Training Report", key: "report", icon: "bi-file-earmark-bar-graph" },
   { label: "Assessment Report", key: "assessmentReport", icon: "bi-graph-up" },
+  { label: "Trainees", key: "trainees", icon: "bi-people" },
   { label: "Notifications", key: "notifications", icon: "bi-bell" },
   { label: "Queries", key: "queries", icon: "bi-chat-left-text" },
   { label: "Progress", key: "trainerProgress", icon: "bi-bar-chart" },
@@ -349,7 +351,7 @@ useEffect(() => {
 
   const renderContent = () => {
     switch (activeContent) {
-      case "dashboard": return <TeacherDashboardContent data={data} />;
+      case "dashboard": return <TeacherDashboardContent data={data} onNavigate={(content) => setActiveContent(content)} />;
       case "profile":
         return (
           <TrainerProfileEdit 
@@ -390,6 +392,7 @@ useEffect(() => {
       case "notifications": return <TrainerNotification />;
       case "trainerProgress": return <TrainerProgress />;
       case "taskReviews": return <TrainerTaskReviews />;
+      case "trainees": return <TraineesList />;
       case "sops": {
         return (
           <div className="sop-page">
