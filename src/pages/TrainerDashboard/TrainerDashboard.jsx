@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import { fetchTrainerDashboard, mediaUrl, fetchSOP, fetchStandardLibrary } from "../../api/trainerAPIservice";
+import { fetchTrainerDashboard, mediaUrl, fetchSOP, fetchStandardLibrary, apiClient } from "../../api/trainerAPIservice";
 import { logout, changePassword } from "../../api/apiservice";
 import { Dropdown, Button, Modal, Form } from "react-bootstrap";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -60,6 +60,9 @@ const TrainerDashboard = () => {
   const [libraryError, setLibraryError] = useState("");
   const [sopsTab, setSopsTab] = useState(() => localStorage.getItem("sopsTab") || "sops");
 
+  // Notification count state
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
+
   const username = localStorage.getItem("username") || "";
   const isAuthenticated = localStorage.getItem("isAuthenticated");
   const name = data?.profile?.name || (username ? username : "Trainer");
@@ -94,6 +97,32 @@ const TrainerDashboard = () => {
   useEffect(() => {
     localStorage.setItem("activeContent", activeContent);
   }, [activeContent]);
+
+  // Fetch unread notification count
+  useEffect(() => {
+    const loadNotificationCount = async () => {
+      try {
+        const res = await apiClient.get("/notifications/", {
+          params: {
+            box: "inbox",
+            page: 1,
+            page_size: 100, // Get enough to count unread
+          },
+        });
+        const data = res.data || {};
+        const results = Array.isArray(data.results) ? data.results : [];
+        const unread = results.filter((n) => !n.read_at).length;
+        setUnreadNotificationCount(unread);
+      } catch (err) {
+        console.error("Failed to load notification count:", err);
+        setUnreadNotificationCount(0);
+      }
+    };
+    loadNotificationCount();
+    // Refresh count every 30 seconds
+    const interval = setInterval(loadNotificationCount, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   // --- lock body scroll when mobile sidebar is open (same as Admin) ---
   useEffect(() => {
@@ -525,7 +554,28 @@ useEffect(() => {
               style={{ pointerEvents: "auto" }}  // Explicit for mobile
             >
               <i className={`bi ${item.icon} sidebar-icon`} />
-              {!isCollapsed && <span className="sidebar-text">{item.label}</span>}
+              {!isCollapsed && (
+                <span className="sidebar-text" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+                  <span>{item.label}</span>
+                  {item.key === "notifications" && unreadNotificationCount > 0 && (
+                    <span 
+                      style={{
+                        backgroundColor: "#e74c3c",
+                        color: "white",
+                        borderRadius: "10px",
+                        padding: "2px 6px",
+                        fontSize: "11px",
+                        fontWeight: "600",
+                        marginLeft: "8px",
+                        minWidth: "18px",
+                        textAlign: "center"
+                      }}
+                    >
+                      {unreadNotificationCount}
+                    </span>
+                  )}
+                </span>
+              )}
               {activeContent === item.key && <span className="active-glow" aria-hidden="true" />}
             </div>
           ))}
