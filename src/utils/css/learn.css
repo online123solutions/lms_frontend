@@ -868,3 +868,25 @@ body {
     font-size: 13px !important;
   }
 }
+
+/* PDF iframe styling for full height */
+.pdf-iframe {
+  height: calc(100vh - 200px) !important;
+  min-height: 800px !important;
+  border: 1px solid #ccc !important;
+  margin-bottom: 10px !important;
+}
+
+@media (max-height: 768px) {
+  .pdf-iframe {
+    height: calc(100vh - 180px) !important;
+    min-height: 600px !important;
+  }
+}
+
+@media (max-height: 552px) {
+  .pdf-iframe {
+    height: calc(100vh - 160px) !important;
+    min-height: 400px !important;
+  }
+}
