@@ -96,11 +96,11 @@ const TrainingReport = () => {
                   <th>User ID</th>
                   <th>Username</th>
                   <th>Name</th>
-                  <th>Role</th>
+                  {/* <th>Role</th> */}
                   <th>Employee ID</th>
                   <th>Department</th>
-                  <th>Designation</th>
-                  <th>Trainer Name</th>
+                  {/* <th>Designation</th> */}
+                  {/* <th>Trainer Name</th> */}
                   <th>Details</th>
                 </tr>
               </thead>
@@ -110,11 +110,11 @@ const TrainingReport = () => {
                     <td>{user.user_id}</td>
                     <td>{user.username}</td>
                     <td>{user.name || "N/A"}</td>
-                    <td>{user.role}</td>
+                    {/* <td>{user.role}</td> */}
                     <td>{user.employee_id || "N/A"}</td>
                     <td>{user.department || "N/A"}</td>
-                    <td>{user.designation || "N/A"}</td>
-                    <td>{user.trainer_name || "N/A"}</td>
+                    {/* <td>{user.designation || "N/A"}</td> */}
+                    {/* <td>{user.trainer_name || "N/A"}</td> */}
                     <td>
                       <button
                         className="btn btn-primary btn-sm"

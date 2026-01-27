@@ -954,7 +954,7 @@ const TeacherDashboardContent = ({ onNavigate }) => {
               </div>
             </div>
 
-            {/* --- Notice Board (same as Admin) --- */}
+            {/* --- Notice Board (same as Admin) --- 
             <div className="content-card1 notice-board-card1">
               <h3>Notice Board</h3>
               <div className="notice-board-content1">
@@ -973,6 +973,7 @@ const TeacherDashboardContent = ({ onNavigate }) => {
                 </div>
               </div>
             </div>
+            */}
           </div>
 
           <div className="right-column1">
