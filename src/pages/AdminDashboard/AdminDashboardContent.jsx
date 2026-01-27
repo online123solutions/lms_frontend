@@ -762,7 +762,7 @@ const AdminDashboardContent = () => {
                 )}
               </div>
 
-              <div className="content-card1 notice-board-card1">
+              {/* <div className="content-card1 notice-board-card1">
                 <h3>Notice Board</h3>
                 <div className="notice-board-content1">
                   <div className="notice-board-scroll1">
@@ -779,7 +779,7 @@ const AdminDashboardContent = () => {
                     )}
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             <div className="right-column1">
