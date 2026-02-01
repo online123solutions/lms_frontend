@@ -33,6 +33,12 @@ const Signup = () => {
     setError(null);
   };
 
+  const clearCache = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    setError("Cache cleared. Please try logging in again.");
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (["username", "email", "password", "role"].includes(name)) {
@@ -54,7 +60,17 @@ const Signup = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(null); // Clear previous errors
+    
     const { username, user } = formData;
+    
+    // Basic validation
+    if (!formData.user.username || !formData.user.password) {
+      setError("Username and password are required");
+      setLoading(false);
+      return;
+    }
+    
     const result = await login(formData.user.username, formData.user.password);
     setLoading(false);
 
@@ -79,7 +95,7 @@ const Signup = () => {
         navigate("/dashboard");
       }
     } else {
-      setError(result.error);
+      setError(result.error || "Login failed. Please check your credentials and try again.");
     }
   };
 
@@ -223,6 +239,25 @@ const Signup = () => {
               </form>
 
               {error && <p className="error-text">{error}</p>}
+
+              {isLoginView && (
+                <button 
+                  type="button" 
+                  onClick={clearCache} 
+                  className="cache-clear-button"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#666',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    marginTop: '10px',
+                    textDecoration: 'underline'
+                  }}
+                >
+                  Clear Cache & Cookies
+                </button>
+              )}
 
               <p onClick={handleToggle} className="toggle-text">
                 {isLoginView

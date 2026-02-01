@@ -56,6 +56,52 @@ function App() {
     localStorage.setItem("isSuperUser", isSuperUser);
   }, [isAuthenticated, role, isSuperUser]);
 
+  // Validate stored token on app startup
+  useEffect(() => {
+    const validateToken = async () => {
+      const token = localStorage.getItem("authToken");
+      const storedAuth = localStorage.getItem("isAuthenticated") === "true";
+      
+      if (token && storedAuth) {
+        try {
+          // Make a simple request to validate token
+          const response = await fetch('https://lms.steel.study/account/profile/', {
+            headers: {
+              'Authorization': `Token ${token}`,
+              'Content-Type': 'application/json',
+            }
+          });
+          
+          if (!response.ok) {
+            // Token is invalid, clear auth state
+            console.warn("Stored token is invalid, clearing authentication state");
+            localStorage.clear();
+            setIsAuthenticated(false);
+            setRole("");
+            setIsSuperUser(false);
+          }
+        } catch (error) {
+          console.error("Token validation failed:", error);
+          // If network error, don't clear state - might be offline
+          if (error.name !== 'TypeError' || error.message !== 'Failed to fetch') {
+            localStorage.clear();
+            setIsAuthenticated(false);
+            setRole("");
+            setIsSuperUser(false);
+          }
+        }
+      } else if (!token && storedAuth) {
+        // Inconsistent state - clear it
+        localStorage.clear();
+        setIsAuthenticated(false);
+        setRole("");
+        setIsSuperUser(false);
+      }
+    };
+
+    validateToken();
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{ isAuthenticated, setIsAuthenticated, role, setRole, isSuperUser, setIsSuperUser }}
