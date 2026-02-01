@@ -329,10 +329,17 @@ const TraineeDashboard = () => {
           </div>
         );
       case "subjects":
+        {
+          console.log("Subjects data before filtering:", data.subjects);
+          const filteredSubjects = data.subjects?.filter(subject => subject.display_on_frontend !== false) || [];
+          console.log("Subjects after filtering:", filteredSubjects);
+        }
         return (
           <div className="subject-cards-container">
             {data?.subjects?.length > 0 ? (
-              data.subjects.map((subject) => (
+              data.subjects
+                .filter(subject => subject.display_on_frontend !== false)
+                .map((subject) => (
                 <div key={subject.id} className="subject-card">
                   <Link
                     to={`/learning/${subject.slug}`}
