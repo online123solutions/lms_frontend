@@ -245,6 +245,14 @@ const Learning = () => {
       const id = url.split("youtu.be/")[1].split("?")[0];
       return `https://www.youtube.com/embed/${id}`;
     }
+    // Handle Google Drive video links
+    if (url.includes("drive.google.com/file/d/")) {
+      const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      if (match && match[1]) {
+        const fileId = match[1];
+        return `https://drive.google.com/file/d/${fileId}/preview`;
+      }
+    }
     if (isSharePoint(url)) {
       // Try WOPI first, but fallback to Office Online
       const wopiUrl = buildSharePointWopiEmbed(url);
