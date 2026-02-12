@@ -73,11 +73,14 @@ function App() {
             validationUrl = 'https://lms.steel.study/trainee/profile/';
           } else if (storedRole === 'trainer') {
             validationUrl = 'https://lms.steel.study/trainer/profile/';
-          } else if (storedRole === 'employee') {
-            // Employee might not have a profile endpoint, use a generic one
+          } else if (storedRole === 'employee' || storedRole === 'admin') {
+            // Employee and Admin don't have profile endpoints, use generic one or skip validation
+            // For admin, we'll skip validation since there's no profile endpoint
+            if (storedRole === 'admin') {
+              // Admin doesn't have a profile endpoint, skip validation
+              return;
+            }
             validationUrl = 'https://lms.steel.study/account/profile/';
-          } else if (storedRole === 'admin') {
-            validationUrl = 'https://lms.steel.study/admin/profile/';
           }
           
           const response = await fetch(validationUrl, {
