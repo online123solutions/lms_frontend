@@ -61,37 +61,59 @@ function App() {
     const validateToken = async () => {
       const token = localStorage.getItem("authToken");
       const storedAuth = localStorage.getItem("isAuthenticated") === "true";
+      const storedRole = localStorage.getItem("role") || "";
       
       if (token && storedAuth) {
         try {
-          // Make a simple request to validate token
-          const response = await fetch('https://lms.steel.study/account/profile/', {
+          // Use role-specific endpoint for validation
+          let validationUrl = 'https://lms.steel.study/account/profile/';
+          
+          // Try role-specific endpoints if available
+          if (storedRole === 'trainee') {
+            validationUrl = 'https://lms.steel.study/trainee/profile/';
+          } else if (storedRole === 'trainer') {
+            validationUrl = 'https://lms.steel.study/trainer/profile/';
+          } else if (storedRole === 'employee') {
+            // Employee might not have a profile endpoint, use a generic one
+            validationUrl = 'https://lms.steel.study/account/profile/';
+          } else if (storedRole === 'admin') {
+            validationUrl = 'https://lms.steel.study/admin/profile/';
+          }
+          
+          const response = await fetch(validationUrl, {
             headers: {
               'Authorization': `Token ${token}`,
               'Content-Type': 'application/json',
             }
           });
           
-          if (!response.ok) {
-            // Token is invalid, clear auth state
-            console.warn("Stored token is invalid, clearing authentication state");
+          // Only clear auth state on authentication errors (401, 403)
+          // Don't clear on 404 (endpoint not found) or other errors
+          if (response.status === 401 || response.status === 403) {
+            console.warn("Token is invalid (401/403), clearing authentication state");
             localStorage.clear();
             setIsAuthenticated(false);
             setRole("");
             setIsSuperUser(false);
+          } else if (!response.ok && response.status !== 404) {
+            // For other errors (except 404), log but don't clear - might be temporary
+            console.warn("Token validation returned non-OK status:", response.status, "but keeping auth state");
           }
         } catch (error) {
           console.error("Token validation failed:", error);
-          // If network error, don't clear state - might be offline
-          if (error.name !== 'TypeError' || error.message !== 'Failed to fetch') {
-            localStorage.clear();
-            setIsAuthenticated(false);
-            setRole("");
-            setIsSuperUser(false);
+          // Only clear on network errors if it's clearly an auth issue
+          // Don't clear on general network failures - user might be offline
+          if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
+            // Network error - don't clear state, might be offline
+            console.warn("Network error during token validation, keeping auth state");
+          } else {
+            // Other errors - be conservative and keep state
+            console.warn("Token validation error, but keeping auth state:", error.message);
           }
         }
       } else if (!token && storedAuth) {
         // Inconsistent state - clear it
+        console.warn("Token missing but auth state is true, clearing inconsistent state");
         localStorage.clear();
         setIsAuthenticated(false);
         setRole("");
