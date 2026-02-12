@@ -4,6 +4,7 @@ import {
   createQuery,
   respondToQuery,
   submitFeedback,
+  fetchFeedbackForm,
   listConcerns,
   createConcern,
   addConcernComment,
@@ -35,12 +36,15 @@ export default function TraineeChat() {
   const [isLoading, setIsLoading] = useState(false);
   const [activeSection, setActiveSection] = useState(null); // "raise" | "feedback" | "concern"
   const [feedback, setFeedback] = useState({
+    trainer_id: "",
     communication: 0,
     subjectKnowledge: 0,
     mentorship: 0,
     customFeedback: "",
   });
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [trainers, setTrainers] = useState([]);
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
   const currentUsername = (localStorage.getItem("username") || "").trim();
   const listEndRef = useRef(null);
 
@@ -185,10 +189,61 @@ export default function TraineeChat() {
     setFeedback((prev) => ({ ...prev, [param]: value }));
   };
 
+  // Fetch trainers when feedback section opens
+  useEffect(() => {
+    const loadFeedbackForm = async () => {
+      if (activeSection === "feedback") {
+        setFeedbackLoading(true);
+        setError(null); // Clear previous errors
+        try {
+          const response = await fetchFeedbackForm();
+          
+          if (response.success && response.data) {
+            // The backend now returns trainers in a 'trainers' field
+            const trainersList = response.data.trainers && Array.isArray(response.data.trainers) 
+              ? response.data.trainers 
+              : [];
+            
+            if (trainersList.length > 0) {
+              setTrainers(trainersList);
+              setError(null); // Clear any previous errors
+            } else {
+              setTrainers([]);
+              setError("No trainers available.");
+            }
+          } else {
+            const errorMsg = 
+              response.error?.detail || 
+              response.error?.message || 
+              (typeof response.error === 'string' ? response.error : "Failed to load trainers. Please try again.");
+            console.error("Error loading trainers:", errorMsg, response.error);
+            setError(errorMsg);
+            setTrainers([]);
+          }
+        } catch (err) {
+          console.error("Failed to load feedback form:", err);
+          const errorMsg = err.response?.data?.detail || err.message || "Failed to load feedback form. Please try again.";
+          setError(errorMsg);
+          setTrainers([]);
+        } finally {
+          setFeedbackLoading(false);
+        }
+      } else {
+        // Reset trainers when leaving feedback section
+        setTrainers([]);
+      }
+    };
+    loadFeedbackForm();
+  }, [activeSection]);
+
   const handleSubmitFeedback = async () => {
+    if (!feedback.trainer_id) {
+      setError("Please select a trainer.");
+      return;
+    }
     try {
       const response = await submitFeedback({
-        username: currentUsername,
+        trainer_id: feedback.trainer_id,
         communication: feedback.communication,
         subjectKnowledge: feedback.subjectKnowledge,
         mentorship: feedback.mentorship,
@@ -198,6 +253,7 @@ export default function TraineeChat() {
       if (response.success) {
         setSubmitSuccess(true);
         setFeedback({
+          trainer_id: "",
           communication: 0,
           subjectKnowledge: 0,
           mentorship: 0,
@@ -454,69 +510,101 @@ export default function TraineeChat() {
           // --- FEEDBACK SECTION ---
           <div className="feedback-section card">
             <h3>Provide Feedback for Trainer</h3>
-            <div className="feedback-form">
-              <div className="form-group">
-                <label>Communication (1-5)</label>
-                <input
-                  type="number"
-                  min="1"
-                  max="5"
-                  value={feedback.communication}
-                  onChange={(e) =>
-                    handleFeedbackChange("communication", e.target.value)
-                  }
-                />
+            {feedbackLoading ? (
+              <div className="loading-state">Loading trainers...</div>
+            ) : (
+              <div className="feedback-form">
+                <div className="form-group">
+                  <label>Select Trainer *</label>
+                  <select
+                    value={feedback.trainer_id}
+                    onChange={(e) =>
+                      handleFeedbackChange("trainer_id", e.target.value)
+                    }
+                    required
+                    disabled={trainers.length === 0}
+                  >
+                    <option value="">-- Select a trainer --</option>
+                    {trainers.map((trainer) => {
+                      const trainerId = trainer.id;
+                      const trainerName = trainer.name || trainer.username || `Trainer #${trainerId}`;
+                      return (
+                        <option key={trainerId} value={trainerId}>
+                          {trainerName}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  {trainers.length === 0 && !feedbackLoading && (
+                    <small className="text-muted" style={{ display: "block", marginTop: "5px" }}>
+                      No trainers available
+                    </small>
+                  )}
+                </div>
+                <div className="form-group">
+                  <label>Communication (1-5)</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="5"
+                    value={feedback.communication}
+                    onChange={(e) =>
+                      handleFeedbackChange("communication", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Subject Knowledge (1-5)</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="5"
+                    value={feedback.subjectKnowledge}
+                    onChange={(e) =>
+                      handleFeedbackChange("subjectKnowledge", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Mentorship (1-5)</label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="5"
+                    value={feedback.mentorship}
+                    onChange={(e) =>
+                      handleFeedbackChange("mentorship", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Custom Feedback</label>
+                  <textarea
+                    rows={3}
+                    value={feedback.customFeedback}
+                    onChange={(e) =>
+                      handleFeedbackChange("customFeedback", e.target.value)
+                    }
+                    placeholder="Any suggestions?"
+                  />
+                </div>
+                <div className="actions">
+                  <button
+                    className="btn-primary"
+                    onClick={handleSubmitFeedback}
+                    disabled={!feedback.trainer_id}
+                  >
+                    Submit
+                  </button>
+                  <button
+                    className="btn-back"
+                    onClick={() => setActiveSection(null)}
+                  >
+                    Back
+                  </button>
+                </div>
               </div>
-              <div className="form-group">
-                <label>Subject Knowledge (1-5)</label>
-                <input
-                  type="number"
-                  min="1"
-                  max="5"
-                  value={feedback.subjectKnowledge}
-                  onChange={(e) =>
-                    handleFeedbackChange("subjectKnowledge", e.target.value)
-                  }
-                />
-              </div>
-              <div className="form-group">
-                <label>Mentorship (1-5)</label>
-                <input
-                  type="number"
-                  min="1"
-                  max="5"
-                  value={feedback.mentorship}
-                  onChange={(e) =>
-                    handleFeedbackChange("mentorship", e.target.value)
-                  }
-                />
-              </div>
-              <div className="form-group">
-                <label>Custom Feedback</label>
-                <textarea
-                  rows={3}
-                  value={feedback.customFeedback}
-                  onChange={(e) =>
-                    handleFeedbackChange("customFeedback", e.target.value)
-                  }
-                  placeholder="Any suggestions?"
-                />
-              </div>
-              <div className="actions">
-                <button
-                  className="btn-primary"
-                  onClick={handleSubmitFeedback}
-                >
-                  Submit
-                </button>
-                <button
-                  className="btn-back"
-                  onClick={() => setActiveSection(null)}
-                >
-                  Back
-                </button>
-              </div>
-            </div>
+            )}
           </div>
         ) : (
           // --- CONCERN SECTION ---

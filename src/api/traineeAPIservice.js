@@ -238,6 +238,16 @@ export async function getTraineeProgress() {
   return data; // { user_id, username, name, totals, subjects[] }
 }
 
+export const fetchFeedbackForm = async () => {
+  try {
+    const res = await apiClient.get("/feedback/submit/");
+    return { success: true, data: res.data };
+  } catch (error) {
+    console.error("fetchFeedbackForm error:", error?.response?.data || error);
+    return { success: false, error: error?.response?.data || error };
+  }
+};
+
 export const submitFeedback = async (feedbackData) => {
   try {
     const res = await apiClient.post("/feedback/submit/", feedbackData);

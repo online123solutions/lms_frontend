@@ -53,21 +53,33 @@ const AdminFeedbackPage = () => {
 
   const exportCSV = () => {
     const header = [
-      "User",
+      "Trainee",
+      "Trainer",
       "Communication",
       "SubjectKnowledge",
       "Mentorship",
       "Comment",
       "CreatedAt",
     ];
-    const lines = rows.map(r => [
-      r.trainee_username,
-      r.communication,
-      r.subject_knowledge,
-      r.mentorship,
-      (r.custom_feedback || "").replace(/\n/g, " ").replace(/"/g, '""'),
-      new Date(r.created_at).toLocaleString(),
-    ]);
+    const lines = rows.map(r => {
+      const trainerName = 
+        r.trainer?.name || 
+        r.trainer_name || 
+        r.trainer?.username || 
+        r.trainer_username ||
+        r.trainer?.user?.name ||
+        r.trainer?.user?.username ||
+        "";
+      return [
+        r.trainee_username,
+        trainerName,
+        r.communication,
+        r.subject_knowledge,
+        r.mentorship,
+        (r.custom_feedback || "").replace(/\n/g, " ").replace(/"/g, '""'),
+        new Date(r.created_at).toLocaleString(),
+      ];
+    });
     const csv = [header, ...lines]
       .map(arr => arr.map(x => `"${x ?? ""}"`).join(","))
       .join("\n");
@@ -151,7 +163,8 @@ const AdminFeedbackPage = () => {
           <table className="afp-table">
             <thead>
               <tr>
-                <th>User</th>
+                <th>Trainee</th>
+                <th>Trainer</th>
                 <th>Communication</th>
                 <th>Subject Knowledge</th>
                 <th>Mentorship</th>
@@ -161,19 +174,31 @@ const AdminFeedbackPage = () => {
             </thead>
             <tbody>
               {rows.length === 0 ? (
-                <tr><td colSpan="6" className="empty">No feedback found.</td></tr>
-              ) : rows.map(r => (
-                <tr key={r.id}>
-                  <td>{r.trainee_username}</td>
-                  <td>{r.communication}</td>
-                  <td>{r.subject_knowledge}</td>
-                  <td>{r.mentorship}</td>
-                  <td className="truncate" title={r.custom_feedback || ""}>
-                    {r.custom_feedback || "-"}
-                  </td>
-                  <td>{new Date(r.created_at).toLocaleString()}</td>
-                </tr>
-              ))}
+                <tr><td colSpan="7" className="empty">No feedback found.</td></tr>
+              ) : rows.map(r => {
+                // Extract trainer name from various possible field structures
+                const trainerName = 
+                  r.trainer?.name || 
+                  r.trainer_name || 
+                  r.trainer?.username || 
+                  r.trainer_username ||
+                  r.trainer?.user?.name ||
+                  r.trainer?.user?.username ||
+                  "-";
+                return (
+                  <tr key={r.id}>
+                    <td>{r.trainee_username}</td>
+                    <td>{trainerName}</td>
+                    <td>{r.communication}</td>
+                    <td>{r.subject_knowledge}</td>
+                    <td>{r.mentorship}</td>
+                    <td className="truncate" title={r.custom_feedback || ""}>
+                      {r.custom_feedback || "-"}
+                    </td>
+                    <td>{new Date(r.created_at).toLocaleString()}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
