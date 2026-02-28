@@ -113,6 +113,32 @@ export default function TrainerNotify() {
       setInboxNext(data.next || null);
       setInboxPrev(data.previous || null);
       setInboxPage(pageArg);
+      
+      // Mark all unread notifications as read
+      const unreadNotifications = results.filter((n) => !n.read_at);
+      for (const notification of unreadNotifications) {
+        try {
+          await apiClient.post("/mark-read/", { notification_id: notification.id });
+        } catch (err) {
+          console.error(`Failed to mark notification ${notification.id} as read:`, err);
+        }
+      }
+      
+      // Reload inbox to show updated read status
+      if (unreadNotifications.length > 0) {
+        const refreshRes = await apiClient.get("/notifications/", {
+          params: {
+            box: "inbox",
+            page: pageArg,
+            page_size: pageSize,
+            search: searchArg || undefined,
+            from_admin: fromAdminArg ? "true" : undefined,
+          },
+        });
+        const refreshData = refreshRes.data || {};
+        const refreshResults = Array.isArray(refreshData.results) ? refreshData.results : [];
+        setInboxItems(refreshResults);
+      }
     } catch (err) {
       setInboxError(
         err?.response?.data?.detail ||

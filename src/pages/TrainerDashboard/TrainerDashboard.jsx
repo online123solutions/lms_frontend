@@ -99,30 +99,61 @@ const TrainerDashboard = () => {
   }, [activeContent]);
 
   // Fetch unread notification count
+  const loadNotificationCount = useCallback(async () => {
+    try {
+      const res = await apiClient.get("/notifications/", {
+        params: {
+          box: "inbox",
+          page: 1,
+          page_size: 100, // Get enough to count unread
+        },
+      });
+      const data = res.data || {};
+      const results = Array.isArray(data.results) ? data.results : [];
+      const unread = results.filter((n) => !n.read_at).length;
+      setUnreadNotificationCount(unread);
+    } catch (err) {
+      console.error("Failed to load notification count:", err);
+      setUnreadNotificationCount(0);
+    }
+  }, []);
+
   useEffect(() => {
-    const loadNotificationCount = async () => {
-      try {
-        const res = await apiClient.get("/notifications/", {
-          params: {
-            box: "inbox",
-            page: 1,
-            page_size: 100, // Get enough to count unread
-          },
-        });
-        const data = res.data || {};
-        const results = Array.isArray(data.results) ? data.results : [];
-        const unread = results.filter((n) => !n.read_at).length;
-        setUnreadNotificationCount(unread);
-      } catch (err) {
-        console.error("Failed to load notification count:", err);
-        setUnreadNotificationCount(0);
-      }
-    };
     loadNotificationCount();
     // Refresh count every 30 seconds
     const interval = setInterval(loadNotificationCount, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, [loadNotificationCount]);
+
+  // Mark all unread notifications as read when notifications tab is opened
+  const markAllNotificationsAsRead = useCallback(async () => {
+    try {
+      const res = await apiClient.get("/notifications/", {
+        params: {
+          box: "inbox",
+          page: 1,
+          page_size: 100,
+        },
+      });
+      const data = res.data || {};
+      const results = Array.isArray(data.results) ? data.results : [];
+      const unreadNotifications = results.filter((n) => !n.read_at);
+      
+      // Mark each unread notification as read
+      for (const notification of unreadNotifications) {
+        try {
+          await apiClient.post("/mark-read/", { notification_id: notification.id });
+        } catch (err) {
+          console.error(`Failed to mark notification ${notification.id} as read:`, err);
+        }
+      }
+      
+      // Refresh the count after marking all as read
+      await loadNotificationCount();
+    } catch (err) {
+      console.error("Failed to mark notifications as read:", err);
+    }
+  }, [loadNotificationCount]);
 
   // --- lock body scroll when mobile sidebar is open (same as Admin) ---
   useEffect(() => {
@@ -532,6 +563,12 @@ useEffect(() => {
                 const newContent = item.key;
                 setActiveContent(newContent);
                 localStorage.setItem("activeContent", newContent);
+                
+                // Mark all notifications as read when notifications tab is clicked
+                if (newContent === "notifications") {
+                  markAllNotificationsAsRead();
+                }
+                
                 // Updated: Delay close in mobile to allow content switch to render
                 if (isMobile && isSidebarOpen) {
                   setTimeout(() => setIsSidebarOpen(false), 150);
@@ -544,6 +581,12 @@ useEffect(() => {
                   const newContent = item.key;
                   setActiveContent(newContent);
                   localStorage.setItem("activeContent", newContent);
+                  
+                  // Mark all notifications as read when notifications tab is clicked
+                  if (newContent === "notifications") {
+                    markAllNotificationsAsRead();
+                  }
+                  
                   if (isMobile && isSidebarOpen) {
                     setTimeout(() => setIsSidebarOpen(false), 150);
                   }
