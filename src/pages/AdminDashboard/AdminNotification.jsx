@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Modal, Button, Form, Alert } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { sendAdminNotification, apiClient } from "../../api/adminAPIservice";
+import { sendAdminNotification, apiClient, fetchAdminDashboard } from "../../api/adminAPIservice";
 import "../../utils/css/Trainer CSS/trainernotification.css";
 
 const initialForm = {
@@ -31,6 +31,7 @@ export default function AdminNotify() {
   const [formData, setFormData] = useState(initialForm);
   const [responseMsg, setResponseMsg] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [departments, setDepartments] = useState([]);
 
   // sent-list state
   const [items, setItems] = useState([]);
@@ -44,6 +45,28 @@ export default function AdminNotify() {
   const [listError, setListError] = useState("");
 
   const debRef = useRef(null);
+
+  // ====== Load Departments ======
+  useEffect(() => {
+    const loadDepartments = async () => {
+      try {
+        const result = await fetchAdminDashboard();
+        if (result.success && result.data.departments) {
+          const departmentsData = result.data.departments;
+          const uniqueDepartments = departmentsData
+            .filter(dept => dept.department && typeof dept.department === 'string' && dept.department.trim() !== '')
+            .map((dept, index) => ({
+              name: dept.department.trim(),
+              id: `dept-${index}`
+            }));
+          setDepartments(uniqueDepartments);
+        }
+      } catch (error) {
+        console.error("Failed to load departments:", error);
+      }
+    };
+    loadDepartments();
+  }, []);
 
   // ====== Sent list loader ======
   const loadSent = async ({ pageArg = page, searchArg = search } = {}) => {
@@ -372,16 +395,19 @@ export default function AdminNotify() {
             {formData.mode === "group" && (
               <Form.Group className="mb-3">
                 <Form.Label>Department (for Employees/Trainers, optional)</Form.Label>
-                <Form.Control
-                  type="text"
+                <Form.Select
                   name="department"
                   value={formData.department}
                   onChange={handleChange}
                   disabled={deptDisabled}
-                  placeholder={
-                    deptDisabled ? "Not applicable" : "e.g., Robotics"
-                  }
-                />
+                >
+                  <option value="">All Departments</option>
+                  {departments.map((dept) => (
+                    <option key={dept.id} value={dept.name}>
+                      {dept.name}
+                    </option>
+                  ))}
+                </Form.Select>
               </Form.Group>
             )}
 

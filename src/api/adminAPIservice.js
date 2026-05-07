@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { ok, fail } from './apiHelpers';
+import { API_BASE } from './config';
 
-const BASE_URL = 'https://lms.steel.study/custom_admin';
+const BASE_URL = `${API_BASE}/custom_admin`;
 
 export const apiClient = axios.create({
   baseURL: BASE_URL,
@@ -276,8 +277,7 @@ export async function getDetailedTrainingReport(userId) {
   return res.data;
 }
 
-export const API_BASE =
-  (process.env.REACT_APP_API_BASE_URL || "https://lms.steel.study").replace(/\/+$/, "");
+export { API_BASE } from "./config";
 
 export function mediaUrl(path) {
   if (!path) return "";
@@ -357,6 +357,23 @@ export async function fetchStandardLibrary() {
     return { success: false, error: e?.response?.data?.detail || e.message };
   }
 }
+
+export const fetchDepartments = async () => {
+  try {
+    const res = await apiClient.get("/departments/");
+    return { success: true, data: res.data };
+  } catch {
+    try {
+      const token = localStorage.getItem("authToken");
+      const res = await axios.get(`${API_BASE}/departments/`, {
+        headers: { Authorization: `Token ${token}` },
+      });
+      return { success: true, data: res.data };
+    } catch (error) {
+      return { success: false, error: error?.response?.data || error.message };
+    }
+  }
+};
 
 export const fetchTraineeFeedback = async (params = {}) => {
   try {

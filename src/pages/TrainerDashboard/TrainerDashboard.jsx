@@ -21,6 +21,8 @@ import TrainerProfileEdit from "./TrainerProfileEdit";
 import TraineesList from "./TraineesList";
 import HamButton from "../../Components/Hamburger";
 import logoS1 from "../../assets/sol_logo.png";
+import "../../utils/css/sidebar.css";
+import "../../utils/css/sidebar-fix.css";
 
 const MENU = [
   { label: "Dashboard", key: "dashboard", icon: "bi-house" },
@@ -594,25 +596,14 @@ useEffect(() => {
                 }
               }}
               title={isCollapsed ? item.label : undefined}
-              style={{ pointerEvents: "auto" }}  // Explicit for mobile
             >
               <i className={`bi ${item.icon} sidebar-icon`} />
               {!isCollapsed && (
-                <span className="sidebar-text" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-                  <span>{item.label}</span>
+                <span className="sidebar-text">
+                  {item.label}
                   {item.key === "notifications" && unreadNotificationCount > 0 && (
                     <span 
-                      style={{
-                        backgroundColor: "#e74c3c",
-                        color: "white",
-                        borderRadius: "10px",
-                        padding: "2px 6px",
-                        fontSize: "11px",
-                        fontWeight: "600",
-                        marginLeft: "8px",
-                        minWidth: "18px",
-                        textAlign: "center"
-                      }}
+                      className="badge rounded-pill bg-danger ms-2"
                     >
                       {unreadNotificationCount}
                     </span>

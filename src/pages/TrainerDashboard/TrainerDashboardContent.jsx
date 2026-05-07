@@ -25,6 +25,7 @@ import {
   fetchTrainerLessonProgress
 } from "../../api/trainerAPIservice";
 import { logout } from "../../api/apiservice";
+import { API_BASE } from "../../api/config";
 import logoSO from "../../assets/logo1.png";
 import "../../index.css";
 import { mediaUrl } from "../../api/traineeAPIservice";
@@ -997,7 +998,7 @@ const TeacherDashboardContent = ({ onNavigate }) => {
                 <button
                   type="button"
                   className="qa-btn cyan"
-                  onClick={() => { window.location.href = "https://lms.steel.study/admin/"; }}
+                  onClick={() => { window.location.href = `${API_BASE}/admin/`; }}
                 >
                   <i className="bi bi-journal-plus"></i>
                   <span>Add Lesson</span>

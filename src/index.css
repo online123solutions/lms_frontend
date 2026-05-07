@@ -92,8 +92,14 @@ span {
 }
 .sidebar .sidebar-logo {
   display: block;
-  height: auto;
+  height: 96px;
+  width: auto;
   max-width: 100%;
+  object-fit: contain;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 .sidebar .sidebar-item {
   align-items: center;
@@ -105,18 +111,62 @@ span {
   padding: 10px;
   user-select: none;
 }
+
+/* Force consistent vertical centering and sizing for icons/text */
+.sidebar .sidebar-item {
+  align-items: center;
+  min-height: 40px;
+}
+
+.sidebar .sidebar-icon {
+  font-size: 18px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.sidebar .sidebar-text > span {
+  line-height: 1.1;
+}
+
+.sidebar .sidebar-icon {
+  /* restore simple icon sizing */
+  min-width: 26px;
+  text-align: center;
+  font-size: 1.2rem;
+  display: inline-block;
+}
+
+.sidebar .sidebar-text {
+  display: inline-block;
+}
 .sidebar .sidebar-item:hover {
-  filter: brightness(0.95);
+  /* removed hover visual change for cleaner look */
+  filter: none;
+  transform: none;
+  background: transparent;
+}
+
+/* Remove focus outline when clicking sidebar items (keep minimal keyboard focus handling if needed) */
+.sidebar .sidebar-item:focus,
+.sidebar a:focus,
+.sidebar button:focus {
+  outline: none !important;
+  box-shadow: none !important;
 }
 .sidebar .sidebar-item.active {
   background: #ffffff0a;
 }
 .sidebar .sidebar-icon {
-  min-width: 26px;
+  min-width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
 }
 .sidebar .sidebar-text {
-  display: inline-block;
+  display: flex;
+  align-items: center;
 }
 .content-panel,
 .main,

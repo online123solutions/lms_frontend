@@ -1,7 +1,8 @@
 import axios from "axios";
 import { ok, fail } from "./apiHelpers";
+import { API_BASE } from "./config";
 
-const BASE_URL = "https://lms.steel.study";
+const BASE_URL = API_BASE;
 
 // Create Axios instance
 export const apiClient = axios.create({
@@ -39,6 +40,19 @@ apiClient.interceptors.request.use(
     if (token) {
       config.headers["Authorization"] = `Token ${token}`;
     }
+    
+    // Only add CSRF token for specific endpoints that require it
+    // and only if the token is available
+    const csrfRequiredEndpoints = ['/account/password-reset/', '/account/password-reset-confirm/', '/account/change-password/'];
+    const isCsrfRequired = csrfRequiredEndpoints.some(endpoint => config.url?.includes(endpoint));
+    
+    if (isCsrfRequired) {
+      const csrfToken = getCsrfToken();
+      if (csrfToken) {
+        config.headers["X-CSRFTOKEN"] = csrfToken;
+      }
+    }
+    
     return config;
   },
   (error) => Promise.reject(error)
@@ -91,6 +105,17 @@ const pickError = (e, fallback) =>
   e?.response?.data?.detail ||
   e?.message ||
   fallback;
+
+// Clear authentication tokens (useful when switching environments)
+export const clearAuthTokens = () => {
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("username");
+  localStorage.removeItem("dashboard_url");
+  localStorage.removeItem("role");
+  localStorage.removeItem("isSuperUser");
+  localStorage.removeItem("isAuthenticated");
+  console.log("Authentication tokens cleared");
+};
 
 // ✅ LOGIN FUNCTION
 export const login = async (username_or_email, password) => {
@@ -272,7 +297,7 @@ export const changePassword = async (data) => {
 };
 
 export const trainerClient = axios.create({
-  baseURL: "https://lms.steel.study/trainer",
+  baseURL: `${API_BASE}/trainer`,
   headers: { "Content-Type": "application/json", Accept: "application/json" },
 });
 

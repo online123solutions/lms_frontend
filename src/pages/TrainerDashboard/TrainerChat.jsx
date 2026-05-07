@@ -8,7 +8,6 @@ import {
 
 // Reuse your existing Trainee chat styles
 import "../../utils/css/Trainer CSS/trainerchat.css";
-import "../../"
 
 // If you already keep username/role/department in LS, we’ll use that for convenience
 const currentUsername = (localStorage.getItem("username") || "").trim();
@@ -216,32 +215,34 @@ async function assignToMe() {
   }
 
   return (
-    <div className="trainer-queries-scope">
-    <div className="qc-root">
-      <div className="qc-shell">
-        {/* Top bar */}
-        <div className="qc-topbar">
-          <div className="qc-top-left">
-            <h2><i className="bi bi-chat-left-text" style={{ color: "#FFFFFF" }}></i> Trainer Queries</h2>
-            {selectedQuery && headerChips(selectedQuery)}
-          </div>
-          <div className="qc-top-actions">
+    <div className="trainer-queries">
+      <div className="d-flex justify-content-between align-items-center mb-4 header">
+        <h2 className="fw-bold text-white m-0">
+          <i className="bi bi-chat-left-text" style={{ color: "#FFFFFF" }}></i>
+          {" "}
+          Trainer Queries
+        </h2>
+        <div className="d-flex align-items-center gap-2">
+          {selectedQuery && (
             <button
               type="button"
-              className="btn-outline back-button-mobile"
+              className="btn btn-outline-secondary"
               onClick={() => setSelectedQuery(null)}
               aria-label="Back to list"
             >
               ← Back to list
             </button>
-          </div>
+          )}
         </div>
+      </div>
 
-        <div className="query-chat-container">
+        <div className="queries-content">
           {/* LEFT: List & Filters */}
-          <aside className="query-list">
-            <div className="list-search">
+          <aside className="queries-sidebar">
+            <div className="queries-search">
               <input
+                type="text"
+                className="form-control"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search by text, user, category, department…"
@@ -374,7 +375,7 @@ async function assignToMe() {
                 <div className="message-area">
                   {/* Root question */}
                   <div className="bubble-row left">
-                    <div className="avatar">
+                    <div className="avatar" title={selectedQuery.raised_by || "Unknown User"}>
                       {(selectedQuery.raised_by || "U").slice(0, 1).toUpperCase()}
                     </div>
                     <div className="bubble trainee">
@@ -396,7 +397,7 @@ async function assignToMe() {
                     const initials = (name || "U").slice(0, 1).toUpperCase();
                     return (
                       <div key={r.id || idx} className={`bubble-row ${side}`}>
-                        <div className="avatar">{initials}</div>
+                        <div className="avatar" title={name}>{initials}</div>
                         <div className={`bubble ${bubbleClass(who)}`}>
                           <div className="bubble-text">{r.response}</div>
                           <div className="bubble-meta">
@@ -423,8 +424,6 @@ async function assignToMe() {
             )}
           </main>
         </div>
-      </div>
-    </div>
     </div>
   );
 }

@@ -1,8 +1,9 @@
 import axios from "axios";
 import { ok, fail } from "./apiHelpers";
-import { apiClient as defaultApiClient, initCsrf, getCsrfToken } from "./apiservice"; 
+import { apiClient as defaultApiClient, initCsrf, getCsrfToken } from "./apiservice";
+import { API_BASE } from "./config";
 
-const BASE_URL = "https://lms.steel.study/trainee";
+const BASE_URL = `${API_BASE}/trainee`;
 
 export const apiClient = axios.create({
   baseURL: BASE_URL,
@@ -141,9 +142,7 @@ export const fetchActiveHomeworkAssignments = async () => {
   }
 };
 
-// somewhere central, e.g. src/api/url.js
-export const API_BASE =
-  (process.env.REACT_APP_API_BASE_URL || "https://lms.steel.study").replace(/\/+$/, "");
+export { API_BASE } from "./config";
 
 export function mediaUrl(path) {
   if (!path) return "";
@@ -522,7 +521,7 @@ export const updateTraineeProfile = async (profileData) => {
 export async function createTaskAssignment(formData) {
   try {
     // If your backend expects JSON, convert; here we assume multipart to allow file upload
-    const res = await apiClient.post("https://lms.steel.study/trainer/tasks/", formData, {
+    const res = await apiClient.post(`${API_BASE}/trainer/tasks/`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     return { success: true, data: res.data };
@@ -534,7 +533,7 @@ export async function createTaskAssignment(formData) {
 
 export async function listMyAssignments(params = {}) { // trainee/employee: only own
   try {
-    const res = await defaultApiClient.get("https://lms.steel.study/trainer/tasks/", { params }); // backend uses request.user
+    const res = await defaultApiClient.get(`${API_BASE}/trainer/tasks/`, { params }); // backend uses request.user
     return { success: true, data: res.data };
   } catch (e) {
     return { success: false, error: e?.response?.data || e.message };
@@ -543,7 +542,7 @@ export async function listMyAssignments(params = {}) { // trainee/employee: only
 
 export async function startAssignment(id) {
   try {
-    const res = await defaultApiClient.post(`https://lms.steel.study/trainer/tasks/${id}/start/`);
+    const res = await defaultApiClient.post(`${API_BASE}/trainer/tasks/${id}/start/`);
     return { success: true, data: res.data };
   } catch (e) {
     return { success: false, error: e?.response?.data || e.message };
@@ -552,7 +551,7 @@ export async function startAssignment(id) {
 
 export async function completeAssignment(id) {
   try {
-    const res = await defaultApiClient.post(`https://lms.steel.study/trainer/tasks/${id}/complete/`);
+    const res = await defaultApiClient.post(`${API_BASE}/trainer/tasks/${id}/complete/`);
     return { success: true, data: res.data };
   } catch (e) {
     return { success: false, error: e?.response?.data || e.message };
@@ -563,7 +562,7 @@ export async function attachSubmissionToAssignment(id, submissionId) {
   try {
     const fd = new FormData();
     fd.append("submission_id", String(submissionId));
-    const res = await defaultApiClient.post(`https://lms.steel.study/trainer/tasks/${id}/attach-submit/`, fd);
+    const res = await defaultApiClient.post(`${API_BASE}/trainer/tasks/${id}/attach-submit/`, fd);
     return { success: true, data: res.data };
   } catch (e) {
     return { success: false, error: e?.response?.data || e.message };
@@ -572,7 +571,7 @@ export async function attachSubmissionToAssignment(id, submissionId) {
 
 export async function listAssignments(params = {}) {
   try {
-    const res = await defaultApiClient.get("https://lms.steel.study/trainer/tasks/", { params });
+    const res = await defaultApiClient.get(`${API_BASE}/trainer/tasks/`, { params });
     return { success: true, data: res.data };
   } catch (e) {
     return { success: false, error: e?.response?.data || e.message };

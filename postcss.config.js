@@ -1,8 +1,8 @@
-module.exports = {
-  plugins: [
-    require('postcss-discard-duplicates'),
-    require('cssnano')({
-      preset: ['default', { discardComments: { removeAll: true } }]
-    })
-  ]
+export default {
+  plugins: {
+    "postcss-discard-duplicates": {},
+    cssnano: {
+      preset: ["default", { discardComments: { removeAll: true } }],
+    },
+  },
 };

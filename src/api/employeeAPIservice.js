@@ -1,8 +1,9 @@
 import axios from "axios";
 import { ok, fail } from "./apiHelpers";
-import { apiClient as defaultApiClient } from "./apiservice"; 
+import { apiClient as defaultApiClient } from "./apiservice";
+import { API_BASE } from "./config";
 
-const BASE_URL = "https://lms.steel.study/employee";
+const BASE_URL = `${API_BASE}/employee`;
 
 export const apiClient = axios.create({
   baseURL: BASE_URL,
@@ -126,9 +127,7 @@ export const fetchActiveHomeworkAssignments = async () => {
   }
 };
 
-// somewhere central, e.g. src/api/url.js
-export const API_BASE =
-  (process.env.REACT_APP_API_BASE_URL || "https://lms.steel.study").replace(/\/+$/, "");
+export { API_BASE } from "./config";
 
 export function mediaUrl(path) {
   if (!path) return "";

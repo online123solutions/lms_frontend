@@ -16,6 +16,7 @@ import {
 } from "chart.js";
 import { fetchAdminDashboard, fetchLMSEngagement, fetchRecentActivity } from "../../api/adminAPIservice";
 import { logout, changePassword } from "../../api/apiservice";
+import { API_BASE } from "../../api/config";
 import logoSO from "../../assets/logo1.png";
 import { mediaUrl } from "../../api/traineeAPIservice";
 import logoS1 from "../../assets/sol_log1.png";
@@ -791,11 +792,11 @@ const AdminDashboardContent = () => {
 
                 <div className="qa-grid">
                   {[
-                    { text: "Add Courses",       icon: "bi-journal-plus",  className: "pink",   link: "https://lms.steel.study/admin/" },
+                    { text: "Add Courses",       icon: "bi-journal-plus",  className: "pink",   link: `${API_BASE}/admin/` },
                     { text: "Push Notification", icon: "bi-megaphone",     className: "purple", link: "#", onClick: () => alert("Open notification modal") },
-                    { text: "Add Lesson",        icon: "bi-file-earmark-plus", className: "purple", link: "https://lms.steel.study/admin/" },
-                    { text: "Add User",          icon: "bi-person-plus",   className: "pink",   link: "https://lms.steel.study/admin/" },
-                    { text: "Add Quiz",          icon: "bi-patch-question",className: "cyan",   link: "https://lms.steel.study/admin/" },
+                    { text: "Add Lesson",        icon: "bi-file-earmark-plus", className: "purple", link: `${API_BASE}/admin/` },
+                    { text: "Add User",          icon: "bi-person-plus",   className: "pink",   link: `${API_BASE}/admin/` },
+                    { text: "Add Quiz",          icon: "bi-patch-question",className: "cyan",   link: `${API_BASE}/admin/` },
                   ].map((item, i) => (
                     <button
                       key={i}

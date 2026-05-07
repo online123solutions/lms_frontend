@@ -18,7 +18,64 @@
   border-collapse: separate;
   border-spacing: 0;
   border-radius: 15px;
-  overflow: hidden;
+}
+
+/* Fixed height scrolling for MicroPlanner table content */
+.micro-planner .table-responsive {
+  max-height: calc(100vh - 180px); /* Reduced header space for more table height */
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 15px;
+}
+
+.micro-planner .table-responsive::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.micro-planner .table-responsive::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.micro-planner .table-responsive::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.micro-planner .table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.trainee-progress .table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Header progress bar styling */
+.trainee-progress .overall-progress-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.trainee-progress .progress-bar-header {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 4px !important;
+  overflow: hidden !important;
+}
+
+.trainee-progress .progress-bar-header .progress-bar {
+  background: linear-gradient(90deg, #28a745, #20c997) !important;
+  border-radius: 4px !important;
+}
+
+/* Keep header fixed */
+.micro-planner-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #393939;
 }
 
 .micro-planner-table th,
@@ -44,6 +101,33 @@
 
 .micro-planner-table tr:hover {
   background-color: #ddd;
+}
+
+/* Week filter in table header styling */
+.micro-planner-table th .form-select {
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #333;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.micro-planner-table th .form-select:hover {
+  background-color: rgba(255, 255, 255, 1);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.micro-planner-table th .form-select:focus {
+  background-color: rgba(255, 255, 255, 1);
+  border-color: #0ba3e6;
+  box-shadow: 0 0 0 2px rgba(11, 163, 230, 0.25);
+}
+
+.micro-planner-table th span {
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
 }
 
 /* Ensure rounded corners work with table-responsive */

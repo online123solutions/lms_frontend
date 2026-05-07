@@ -51,58 +51,47 @@ export default function EmployeeProgress() {
   };
 
   return (
-    <div className="container mt-2">
+    <div className="employee-progress">
       {/* Header bar (same look as Planner) */}
       <div className="d-flex justify-content-between align-items-center mb-4 header">
         <h2 className="fw-bold text-white m-0 d-flex align-items-center gap-2">
           <i className="bi bi-bar-chart-line"></i> Progress
         </h2>
-
-        {/* Subject filter (optional) */}
-        <Form.Select
-          className="w-auto border-primary shadow-sm"
-          value={subjectFilter}
-          onChange={(e) => setSubjectFilter(e.target.value)}
-        >
-          <option value="">All Subjects</option>
-          {data.subjects.map((s) => (
-            <option key={s.subject_id} value={s.subject_id}>
-              {s.subject_name}
-            </option>
-          ))}
-        </Form.Select>
+        <div className="d-flex align-items-center gap-3">
+          <div className="overall-progress-header">
+            <div className="text-white small mb-1">Overall Progress</div>
+            <div className="d-flex align-items-center gap-2">
+              <ProgressBar now={totals.progress_pct} className="progress-bar-header" style={{ width: '120px', height: '8px' }} />
+              <span className="text-white fw-bold">{totals.progress_pct}%</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Overall row, Planner-like compact KPIs */}
-      <div
-        className="row g-3 mb-3"
-        style={{ marginLeft: 0, marginRight: 0 }}
-      >
-        <div className="col-md-2">
-          <div className="p-3 bg-white rounded-3 shadow-sm">
+      {/* Compact KPIs row - All 4 cards in same row using flexbox */}
+      <div className="d-flex gap-3 mb-4">
+        <div className="flex-fill">
+          <div className="p-3 bg-white rounded-3 shadow-sm h-100">
             <div className="text-muted small">Subjects</div>
             <div className="fs-4 fw-bold">{totals.subjects_total}</div>
           </div>
         </div>
-        <div className="col-md-2">
-          <div className="p-3 bg-white rounded-3 shadow-sm">
+        <div className="flex-fill">
+          <div className="p-3 bg-white rounded-3 shadow-sm h-100">
             <div className="text-muted small">Lessons</div>
             <div className="fs-4 fw-bold">{totals.lessons_total}</div>
           </div>
         </div>
-        <div className="col-md-2">
-          <div className="p-3 bg-white rounded-3 shadow-sm">
+        <div className="flex-fill">
+          <div className="p-3 bg-white rounded-3 shadow-sm h-100">
             <div className="text-muted small">Completed</div>
             <div className="fs-4 fw-bold">{totals.lessons_completed}</div>
           </div>
         </div>
-        <div className="col-md-6">
-          <div className="p-3 bg-white rounded-3 shadow-sm">
-            <div className="d-flex justify-content-between">
-              <div className="text-muted small">Overall Progress</div>
-              <div className="fw-semibold">{totals.progress_pct}%</div>
-            </div>
-            <ProgressBar now={totals.progress_pct} className="mt-1" />
+        <div className="flex-fill">
+          <div className="p-3 bg-white rounded-3 shadow-sm h-100">
+            <div className="text-muted small">Pending</div>
+            <div className="fs-4 fw-bold">{totals.lessons_total - totals.lessons_completed}</div>
           </div>
         </div>
       </div>
@@ -112,7 +101,24 @@ export default function EmployeeProgress() {
         <table className="table table-bordered table-hover align-middle shadow-sm macro-planner-table">
           <thead className="table-custom">
             <tr>
-              <th>Subject</th>
+              <th>
+                <div className="d-flex flex-column">
+                  <span>Subject</span>
+                  <Form.Select
+                    className="form-select form-select-sm mt-1"
+                    value={subjectFilter}
+                    onChange={(e) => setSubjectFilter(e.target.value)}
+                    style={{ fontSize: '0.875rem', padding: '0.25rem 0.5rem' }}
+                  >
+                    <option value="">All Subjects</option>
+                    {data.subjects.map((s) => (
+                      <option key={s.subject_id} value={s.subject_id}>
+                        {s.subject_name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </div>
+              </th>
               <th className="text-center">Total</th>
               <th className="text-center">Completed</th>
               <th className="text-center">Pending</th>

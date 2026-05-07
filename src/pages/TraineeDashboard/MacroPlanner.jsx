@@ -53,7 +53,7 @@ const MacroPlanner = () => {
   );
 
   return (
-    <div className="macro-planner container">
+    <div className="macro-planner">
       {/* Header layout (matches Trainer visual layout) */}
       <div className="header d-flex justify-content-between align-items-center mb-4">
         <h2 className="fw-bold text-white mb-0" title="Road Map">
@@ -70,19 +70,6 @@ const MacroPlanner = () => {
             <path d="M16 3v4M8 3v4" stroke="white" strokeWidth="1.6" strokeLinecap="round" />
           </svg>Road Map</h2>
 
-        <Form.Select
-          className="w-auto border-primary shadow-sm macro-filter-select"
-          onChange={(e) => setSelectedWeek(e.target.value)}
-          value={selectedWeek}
-        >
-          <option value="">All Weeks</option>
-          {weekOptions.map((week) => (
-            <option key={week} value={week}>
-              {week}
-            </option>
-          ))}
-        </Form.Select>
-
         {/* Trainee view: no Add button (read-only) */}
         <div style={{ minWidth: 120 }} /> {/* placeholder to keep spacing consistent */}
       </div>
@@ -98,7 +85,24 @@ const MacroPlanner = () => {
           <table className="macro-planner-table">
             <thead>
               <tr>
-                <th>Duration</th>
+                <th>
+                  <div className="d-flex flex-column">
+                    <span>Duration</span>
+                    <Form.Select
+                      className="form-select form-select-sm mt-1"
+                      onChange={(e) => setSelectedWeek(e.target.value)}
+                      value={selectedWeek}
+                      style={{ fontSize: '0.875rem', padding: '0.25rem 0.5rem' }}
+                    >
+                      <option value="">All Weeks</option>
+                      {weekOptions.map((week) => (
+                        <option key={week} value={week}>
+                          {week}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </div>
+                </th>
                 <th>Department</th>
                 <th>Module</th>
                 <th>Role</th>

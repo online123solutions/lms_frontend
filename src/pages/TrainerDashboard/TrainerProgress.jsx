@@ -279,26 +279,27 @@ const TrainerProgress = () => {
   if (err) return <div className="error">{err}</div>;
 
   return (
-    <div className="training-report-container mt-2 mb-4 shadow-none rounded">
-      <div className="report-card">
-        <h2 className="report-title m-0">
-          <i className="bi bi-bar-chart-line-fill" style={{ color: "#FFFFFF" }}></i>{" "}
+    <>
+    <div className="trainer-progress">
+      <div className="d-flex justify-content-between align-items-center mb-4 header">
+        <h2 className="fw-bold text-white m-0">
+          <i className="bi bi-bar-chart-line-fill" style={{ color: "#FFFFFF" }}></i>
+          {" "}
           Trainer Progress
         </h2>
-
-        {/* Overall */}
-        <div className="overall-wrap">
+        <div className="d-flex align-items-center gap-2">
           <div className="overall-chip">
-            Overall Completion
             <span className="overall-value">{overall.pct}%</span>
+            <span className="overall-label">Overall</span>
           </div>
           <div className="overall-mini">
             {overall.done} / {overall.total} lessons
           </div>
         </div>
+      </div>
 
         {/* Per-course sections */}
-        <div className="mt-3">
+        <div className="courses-content">
           {sections.length === 0 ? (
             <p className="no-data">No courses found.</p>
           ) : (
@@ -404,8 +405,8 @@ const TrainerProgress = () => {
             ))
           )}
         </div>
-      </div>
     </div>
+    </>
   );
 };
 

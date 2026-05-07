@@ -1,8 +1,9 @@
 import axios from "axios";
 import { ok, fail } from "./apiHelpers";
 import { initCsrf, getCsrfToken } from "./apiservice";
+import { API_BASE } from "./config";
 
-const BASE_URL = "https://lms.steel.study/trainer";
+const BASE_URL = `${API_BASE}/trainer`;
 
 export const apiClient = axios.create({
   baseURL: BASE_URL,
@@ -396,9 +397,8 @@ export async function getDetailedTrainingReport(userId) {
   return res.data;
 }
 
-export const API_BASE =
-  (process.env.REACT_APP_API_BASE_URL || "https://lms.steel.study").replace(/\/+$/, "");
-  
+export { API_BASE } from "./config";
+
 export function mediaUrl(path) {
   if (!path) return "";
   return /^https?:\/\//i.test(path) ? path : `${API_BASE}${path.startsWith("/") ? "" : "/"}${path}`;

@@ -67,10 +67,10 @@ const TraineesList = () => {
   }
 
   return (
-    <div className="training-report-container mb-4 shadow-sm rounded">
-      <div className="report-card">
-        <div className="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
-          <h2 className="report-title m-0">
+    <>
+      <div className="trainees-list">
+        <div className="d-flex justify-content-between align-items-center mb-4 header">
+          <h2 className="fw-bold text-white m-0">
             <i className="bi bi-people" style={{ color: "#FFFFFF" }}></i>
             {" "}
             Total Trainees
@@ -101,13 +101,15 @@ const TraineesList = () => {
         </div>
 
         {filteredTrainees.length === 0 ? (
-          <div className="p-4 text-center text-muted">
-            <p>{query ? "No trainees found matching your search." : "No trainees found."}</p>
+          <div className="text-center my-5">
+            <div className="alert alert-info">
+              {query ? "No trainees found matching your search." : "No trainees found."}
+            </div>
           </div>
         ) : (
           <div className="table-responsive">
-            <Table striped bordered hover className="mb-0">
-              <thead className="table-light">
+            <Table striped bordered hover className="table table-bordered table-hover align-middle shadow-sm">
+              <thead className="table-custom">
                 <tr>
                   <th style={{ width: "70px" }}>Photo</th>
                   <th>Name</th>
@@ -139,23 +141,24 @@ const TraineesList = () => {
                             }
                           }}
                         />
-                      ) : null}
-                      <div
-                        className="d-flex align-items-center justify-content-center"
-                        style={{
-                          width: "45px",
-                          height: "45px",
-                          borderRadius: "50%",
-                          backgroundColor: "#6c757d",
-                          color: "white",
-                          fontSize: "16px",
-                          fontWeight: "bold",
-                          margin: "0 auto",
-                          display: !trainee.profile_picture || trainee.profile_picture.includes("default_profile") ? "flex" : "none",
-                        }}
-                      >
-                        {getInitials(trainee.name)}
-                      </div>
+                      ) : (
+                        <div
+                          className="d-flex align-items-center justify-content-center"
+                          style={{
+                            width: "45px",
+                            height: "45px",
+                            borderRadius: "50%",
+                            backgroundColor: "#6c757d",
+                            color: "white",
+                            fontSize: "16px",
+                            fontWeight: "bold",
+                            margin: "0 auto",
+                            display: "flex",
+                          }}
+                        >
+                          {getInitials(trainee.name)}
+                        </div>
+                      )}
                     </td>
                     <td className="align-middle" style={{ fontWeight: "500" }}>{trainee.name || "N/A"}</td>
                     <td className="align-middle">{trainee.employee_id || "N/A"}</td>
@@ -175,7 +178,7 @@ const TraineesList = () => {
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 };
 

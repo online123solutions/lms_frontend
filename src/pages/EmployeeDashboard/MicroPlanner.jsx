@@ -55,24 +55,12 @@ const MicroPlanner = () => {
   );
 
   return (
-    <div className="macro-planner container">
+    <div className="macro-planner">
       <div className="d-flex justify-content-between align-items-center mb-4 header">
         <h2 className="fw-bold text-white">
           <i className="bi bi-calendar-check me-2"></i>
           Planner
         </h2>
-        <Form.Select
-          className="w-auto border-primary shadow-sm"
-          onChange={(e) => setSelectedWeek(e.target.value)}
-          value={selectedWeek}
-        >
-          <option value="">All Weeks</option>
-          {weekOptions.map((week) => (
-            <option key={week} value={week}>
-              {week}
-            </option>
-          ))}
-        </Form.Select>
       </div>
 
       {loading ? (
@@ -87,7 +75,24 @@ const MicroPlanner = () => {
             <thead className="table-custom">
               <tr>
                 <th>Month</th>
-                <th>Week</th> {/* Updated from Month to Week */}
+                <th>
+                  <div className="d-flex flex-column">
+                    <span>Week</span>
+                    <Form.Select
+                      className="form-select form-select-sm mt-1"
+                      onChange={(e) => setSelectedWeek(e.target.value)}
+                      value={selectedWeek}
+                      style={{ fontSize: '0.875rem', padding: '0.25rem 0.5rem' }}
+                    >
+                      <option value="">All Weeks</option>
+                      {weekOptions.map((week) => (
+                        <option key={week} value={week}>
+                          {week}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </div>
+                </th>
                 <th>Days & Modules</th>
                 <th>Department</th>
                 <th>Sessions</th>

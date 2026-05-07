@@ -1,29 +1,49 @@
-/* Card Container Styling */
+/* Card Container Styling - Modern Clean Design */
 .card {
   width: 100%;
   max-width: 299px;
-  border-radius: 21.67px; /* 1.3 times the original border-radius of 16.67px */
-  background: #b49d76;
-  padding: 6.5px; /* 1.3 times the original padding of 5px */
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  padding: 0;
   overflow: hidden;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 20px 0px;
-  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
 .card:hover {
-  transform: translateY(-6px);
-  box-shadow: rgba(100, 100, 111, 0.3) 0px 12px 30px 0px;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-color: #dee2e6;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #007bff, #6f42c1);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover::before {
+  opacity: 1;
 }
 
 
-/* Top Section */
+/* Top Section - Modern Design */
 .card .top-section {
-  min-height: 286px; /* 1.3 times the original height of 220px */
-  border-radius: 13px; /* 1.3 times the original border-radius of 10px */
-  background-color:#b49d76;
+  min-height: 200px;
+  border-radius: 16px 16px 0 0;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   position: relative;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 /* Diagonal Border */
@@ -69,33 +89,38 @@
   text-decoration: none;
 }
 
-/* Bottom Section */
+/* Bottom Section - Modern Design */
 .bottom-section {
   text-align: center;
   width: 100%;
-  padding: 13px 0; /* 1.3 times the original padding of 10px 0 */
+  padding: 16px;
+  background: #ffffff;
   display: flex;
-  justify-content: center; /* Center the button horizontally */
+  justify-content: center;
+  align-items: center;
 }
 
 .button {
-  background-color: #393939;
-  color: #000;
-  width: 12.35em; /* 1.3 times the original width of 9.5em */
-  height: 3.51em; /* 1.3 times the original height of 2.7em */
-  border: 0.26em solid var(--primary); /* 1.3 times the original border of 0.2em */
-  border-radius: 9.17px; /* 1.3 times the original border-radius of 7.08px */
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: #ffffff;
+  width: 100%;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10.4px; /* 1.3 times the original gap of 8px */
-  transition: all 0.6s ease;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .button:hover {
-  background-color: #2e1a47;
-  color: #fff;
+  background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
 }
 
 .button svg {
@@ -109,6 +134,43 @@
 
 .text {
   margin: 0 0;
+}
+
+/* Card Title and Text - Modern Design */
+.card-title {
+  color: #333333;
+  font-weight: 600;
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.card-text {
+  color: #666666;
+  font-size: 14px;
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+}
+
+/* Subject Card Specific Styling */
+.subject-card .card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.subject-card .card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+}
+
+.subject-card .card img {
+  transition: transform 0.3s ease;
+}
+
+.subject-card .card:hover img {
+  transform: scale(1.05);
 }
 
 /* Responsive Adjustments */
@@ -250,7 +312,7 @@
 }
 @media (max-height: 768px) {
   .subject-cards-container {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 12px;
   }
 }
@@ -279,7 +341,7 @@
 }
 @media (max-height: 552px) {
   .subject-cards-container {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 8px;
   }
 
@@ -304,7 +366,7 @@
 }
 .subject-cards-container {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   column-gap: 12px;
   row-gap: 8px;        /* 🔥 control row spacing here */
   align-items: start; /* 🔥 prevents stretch gap */

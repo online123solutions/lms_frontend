@@ -50,6 +50,148 @@
   background-color: #ddd;
 }
 
+/* Week filter in table header styling */
+.macro-planner-table th .form-select {
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #333;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.macro-planner-table th .form-select:hover {
+  background-color: rgba(255, 255, 255, 1);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.macro-planner-table th .form-select:focus {
+  background-color: rgba(255, 255, 255, 1);
+  border-color: #0ba3e6;
+  box-shadow: 0 0 0 2px rgba(11, 163, 230, 0.25);
+}
+
+/* Ensure macroplanner table cells contain their content properly */
+.macro-planner-table th,
+.macro-planner-table td {
+  position: relative;
+  overflow: hidden;
+}
+
+.macro-planner-table th {
+  min-width: 120px;
+  max-width: 250px;
+}
+
+.macro-planner-table td {
+  min-width: 100px;
+  max-width: 300px;
+}
+
+.macro-planner-table th span {
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* TraineeProgress specific styles */
+.trainee-progress {
+  width: 100%;
+  max-width: 100%;
+  padding: 15px;
+  margin: 0;
+}
+
+.trainee-progress .header {
+  width: 100%;
+}
+
+/* Ensure full width table */
+.trainee-progress .table-responsive {
+  width: 100%;
+}
+
+.trainee-progress .macro-planner-table {
+  width: 100%;
+}
+
+/* Subject filter styling in table header */
+.trainee-progress .macro-planner-table th .form-select {
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #333;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.trainee-progress .macro-planner-table th .form-select:hover {
+  background-color: rgba(255, 255, 255, 1);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.trainee-progress .macro-planner-table th .form-select:focus {
+  background-color: rgba(255, 255, 255, 1);
+  border-color: #0ba3e6;
+  box-shadow: 0 0 0 2px rgba(11, 163, 230, 0.25);
+}
+
+/* KPI cards full width enhancement */
+@media (max-width: 768px) {
+  .trainee-progress .row.g-3 > div {
+    margin-bottom: 1rem;
+  }
+}
+
+/* EmployeeProgress specific styles */
+.employee-progress {
+  width: 100%;
+  max-width: 100%;
+  padding: 15px;
+  margin: 0;
+}
+
+.employee-progress .header {
+  width: 100%;
+}
+
+/* Ensure full width table */
+.employee-progress .table-responsive {
+  width: 100%;
+}
+
+.employee-progress .macro-planner-table {
+  width: 100%;
+}
+
+/* Subject filter styling in table header */
+.employee-progress .macro-planner-table th .form-select {
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #333;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.employee-progress .macro-planner-table th .form-select:hover {
+  background-color: rgba(255, 255, 255, 1);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.employee-progress .macro-planner-table th .form-select:focus {
+  background-color: rgba(255, 255, 255, 1);
+  border-color: #0ba3e6;
+  box-shadow: 0 0 0 2px rgba(11, 163, 230, 0.25);
+}
+
+/* KPI cards full width enhancement for EmployeeProgress */
+@media (max-width: 768px) {
+  .employee-progress .row.g-3 > div {
+    margin-bottom: 1rem;
+  }
+}
+
 /* Ensure rounded corners work with table-responsive */
 .macro-planner-table tr:first-child th:first-child {
   border-top-left-radius: 15px;
@@ -65,6 +207,89 @@
 
 .macro-planner-table tr:last-child td:last-child {
   border-bottom-right-radius: 15px;
+}
+
+/* Fixed height scrolling for table content */
+.macro-planner .table-responsive {
+  max-height: calc(100vh - 180px); /* Reduced header space for more table height */
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 15px;
+}
+
+.macro-planner .table-responsive::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.macro-planner .table-responsive::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.macro-planner .table-responsive::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.macro-planner .table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Keep header fixed */
+.macro-planner-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #393939;
+}
+
+/* Apply same to other dashboard pages */
+.trainee-progress .table-responsive,
+.employee-progress .table-responsive,
+.training-report .table-responsive {
+  max-height: calc(100vh - 180px); /* Reduced header space for more table height */
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 15px;
+}
+
+.trainee-progress .table-responsive::-webkit-scrollbar,
+.employee-progress .table-responsive::-webkit-scrollbar,
+.training-report .table-responsive::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.trainee-progress .table-responsive::-webkit-scrollbar-track,
+.employee-progress .table-responsive::-webkit-scrollbar-track,
+.training-report .table-responsive::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.trainee-progress .table-responsive::-webkit-scrollbar-thumb,
+.employee-progress .table-responsive::-webkit-scrollbar-thumb,
+.training-report .table-responsive::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.trainee-progress .table-responsive::-webkit-scrollbar-thumb:hover,
+.employee-progress .table-responsive::-webkit-scrollbar-thumb:hover,
+.training-report .table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.trainee-progress .table-custom thead,
+.employee-progress .table-custom thead,
+.training-report .table-custom thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #393939;
 }
 
 /* Primary Button */

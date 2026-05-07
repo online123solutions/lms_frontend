@@ -6,13 +6,11 @@ import {
   fetchMacroPlanner,
   addMacroPlanner,
   updateMacroPlanner,
+  fetchDepartments,
 } from "../../api/adminAPIservice";
 
 const durationOptions = [
   "1 Month","2 Months","3 Months","4 Months","5 Months","6 Months"
-];
-const defaultDepartmentOptions = [
-  "HR","IT","Finance","Marketing","Sales","Operations","Support","Training","Development","Design"
 ];
 const staticWeekOptions = ["week 1","week 2","week 3","week 4"];
 const modeOptions = ["Theoretical","Practical"];
@@ -34,13 +32,24 @@ const MacroPlanner = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+  const [departments, setDepartments] = useState([]);
 
   useEffect(() => {
     (async () => {
       try {
-        const result = await fetchMacroPlanner();
-        if (result?.success) setPlanners(Array.isArray(result.data) ? result.data : []);
+        const [plannerResult, deptResult] = await Promise.all([
+          fetchMacroPlanner(),
+          fetchDepartments(),
+        ]);
+        const planners = Array.isArray(plannerResult?.data) ? plannerResult.data : [];
+        if (plannerResult?.success) setPlanners(planners);
         else setError("Failed to fetch macroplanner data.");
+        if (deptResult?.success && deptResult.data?.length) {
+          setDepartments(deptResult.data);
+        } else {
+          const unique = [...new Set(planners.map(p => p.department).filter(Boolean))];
+          setDepartments(unique.map(d => ({ value: d, label: d })));
+        }
       } catch {
         setError("An error occurred while fetching macroplanner data.");
       } finally {
@@ -48,12 +57,6 @@ const MacroPlanner = () => {
       }
     })();
   }, []);
-
-  const departmentOptions = useMemo(() => {
-    const set = new Set(planners.map(p => p.department).filter(Boolean));
-    const fromData = Array.from(set);
-    return fromData.length ? fromData : defaultDepartmentOptions;
-  }, [planners]);
 
   const weekOptions = useMemo(() => {
     const set = new Set(planners.map(p => p.week).filter(Boolean));
@@ -76,7 +79,7 @@ const MacroPlanner = () => {
       month: planner?.month || "",
       week: planner?.week || "",
       duration: planner?.duration || "",
-      department: planner?.department || (departmentOptions[0] || ""),
+      department: planner?.department || (departments[0]?.value || ""),
       module: planner?.module || "",
       mode: planner?.mode || "Theoretical",
     });
@@ -126,20 +129,14 @@ const MacroPlanner = () => {
   };
 
   return (
-    <div className="macro-planner container">
+    <div className="macro-planner">
       {/* Dark header bar like your screenshot */}
       <div className="d-flex justify-content-between align-items-center mb-4 header">
         <h2 className="fw-bold text-white">
           <i className="bi bi-calendar" style={{ color: "#FFFFFF" }}></i> Road Map
         </h2>
 
-        <Button variant="info macro-btn" className="mp-add" onClick={() => handleShowModal()}>
-            <i className="bi bi-plus-circle me-2"></i>
-            Add Road Map
-          </Button>
-      </div>
-      <div className="mp-header">
-        <div className="mp-actions">
+        <div className="d-flex gap-2">
           <Form.Select
             className="mp-select"
             onChange={(e) => setSelectedDepartment(e.target.value)}
@@ -147,23 +144,15 @@ const MacroPlanner = () => {
             aria-label="Filter by Department"
           >
             <option value="">All Departments</option>
-            {departmentOptions.map((dept) => (
-              <option key={dept} value={dept}>{dept}</option>
+            {departments.map((dept) => (
+              <option key={dept.value} value={dept.value}>{dept.label}</option>
             ))}
           </Form.Select>
-
-          {/* <Form.Select
-            className="mp-select"
-            onChange={(e) => setSelectedWeek(e.target.value)}
-            value={selectedWeek}
-            aria-label="Filter by Week"
-          >
-            <option value="">All Weeks</option>
-            {weekOptions.map((w) => (
-              <option key={w} value={w}>{w}</option>
-            ))}
-          </Form.Select> */}
-
+          
+          <Button variant="info macro-btn" className="mp-add" onClick={() => handleShowModal()}>
+              <i className="bi bi-plus-circle me-2"></i>
+              Add Road Map
+            </Button>
         </div>
       </div>
 
@@ -178,8 +167,24 @@ const MacroPlanner = () => {
           <table className="macro-planner-table">
             <thead>
               <tr>
-                {/* <th>Week</th> */}
-                <th>Duration</th>
+                <th>
+                  <div className="d-flex flex-column">
+                    <span>Duration</span>
+                    <Form.Select
+                      className="form-select form-select-sm mt-1"
+                      onChange={(e) => setSelectedWeek(e.target.value)}
+                      value={selectedWeek}
+                      style={{ fontSize: '0.875rem', padding: '0.25rem 0.5rem' }}
+                    >
+                      <option value="">All Weeks</option>
+                      {weekOptions.map((week) => (
+                        <option key={week} value={week}>
+                          {week}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </div>
+                </th>
                 <th>Department</th>
                 <th>Module</th>
                 <th>Mode</th>
@@ -262,8 +267,8 @@ const MacroPlanner = () => {
               <Form.Label>Department</Form.Label>
               <Form.Select name="department" value={form.department} onChange={onFormChange} required>
                 <option value="" disabled>Select department</option>
-                {departmentOptions.map((dept) => (
-                  <option key={dept} value={dept}>{dept}</option>
+                {departments.map((dept) => (
+                  <option key={dept.value} value={dept.value}>{dept.label}</option>
                 ))}
               </Form.Select>
             </Form.Group>

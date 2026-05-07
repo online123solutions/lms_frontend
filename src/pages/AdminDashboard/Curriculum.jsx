@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchLessons, fetchCourses } from "../../api/adminAPIservice";
+import { fetchLessons, fetchCourses, fetchAdminDashboard } from "../../api/adminAPIservice";
 import "../../utils/css/Trainer CSS/Curriculum.css";
 
 const IS_DEV = ["localhost", "127.0.0.1"].includes(window.location.hostname);
@@ -36,6 +36,7 @@ const Courses = () => {
   const [departments, setDepartments] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [subjects, setSubjects] = useState([]);
+  const [filteredSubjects, setFilteredSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState("");
   const [topics, setTopics] = useState([]);
   const [selectedTopic, setSelectedTopic] = useState(null);
@@ -47,27 +48,39 @@ const Courses = () => {
   const [rawUrl, setRawUrl] = useState("");
   const [isPdfNative, setIsPdfNative] = useState(false);
 
-  // Load Courses and Departments
+  // Load Departments and Courses
   useEffect(() => {
-    const loadCourses = async () => {
+    const loadData = async () => {
       try {
         setLoading(true);
-        const result = await fetchCourses();
-        if (result.success) {
-          // Extract unique departments and subjects
-          const courses = result.data || [];
-          const uniqueDepartments = Array.from(
-            new Set(courses.map((course) => course.department).filter(Boolean))
-          ).map((dept) => ({ name: dept }));
+        
+        // Fetch departments from admin dashboard
+        const dashboardResult = await fetchAdminDashboard();
+        if (dashboardResult.success && dashboardResult.data.departments) {
+          const departmentsData = dashboardResult.data.departments;
+          const uniqueDepartments = departmentsData
+            .filter(dept => dept.department && typeof dept.department === 'string' && dept.department.trim() !== '')
+            .map((dept, index) => ({
+              name: dept.department.trim(),
+              id: `dept-${index}`
+            }));
+          
+          setDepartments(uniqueDepartments);
+        }
+        
+        // Fetch courses for subjects
+        const coursesResult = await fetchCourses();
+        if (coursesResult.success) {
+          const courses = coursesResult.data || [];
+          console.log("Raw courses data:", courses);
+          
           const uniqueSubjects = courses.map((course) => ({
             id: course.course_id,
             name: course.course_name,
-            department: course.department,
+            department: Array.isArray(course.department) ? course.department[0] : course.department,
           }));
-          setDepartments(uniqueDepartments);
+          console.log("Processed subjects with departments:", uniqueSubjects);
           setSubjects(uniqueSubjects);
-        } else {
-          setError("Failed to load courses.");
         }
       } catch (err) {
         console.error("Unexpected error:", err);
@@ -76,7 +89,7 @@ const Courses = () => {
         setLoading(false);
       }
     };
-    loadCourses();
+    loadData();
   }, []);
 
   // Load Lessons
@@ -99,11 +112,23 @@ const Courses = () => {
 
   // Filter subjects by department
   useEffect(() => {
+    console.log("Selected department:", selectedDepartment);
+    console.log("All subjects:", subjects);
+    
     if (selectedDepartment) {
-      const filteredSubjects = subjects.filter(
+      // Show department names from subjects for comparison
+      const subjectDepartments = subjects.map(s => s.department);
+      console.log("Department names in subjects:", subjectDepartments);
+      
+      const filtered = subjects.filter(
         (subject) => subject.department === selectedDepartment
       );
-      setSubjects(filteredSubjects);
+      console.log("Filtered subjects for department:", filtered);
+      console.log("Filter comparison results:");
+      subjects.forEach(subject => {
+        console.log(`Subject: ${subject.name}, Dept: "${subject.department}" == "${selectedDepartment}" = ${subject.department === selectedDepartment}`);
+      });
+      setFilteredSubjects(filtered);
       setSelectedSubject("");
       setTopics([]);
       setSelectedTopic(null);
@@ -112,20 +137,15 @@ const Courses = () => {
       setIsPdfNative(false);
     } else {
       // Reset to all subjects when no department is selected
-      const loadCourses = async () => {
-        const result = await fetchCourses();
-        if (result.success) {
-          const uniqueSubjects = result.data.map((course) => ({
-            id: course.course_id,
-            name: course.course_name,
-            department: course.department,
-          }));
-          setSubjects(uniqueSubjects);
-        }
-      };
-      loadCourses();
+      setFilteredSubjects(subjects);
+      setSelectedSubject("");
+      setTopics([]);
+      setSelectedTopic(null);
+      setViewerUrl("");
+      setRawUrl("");
+      setIsPdfNative(false);
     }
-  }, [selectedDepartment]);
+  }, [selectedDepartment, subjects]);
 
   // Filter topics by subject
   useEffect(() => {
@@ -194,11 +214,16 @@ const Courses = () => {
         >
           <option value="">Select a Department</option>
           {departments.map((dept) => (
-            <option key={dept.name} value={dept.name}>
+            <option key={dept.id} value={dept.name}>
               {dept.name}
             </option>
           ))}
         </select>
+        
+        {/* Debug info */}
+        <div style={{ fontSize: '12px', color: '#666', marginTop: '10px' }}>
+          Debug: {departments.length} unique departments found
+        </div>
 
         {selectedDepartment && (
           <select
@@ -206,9 +231,7 @@ const Courses = () => {
             onChange={(e) => setSelectedSubject(e.target.value)}
           >
             <option value="">Select a Subject</option>
-            {subjects
-              .filter((subject) => subject.department === selectedDepartment)
-              .map((subject) => (
+            {filteredSubjects.map((subject) => (
                 <option key={subject.id} value={subject.name}>
                   {subject.name}
                 </option>

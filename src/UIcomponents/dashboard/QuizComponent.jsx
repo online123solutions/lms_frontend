@@ -5,6 +5,7 @@ import QuizCard from "../common/QuizCard";
 import QuestionCard from "../common/QuestionCard";
 import QuizResultCard from "../common/QuizResultCard";
 import { fetchTraineeDashboard } from "../../api/traineeAPIservice";
+import { API_BASE } from "../../api/config";
 import axios from "axios";
 
 const QuizComponent = ({ setActiveContent }) => {
@@ -95,7 +96,7 @@ const QuizComponent = ({ setActiveContent }) => {
       const token = localStorage.getItem("authToken");
 
       const response = await axios.post(
-        `https://lms.steel.study/quiz/${quizId}/save/`,
+        `${API_BASE}/quiz/${quizId}/save/`,
         answersMap,
         {
           headers: {

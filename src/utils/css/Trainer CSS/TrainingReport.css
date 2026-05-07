@@ -7,6 +7,26 @@
   font-family: 'Lato', sans-serif;
   background-color: white;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+/* New full-width Training Report styles */
+.training-report {
+  width: 100%;
+  max-width: 100%;
+  font-family: 'Lato', sans-serif;
+  background-color: transparent;
+  padding: 15px;
+}
+
+.training-report .header {
+  width: 100%;
+  background-color: #393939;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
 }
 
 .report-card {
@@ -15,6 +35,9 @@
   padding: 25px;
   overflow: hidden;
   transition: transform 0.3s ease;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 
@@ -37,8 +60,160 @@
   color: #fff; /* Ensures the SVG icon is white */
 }
 
+.search-wrap {
+  flex-shrink: 0;
+}
+
 .table-wrapper {
   overflow-x: auto;
+  flex: 1;
+  margin-top: 20px;
+}
+
+.training-report .table {
+  width: 100%;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.training-report .table-custom {
+  background-color: #393939;
+  color: white;
+}
+
+.training-report .table-custom th {
+  border: none;
+  padding: 12px 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  letter-spacing: 0.5px;
+}
+
+.training-report .table td {
+  padding: 12px 15px;
+  vertical-align: middle;
+  border-color: #e9ecef;
+}
+
+/* Fix form select positioning within tables */
+.training-report .table th .form-select,
+.training-report .table td .form-select {
+  width: 100%;
+  max-width: 100%;
+  min-width: auto;
+  box-sizing: border-box;
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #333;
+  border-radius: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.training-report .table th .form-select:focus,
+.training-report .table td .form-select:focus {
+  background-color: #fff;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  outline: none;
+}
+
+/* Ensure table cells contain their content properly */
+.training-report .table th,
+.training-report .table td {
+  position: relative;
+  overflow: hidden;
+}
+
+.training-report .table th {
+  min-width: 120px;
+  max-width: 250px;
+}
+
+.training-report .table td {
+  min-width: 100px;
+  max-width: 300px;
+}
+
+/* Comprehensive fix for all form elements within tables */
+.training-report .table th,
+.training-report .table td {
+  position: relative;
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+/* Fix all form controls within tables */
+.training-report .table th .form-control,
+.training-report .table td .form-control,
+.training-report .table th .form-select,
+.training-report .table td .form-select,
+.training-report .table th input,
+.training-report .table td input,
+.training-report .table th textarea,
+.training-report .table td textarea {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: auto !important;
+  box-sizing: border-box !important;
+  font-size: 0.875rem !important;
+  padding: 0.25rem 0.5rem !important;
+  border: 1px solid #ced4da !important;
+  border-radius: 4px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  line-height: 1.5 !important;
+  height: auto !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+}
+
+/* Fix buttons within tables */
+.training-report .table th .btn,
+.training-report .table td .btn {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+}
+
+/* Fix table cell content wrapping */
+.training-report .table th div,
+.training-report .table td div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* Ensure table wrapper contains overflow */
+.table-wrapper {
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+}
+
+/* Fix responsive table containers */
+.table-responsive {
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  max-height: calc(100vh - 200px) !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 8px !important;
+}
+
+.training-report .table-hover tbody tr:hover {
+  background-color: #f8f9fa;
 }
 
 .report-table {
@@ -49,6 +224,579 @@
   overflow: hidden;
   border: 2px solid #fafafa; /* Outer border */
   border-spacing: 0; /* Removes default spacing between cells */
+}
+
+/* Fixed height scrolling for TrainingReport table content */
+.training-report .table-responsive {
+  max-height: calc(100vh - 180px); /* Reduced header space for more table height */
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 15px;
+}
+
+.training-report .table-responsive::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.training-report .table-responsive::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.training-report .table-responsive::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.training-report .table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Keep header fixed */
+.training-report .table-custom thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #393939;
+}
+
+/* Trainees List styling to match other pages */
+.trainees-list {
+  width: 100%;
+  max-width: 100%;
+  padding: 15px;
+}
+
+.trainees-list .header {
+  width: 100%;
+  background-color: #393939;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.trainees-list .table-responsive {
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 15px;
+}
+
+.trainees-list .table-responsive::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.trainees-list .table-responsive::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.trainees-list .table-responsive::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.trainees-list .table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.trainees-list .table-custom thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #393939;
+}
+
+/* Trainer Progress styling to match other pages */
+.trainer-progress {
+  width: 100%;
+  max-width: 100%;
+  padding: 15px;
+}
+
+.trainer-progress .header {
+  width: 100%;
+  background-color: #393939;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.trainer-progress .overall-chip {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trainer-progress .overall-value {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.trainer-progress .overall-label {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.trainer-progress .overall-mini {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.trainer-progress .courses-content {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+.trainer-progress .course-block {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.trainer-progress .course-block:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.trainer-progress .course-header {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #e9ecef;
+}
+
+.trainer-progress .course-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.trainer-progress .course-title .mono {
+  font-family: 'Courier New', monospace;
+  background: #007bff;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.trainer-progress .course-progress {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.trainer-progress .course-percent {
+  font-size: 18px;
+  font-weight: 700;
+  color: #28a745;
+  min-width: 50px;
+}
+
+.trainer-progress .course-bar {
+  flex: 1;
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.trainer-progress .course-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #28a745, #20c997);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.trainer-progress .course-stats {
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.trainer-progress .table-responsive {
+  max-height: calc(100vh - 250px);
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 15px;
+}
+
+.trainer-progress .table-responsive::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.trainer-progress .table-responsive::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.trainer-progress .table-responsive::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.trainer-progress .table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.trainer-progress .table-custom {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #393939;
+}
+
+.trainer-progress .no-data {
+  text-align: center;
+  color: #6c757d;
+  padding: 40px;
+  font-style: italic;
+}
+
+/* Trainer Queries styling to match other pages */
+.trainer-queries {
+  width: 100%;
+  max-width: 100%;
+  padding: 15px;
+}
+
+.trainer-queries .header {
+  width: 100%;
+  background-color: #393939;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+/* Admin Training Report styling to match other pages */
+.admin-training-report {
+  width: 100%;
+  max-width: 100%;
+  padding: 15px;
+}
+
+.admin-training-report .header {
+  width: 100%;
+  background-color: #393939;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.admin-training-report .report-content {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+.admin-training-report .table-wrapper {
+  max-height: calc(100vh - 250px);
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 15px;
+}
+
+.admin-training-report .table-wrapper::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.admin-training-report .table-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.admin-training-report .table-wrapper::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.admin-training-report .table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.admin-training-report .report-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.admin-training-report .report-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #393939;
+}
+
+.admin-training-report .report-table thead th {
+  background-color: #393939;
+  color: white;
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 600;
+  border: none;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.admin-training-report .report-table tbody tr {
+  border-bottom: 1px solid #e9ecef;
+  transition: background-color 0.2s ease;
+}
+
+.admin-training-report .report-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.admin-training-report .report-table tbody td {
+  padding: 12px 15px;
+  vertical-align: middle;
+  border: none;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.admin-training-report .report-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-training-report .no-data {
+  text-align: center;
+  color: #6c757d;
+  padding: 40px;
+  font-style: italic;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.admin-training-report .btn-details {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.admin-training-report .btn-details:hover {
+  background: #0056b3;
+}
+
+/* User Details Modal styling */
+.admin-training-report .user-details-modal .modal-content {
+  border-radius: 15px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.admin-training-report .user-details-modal .modal-header {
+  background: #393939;
+  color: white;
+  border-radius: 15px 15px 0 0;
+  border: none;
+}
+
+.admin-training-report .user-details-modal .modal-title {
+  color: white;
+  font-weight: 600;
+}
+
+.admin-training-report .user-details-modal .btn-close {
+  color: white;
+  opacity: 0.8;
+}
+
+.admin-training-report .user-details-modal .btn-close:hover {
+  opacity: 1;
+}
+
+.admin-training-report .user-details-modal .modal-body {
+  padding: 25px;
+}
+
+.admin-training-report .user-details-modal .lesson-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 15px;
+}
+
+.admin-training-report .user-details-modal .lesson-table thead th {
+  background: #f8f9fa;
+  color: #333;
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 600;
+  border: 1px solid #e9ecef;
+}
+
+.admin-training-report .user-details-modal .lesson-table tbody td {
+  padding: 10px 12px;
+  border: 1px solid #e9ecef;
+  vertical-align: middle;
+}
+
+.admin-training-report .user-details-modal .lesson-table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.trainer-queries .queries-content {
+  display: flex;
+  gap: 20px;
+  height: calc(100vh - 180px);
+  overflow: hidden;
+}
+
+.trainer-queries .queries-sidebar {
+  width: 350px;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.trainer-queries .queries-search {
+  padding: 15px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.trainer-queries .filter-bar {
+  padding: 15px;
+  border-bottom: 1px solid #dee2e6;
+  background: #f8f9fa;
+}
+
+.trainer-queries .filter {
+  margin-bottom: 10px;
+}
+
+.trainer-queries .filter label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #495057;
+}
+
+.trainer-queries .filter select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+.trainer-queries .query-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.trainer-queries .chat-list-item {
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border: 1px solid #e9ecef;
+}
+
+.trainer-queries .chat-list-item:hover {
+  background-color: #f8f9fa;
+}
+
+.trainer-queries .chat-list-item.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.trainer-queries .item-title {
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 4px;
+}
+
+.trainer-queries .item-meta {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.trainer-queries .chat-main {
+  flex: 1;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.trainer-queries .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px;
+  text-align: center;
+  color: #6c757d;
+}
+
+.trainer-queries .thread-header {
+  padding: 20px;
+  border-bottom: 1px solid #dee2e6;
+  background: #f8f9fa;
+}
+
+.trainer-queries .thread-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+
+.trainer-queries .thread-sub {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.trainer-queries .assign-row {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #dee2e6;
 }
 
 .report-table th,
@@ -67,7 +815,8 @@
   letter-spacing: 0.5px;
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 10;
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
 }
 
 .report-table tr {
@@ -133,6 +882,10 @@
     margin-bottom: 16px;
   }
 
+  .table-wrapper {
+    margin-top: 16px;
+  }
+
   .report-table th,
   .report-table td {
     padding: 10px 14px;
@@ -164,6 +917,10 @@
     font-size: 18px;
     padding: 10px;
     margin-bottom: 12px;
+  }
+
+  .table-wrapper {
+    margin-top: 12px;
   }
 
   .report-table th,

@@ -7,6 +7,7 @@ import {
   addMacroPlanner,
   updateMacroPlanner,
 } from "../../api/trainerAPIservice";
+import { fetchDepartments } from "../../api/adminAPIservice";
 import "../../index.css";
 
 const MacroPlanner = () => {
@@ -16,6 +17,7 @@ const MacroPlanner = () => {
   const [currentPlanner, setCurrentPlanner] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [departments, setDepartments] = useState([]);
 
   const monthOptions = [
     "January","February","March","April","May","June",
@@ -24,11 +26,6 @@ const MacroPlanner = () => {
 
   const durationOptions = [
     "1 Month","2 Months","3 Months","4 Months","5 Months","6 Months",
-  ];
-
-  const departmentOptions = [
-    "HR","IT","Finance","Marketing","Sales",
-    "Operations","Support","Training","Development","Design",
   ];
 
   const weekOptions = ["week 1","week 2","week 3","week 4"];
@@ -41,11 +38,21 @@ const MacroPlanner = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await fetchMacroPlanner();
-        if (result.success) {
-          setPlanners(result.data || []);
+        const [plannerResult, deptResult] = await Promise.all([
+          fetchMacroPlanner(),
+          fetchDepartments(),
+        ]);
+        const planners = plannerResult.data || [];
+        if (plannerResult.success) {
+          setPlanners(planners);
         } else {
           setError("Failed to fetch macroplanner data.");
+        }
+        if (deptResult.success && deptResult.data?.length) {
+          setDepartments(deptResult.data);
+        } else {
+          const unique = [...new Set(planners.map(p => p.department).filter(Boolean))];
+          setDepartments(unique.map(d => ({ value: d, label: d })));
         }
       } catch (err) {
         setError("An error occurred while fetching macroplanner data.");
@@ -100,26 +107,13 @@ const MacroPlanner = () => {
   );
 
   return (
-    <div className="macro-planner container">
+    <div className="macro-planner">
       {/* HEADER: now responsive using flex-column on mobile */}
       <div className="header d-flex justify-content-between align-items-center mb-4">
         <h2 className="fw-bold text-white mb-0">
           <i className="bi bi-calendar me-2" style={{ color: "#FFFFFF" }}></i>
           Road Map
         </h2>
-
-        <Form.Select
-          className="w-auto border-primary shadow-sm macro-filter-select"
-          onChange={(e) => setSelectedWeek(e.target.value)}
-          value={selectedWeek}
-        >
-          <option value="">All Weeks</option>
-          {weekOptions.map((week) => (
-            <option key={week} value={week}>
-              {week}
-            </option>
-          ))}
-        </Form.Select>
 
         <Button
           variant="info"
@@ -141,7 +135,24 @@ const MacroPlanner = () => {
           <table className="macro-planner-table">
             <thead>
               <tr>
-                <th>Duration</th>
+                <th>
+                  <div className="d-flex flex-column">
+                    <span>Duration</span>
+                    <Form.Select
+                      className="form-select form-select-sm mt-1"
+                      onChange={(e) => setSelectedWeek(e.target.value)}
+                      value={selectedWeek}
+                      style={{ fontSize: '0.875rem', padding: '0.25rem 0.5rem' }}
+                    >
+                      <option value="">All Weeks</option>
+                      {weekOptions.map((week) => (
+                        <option key={week} value={week}>
+                          {week}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </div>
+                </th>
                 <th>Department</th>
                 <th>Module</th>
                 <th>Role</th>
@@ -237,8 +248,8 @@ const MacroPlanner = () => {
                 defaultValue={currentPlanner?.department || ""}
                 required
               >
-                {departmentOptions.map((dept) => (
-                  <option key={dept} value={dept}>{dept}</option>
+                {departments.map((dept) => (
+                  <option key={dept.value} value={dept.value}>{dept.label}</option>
                 ))}
               </Form.Select>
             </Form.Group>
