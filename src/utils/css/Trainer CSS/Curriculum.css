@@ -69,21 +69,34 @@ html, body, #root {
   margin: 0 0 6px 0;
 }
 
-/* Viewer wrapper grows and the frame fills it */
+/* Viewer wrapper — background matches the Google Docs toolbar grey so the
+   clipped corner blends in seamlessly. */
 .viewer-wrapper {
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
+  position: relative;
+  background: #3c3c3c;
 }
 
+/* clip-path on the frame hides the download/print/menu buttons (top-right
+   140×50px) while the wrapper's grey background fills the gap. */
 .viewer-frame {
   flex: 1 1 auto;
   width: 100%;
   height: 100%;
   border: 0;
   border-radius: 8px;
-  background: #000;             /* helps hide white around PDF toolbar */
+  background: #000;
+  clip-path: polygon(
+    0 0,
+    calc(100% - 140px) 0,
+    calc(100% - 140px) 50px,
+    100% 50px,
+    100% 100%,
+    0 100%
+  );
 }
 
 /* Footer row under viewer */

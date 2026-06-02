@@ -450,11 +450,6 @@ const Curriculum = () => {
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                     />
-                    <div className="viewer-footer">
-                      <a href={rawUrl} target="_blank" rel="noreferrer">
-                        Open original file
-                      </a>
-                    </div>
                   </>
                 ) : (
                   <div className="empty-space1">
