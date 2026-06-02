@@ -118,8 +118,10 @@
 
 /* Messages */
 .thread-header{
-  padding:16px 20px; border-bottom:1px solid var(--line); background:#fff;
+  padding:12px 20px; border-bottom:1px solid var(--line); background:#fff;
+  display:flex; align-items:center; gap:10px;
 }
+.thread-title{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .thread-title{ font-weight:800; color:#1f2937; font-size:18px; }
 .thread-sub{ font-size:13px; color:#6b7280; margin-top:4px; }
 

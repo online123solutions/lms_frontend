@@ -30,6 +30,7 @@ export default function TraineeChat() {
   const [selectedQuery, setSelectedQuery] = useState(null);
   const [newCategory, setNewCategory] = useState("general");
   const [newQueryText, setNewQueryText] = useState("");
+  const [queryFiles, setQueryFiles] = useState([]);
   const [replyText, setReplyText] = useState("");
   const [filter, setFilter] = useState("");
   const [error, setError] = useState(null);
@@ -135,8 +136,10 @@ export default function TraineeChat() {
       const fd = new FormData();
       fd.append("question", text);
       if (newCategory) fd.append("category", newCategory);
+      queryFiles.forEach(f => fd.append("attachments", f));
       const created = await createQuery(fd);
       setNewQueryText("");
+      setQueryFiles([]);
       if (created && created.id)
         setSelectedQuery({ responses: [], ...created });
       await fetchQueries();
@@ -434,6 +437,39 @@ export default function TraineeChat() {
                     placeholder="Type your question for the trainer…"
                   />
 
+                  {/* Attachments */}
+                  <div className="form-group" style={{ marginTop: 12 }}>
+                    <label className="form-label" style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+                      <span>📎</span> Attach Files <span style={{ fontSize: 11, color: "#888", fontWeight: 400 }}>(PDF or images, multiple allowed)</span>
+                    </label>
+                    <input
+                      type="file"
+                      accept=".pdf,image/*"
+                      multiple
+                      onChange={e => setQueryFiles(Array.from(e.target.files))}
+                      style={{ fontSize: 13 }}
+                    />
+                    {queryFiles.length > 0 && (
+                      <div style={{ marginTop: 8, display: "flex", flexWrap: "wrap", gap: 6 }}>
+                        {queryFiles.map((f, i) => (
+                          <span key={i} style={{
+                            display: "inline-flex", alignItems: "center", gap: 4,
+                            padding: "3px 10px", background: "#f0f4ff",
+                            border: "1px solid #c7d7fb", borderRadius: 20,
+                            fontSize: 12, color: "#1a73e8"
+                          }}>
+                            {f.type.startsWith("image/") ? "🖼️" : "📄"} {f.name}
+                            <button
+                              type="button"
+                              onClick={() => setQueryFiles(prev => prev.filter((_, idx) => idx !== i))}
+                              style={{ background: "none", border: "none", cursor: "pointer", color: "#888", padding: 0, lineHeight: 1 }}
+                            >×</button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
                   <div className="actions">
                     <button className="btn-primary" onClick={handleNewQuery}>
                       Send
@@ -449,6 +485,13 @@ export default function TraineeChat() {
               ) : (
                 <>
                   <div className="thread-header">
+                    <button
+                      className="btn-back-inline"
+                      onClick={() => setSelectedQuery(null)}
+                      style={{ marginRight: 10, flexShrink: 0 }}
+                    >
+                      ← Back
+                    </button>
                     <div className="thread-title">
                       {selectedQuery.question?.slice(0, 120) ||
                         `Query #${selectedQuery.id}`}
@@ -461,6 +504,27 @@ export default function TraineeChat() {
                         <div className="bubble-text">
                           {selectedQuery.question}
                         </div>
+                        {selectedQuery.attachments?.length > 0 && (
+                          <div style={{ marginTop: 8, display: "flex", flexWrap: "wrap", gap: 6 }}>
+                            {selectedQuery.attachments.map((path, i) => {
+                              const url = mediaUrl(path);
+                              const isImg = /\.(png|jpg|jpeg|gif|webp)$/i.test(path);
+                              return isImg ? (
+                                <a key={i} href={url} target="_blank" rel="noreferrer">
+                                  <img src={url} alt={`attachment-${i + 1}`}
+                                    style={{ maxWidth: 120, maxHeight: 90, borderRadius: 6, border: "1px solid #ddd", cursor: "pointer" }} />
+                                </a>
+                              ) : (
+                                <a key={i} href={url} target="_blank" rel="noreferrer"
+                                  style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "4px 10px",
+                                    background: "#fff", border: "1px solid #c7d7fb", borderRadius: 20,
+                                    fontSize: 12, color: "#1a73e8", textDecoration: "none" }}>
+                                  📄 {path.split('/').pop()}
+                                </a>
+                              );
+                            })}
+                          </div>
+                        )}
                         <div className="bubble-meta">
                           {selectedQuery.raised_by === currentUsername
                             ? "You"
