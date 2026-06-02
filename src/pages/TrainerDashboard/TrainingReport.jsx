@@ -10,7 +10,8 @@ const TrainingReport = () => {
   const [reportData, setReportData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [query, setQuery] = useState(""); // NEW: search query
+  const [query, setQuery] = useState("");
+  const [selectedDept, setSelectedDept] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [userDetails, setUserDetails] = useState(null);
   const [detailsLoading, setDetailsLoading] = useState(false);
@@ -38,18 +39,27 @@ const TrainingReport = () => {
     fetchReport();
   }, [navigate, token]);
 
-  // NEW: memoized filtered rows (search by employee_id or name; also checks username)
-  const filteredRows = useMemo(() => {
-    if (!query.trim()) return reportData;
-    const q = query.trim().toLowerCase();
+  const uniqueDepts = useMemo(() => {
+    const depts = [...new Set(reportData.map(u => u.department).filter(Boolean))].sort();
+    return depts;
+  }, [reportData]);
 
-    return reportData.filter((u) => {
-      const empId = (u.employee_id ?? "").toString().toLowerCase();
-      const name = (u.name ?? "").toLowerCase();
-      const username = (u.username ?? "").toLowerCase();
-      return empId.includes(q) || name.includes(q) || username.includes(q);
-    });
-  }, [reportData, query]);
+  const filteredRows = useMemo(() => {
+    let rows = reportData;
+    if (selectedDept) {
+      rows = rows.filter(u => (u.department ?? "") === selectedDept);
+    }
+    if (query.trim()) {
+      const q = query.trim().toLowerCase();
+      rows = rows.filter((u) => {
+        const empId = (u.employee_id ?? "").toString().toLowerCase();
+        const name = (u.name ?? "").toLowerCase();
+        const username = (u.username ?? "").toLowerCase();
+        return empId.includes(q) || name.includes(q) || username.includes(q);
+      });
+    }
+    return rows;
+  }, [reportData, query, selectedDept]);
 
   // Fetch user details when a user is selected
   useEffect(() => {
@@ -104,12 +114,12 @@ const TrainingReport = () => {
             style={{ minWidth: 260 }}
             aria-label="Search by Employee ID or Name"
           />
-          {query && (
+          {(query || selectedDept) && (
             <button
               type="button"
               className="btn btn-outline-secondary"
-              onClick={() => setQuery("")}
-              aria-label="Clear search"
+              onClick={() => { setQuery(""); setSelectedDept(""); }}
+              aria-label="Clear filters"
             >
               Clear
             </button>
@@ -135,7 +145,32 @@ const TrainingReport = () => {
                   <th>Name</th>
                   {/* <th>Role</th> */}
                   <th>Employee ID</th>
-                  <th>Department</th>
+                  <th>
+                    <select
+                      value={selectedDept}
+                      onChange={e => setSelectedDept(e.target.value)}
+                      onClick={e => e.stopPropagation()}
+                      style={{
+                        width: "auto",
+                        background: "transparent",
+                        color: "#fff",
+                        border: "none",
+                        outline: "none",
+                        cursor: "pointer",
+                        fontWeight: 600,
+                        fontSize: "0.875rem",
+                        letterSpacing: "0.5px",
+                        textTransform: "uppercase",
+                        appearance: "auto",
+                        padding: 0,
+                      }}
+                    >
+                      <option value="" style={{ color: "#333", background: "#fff", fontWeight: 600 }}>All Departments</option>
+                      {uniqueDepts.map(d => (
+                        <option key={d} value={d} style={{ color: "#333", background: "#fff", fontWeight: 400, textTransform: "none" }}>{d}</option>
+                      ))}
+                    </select>
+                  </th>
                   {/* <th>Designation</th> */}
                   {/* <th>Trainer Name</th> */}
                   <th>Details</th>

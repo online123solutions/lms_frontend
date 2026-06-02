@@ -491,3 +491,23 @@ export const adminAddComment = async (id, message) => {
   const { data } = await apiClient.post(`${base}${id}/comment/`, fd);
   return data;
 };
+
+export const fetchAdminTrainers = async () => {
+  try {
+    const res = await apiClient.get('/trainers/');
+    return { success: true, data: res.data };
+  } catch (e) {
+    return { success: false, error: e?.response?.data || e.message };
+  }
+};
+
+export const assignTrainerBranches = async (trainerId, departments) => {
+  try {
+    const res = await apiClient.patch(`/trainers/${trainerId}/assign-branches/`, {
+      assigned_departments: departments,
+    });
+    return { success: true, data: res.data };
+  } catch (e) {
+    return { success: false, error: e?.response?.data || e.message };
+  }
+};

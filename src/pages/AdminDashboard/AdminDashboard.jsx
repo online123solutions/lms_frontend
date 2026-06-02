@@ -18,6 +18,7 @@ import AdminNotification from './AdminNotification';
 import AdminFeedbackPage from './AdminFeedbackPage';
 import CourseProgress from './CourseProgress';
 import AdminUserImportCard from './AdminUserImportCard';
+import TrainerBranchAssignment from './TrainerBranchAssignment';
 // import AdminConcernBoard from './AdminConcernBoard';
 import logoS1 from "../../assets/sol_logo.png";
 
@@ -32,7 +33,8 @@ const MENU = [
   { label: 'SOP', key: 'sops', icon: 'bi-file-earmark-text' },
   { label: 'Feedback', key: 'feedback', icon: 'bi-chat-dots' },
   { label: 'Course Progress', key: 'courseProgress', icon: 'bi-bar-chart' },
-  { label: 'User Import', key: 'userImport', icon: 'bi-upload', component: AdminUserImportCard },  
+  { label: 'User Import', key: 'userImport', icon: 'bi-upload', component: AdminUserImportCard },
+  { label: 'Trainer Branches', key: 'trainerBranches', icon: 'bi-diagram-3' },
   // { label: 'Concerns', key: 'concerns', icon: 'bi-exclamation-circle', component: AdminConcernBoard },
 ];
 
@@ -334,6 +336,8 @@ const AdminDashboard = () => {
         return <CourseProgress />;
       case 'userImport':
         return <AdminUserImportCard />;
+      case 'trainerBranches':
+        return <TrainerBranchAssignment />;
       // case 'concerns':
       //   return <AdminConcernBoard />;
 

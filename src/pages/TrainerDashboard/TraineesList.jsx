@@ -9,6 +9,7 @@ const TraineesList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
+  const [selectedDept, setSelectedDept] = useState("");
 
   useEffect(() => {
     const loadTrainees = async () => {
@@ -35,19 +36,28 @@ const TraineesList = () => {
     loadTrainees();
   }, []);
 
-  // Filter trainees based on search query
+  const uniqueDepts = useMemo(() => {
+    return [...new Set(trainees.map(t => t.department).filter(Boolean))].sort();
+  }, [trainees]);
+
   const filteredTrainees = useMemo(() => {
-    if (!query.trim()) return trainees;
-    const q = query.trim().toLowerCase();
-    return trainees.filter((t) => {
-      const name = (t.name || "").toLowerCase();
-      const empId = (t.employee_id || "").toLowerCase();
-      const email = (t.user?.email || "").toLowerCase();
-      const username = (t.user?.username || "").toLowerCase();
-      const dept = (t.department || "").toLowerCase();
-      return name.includes(q) || empId.includes(q) || email.includes(q) || username.includes(q) || dept.includes(q);
-    });
-  }, [trainees, query]);
+    let rows = trainees;
+    if (selectedDept) {
+      rows = rows.filter(t => (t.department || "") === selectedDept);
+    }
+    if (query.trim()) {
+      const q = query.trim().toLowerCase();
+      rows = rows.filter((t) => {
+        const name = (t.name || "").toLowerCase();
+        const empId = (t.employee_id || "").toLowerCase();
+        const email = (t.user?.email || "").toLowerCase();
+        const username = (t.user?.username || "").toLowerCase();
+        const dept = (t.department || "").toLowerCase();
+        return name.includes(q) || empId.includes(q) || email.includes(q) || username.includes(q) || dept.includes(q);
+      });
+    }
+    return rows;
+  }, [trainees, query, selectedDept]);
 
   const getInitials = (name) => {
     if (!name) return "?";
@@ -87,12 +97,12 @@ const TraineesList = () => {
               style={{ minWidth: 260 }}
               aria-label="Search trainees"
             />
-            {query && (
+            {(query || selectedDept) && (
               <button
                 type="button"
                 className="btn btn-outline-secondary"
-                onClick={() => setQuery("")}
-                aria-label="Clear search"
+                onClick={() => { setQuery(""); setSelectedDept(""); }}
+                aria-label="Clear filters"
               >
                 Clear
               </button>
@@ -114,7 +124,32 @@ const TraineesList = () => {
                   <th style={{ width: "70px" }}>Photo</th>
                   <th>Name</th>
                   <th>Employee ID</th>
-                  <th>Department</th>
+                  <th>
+                    <select
+                      value={selectedDept}
+                      onChange={e => setSelectedDept(e.target.value)}
+                      onClick={e => e.stopPropagation()}
+                      style={{
+                        width: "auto",
+                        background: "transparent",
+                        color: "#fff",
+                        border: "none",
+                        outline: "none",
+                        cursor: "pointer",
+                        fontWeight: 600,
+                        fontSize: "0.875rem",
+                        letterSpacing: "0.5px",
+                        textTransform: "uppercase",
+                        appearance: "auto",
+                        padding: 0,
+                      }}
+                    >
+                      <option value="" style={{ color: "#333", background: "#fff", fontWeight: 600 }}>All Departments</option>
+                      {uniqueDepts.map(d => (
+                        <option key={d} value={d} style={{ color: "#333", background: "#fff", fontWeight: 400, textTransform: "none" }}>{d}</option>
+                      ))}
+                    </select>
+                  </th>
                   <th>Designation</th>
                   <th>Email</th>
                   <th>Username</th>
@@ -172,7 +207,7 @@ const TraineesList = () => {
             </Table>
           </div>
         )}
-        {query && filteredTrainees.length > 0 && (
+        {(query || selectedDept) && filteredTrainees.length > 0 && (
           <div className="p-2 text-muted small text-end">
             Showing {filteredTrainees.length} of {trainees.length} trainees
           </div>
