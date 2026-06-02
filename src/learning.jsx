@@ -413,93 +413,52 @@ const Learning = () => {
                 />
               ) : selectedButton === "pdfs" && sectionData.lesson_pdfs_urls && sectionData.lesson_pdfs_urls.length > 0 ? (
                 <div className="pdf-container">
-                  <h3>Lesson PDFs</h3>
-                  <div style={{ textAlign: "center" }}>
-                    {sectionData.lesson_pdfs_urls.length > 1 && (
-                      <div style={{ marginBottom: "20px", textAlign: "center" }}>
-                        <span style={{ marginRight: "15px", fontSize: "16px", fontWeight: "bold" }}>
-                          PDF {currentPdfIndex + 1} of {sectionData.lesson_pdfs_urls.length}
-                        </span>
-                        <button
-                          onClick={handlePrevPdf}
-                          disabled={currentPdfIndex === 0}
-                          style={{
-                            marginRight: "10px",
-                            padding: "8px 16px",
-                            backgroundColor: currentPdfIndex === 0 ? "#ccc" : "#007bff",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "4px",
-                            cursor: currentPdfIndex === 0 ? "not-allowed" : "pointer"
-                          }}
-                        >
-                          Previous
-                        </button>
-                        <button
-                          onClick={handleNextPdf}
-                          disabled={currentPdfIndex === sectionData.lesson_pdfs_urls.length - 1}
-                          style={{
-                            padding: "8px 16px",
-                            backgroundColor: currentPdfIndex === sectionData.lesson_pdfs_urls.length - 1 ? "#ccc" : "#007bff",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "4px",
-                            cursor: currentPdfIndex === sectionData.lesson_pdfs_urls.length - 1 ? "not-allowed" : "pointer"
-                          }}
-                        >
-                          Next
-                        </button>
-                      </div>
-                    )}
+                  {sectionData.lesson_pdfs_urls.length > 1 && (
+                    <div className="pdf-nav-bar">
+                      <button
+                        className="pdf-nav-btn"
+                        onClick={handlePrevPdf}
+                        disabled={currentPdfIndex === 0}
+                      >
+                        ← Previous
+                      </button>
+                      <span className="pdf-counter">
+                        PDF {currentPdfIndex + 1} of {sectionData.lesson_pdfs_urls.length}
+                      </span>
+                      <button
+                        className="pdf-nav-btn"
+                        onClick={handleNextPdf}
+                        disabled={currentPdfIndex === sectionData.lesson_pdfs_urls.length - 1}
+                      >
+                        Next →
+                      </button>
+                    </div>
+                  )}
+                  <div className="pdf-viewer-wrapper">
                     <iframe
                       src={getPdfEmbedUrl(sectionData.lesson_pdfs_urls[currentPdfIndex])}
                       title={`PDF ${currentPdfIndex + 1}`}
-                      width="100%"
                       className="pdf-iframe"
                       onError={(e) => {
                         e.target.style.display = 'none';
-                        document.getElementById(`pdf-fallback`).style.display = 'block';
+                        document.getElementById('pdf-fallback').style.display = 'flex';
                       }}
                       onLoad={(e) => {
-                        // Check if iframe loaded the sign-in page or error page
                         try {
                           const iframeDoc = e.target.contentDocument || e.target.contentWindow.document;
                           if (iframeDoc.title.includes('Sign in') || iframeDoc.title.includes('Google')) {
                             e.target.style.display = 'none';
-                            document.getElementById(`pdf-fallback`).style.display = 'block';
+                            document.getElementById('pdf-fallback').style.display = 'flex';
                           }
                         } catch (error) {
-                          // Cross-origin error, likely means PDF loaded successfully
+                          // Cross-origin — PDF loaded successfully
                         }
                       }}
                     />
-                    <div id="pdf-fallback" style={{ display: "none", padding: "20px", border: "1px solid #ccc", textAlign: "center" }}>
-                      <p style={{ marginBottom: "15px", fontSize: "16px" }}>
-                        This PDF cannot be embedded directly. Click the buttons below to open them in new tabs.
-                      </p>
-                      {sectionData.lesson_pdfs_urls.map((pdfUrl, index) => (
-                        <div key={index} style={{ marginBottom: "10px" }}>
-                          <a 
-                            href={sectionData.lesson_pdfs[index] || pdfUrl} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            style={{
-                              display: "inline-block",
-                              padding: "12px 24px",
-                              backgroundColor: "#007bff",
-                              color: "white",
-                              textDecoration: "none",
-                              borderRadius: "6px",
-                              fontSize: "16px",
-                              fontWeight: "bold",
-                              marginRight: "10px"
-                            }}
-                          >
-                            Open PDF {index + 1} in New Tab
-                          </a>
-                        </div>
-                      ))}
-                    </div>
+                    <div className="pdf-icon-blocker" />
+                  </div>
+                  <div id="pdf-fallback" className="pdf-fallback">
+                    <p>This PDF cannot be displayed at the moment. Please contact your trainer.</p>
                   </div>
                 </div>
               ) : selectedButton === "pdfs" && (!sectionData.lesson_pdfs_urls || sectionData.lesson_pdfs_urls.length === 0) ? (

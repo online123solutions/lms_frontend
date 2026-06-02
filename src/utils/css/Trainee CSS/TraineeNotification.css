@@ -79,286 +79,109 @@
 
 /* ... (other existing styles remain unchanged) ... */
 
-/* Notifications Page Styles */
+/* ===== NOTIFICATIONS PAGE ===== */
+
 .notif-container {
-  background-color: var(--bg-light);
-  padding: 20px;
-  border-radius: 15px;
-  width: 100vw !important; /* Force full viewport width */
-  max-width: 100vw !important; /* Override any parent constraints */
-  margin-left: -20px; /* Compensate for parent padding */
-  margin-right: -20px; /* Compensate for parent padding */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  position: relative;
-  left: 0;
-  right: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px 24px 16px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
+/* Header */
 .notif-header {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+  flex-shrink: 0;
 }
-
 .notif-header h2 {
-  color: var(--color-text);
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 4px;
+}
+.notif-subtitle {
+  font-size: 13px;
+  color: #6b7280;
   margin: 0;
 }
 
-.notif-subtitle {
-  color: var(--color-secondary);
-  font-size: 14px;
-  margin-top: 5px;
-}
-
+/* Toolbar */
 .notif-toolbar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  background-color: var(--bg-card);
-  padding: 10px 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  justify-content: space-between;
+  margin-bottom: 14px;
+  flex-shrink: 0;
+  gap: 12px;
 }
 
+/* Tab pills */
 .notif-tabs {
-  display: flex;
-  gap: 10px;
+  display: inline-flex;
+  background: #f1f5f9;
+  border-radius: 10px;
+  padding: 3px;
+  gap: 3px;
 }
-
 .notif-tab {
-  background: none;
   border: none;
-  padding: 8px 15px;
-  font-size: 14px;
-  color: var(--color-secondary);
-  cursor: pointer;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-}
-
-.notif-tab.active {
-  background-color: #0ba3e6;
-  color: #ffffff;
+  background: transparent;
+  padding: 7px 18px;
+  font-size: 13px;
   font-weight: 500;
+  color: #6b7280;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+  white-space: nowrap;
 }
-
+.notif-tab.active {
+  background: #203C6E;
+  color: #ffffff !important;
+  box-shadow: 0 1px 4px rgba(32, 60, 110, 0.25);
+}
 .notif-tab:hover:not(.active) {
-  background-color: #0ba3e6;
+  background: #e2e8f0;
+  color: #374151;
 }
 
+/* Toolbar action buttons */
 .notif-toolbar-actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
-.notif-btn {
-  padding: 8px 15px;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.notif-btn.ghost {
-  background-color: transparent;
-  color: #0ba3e6;
-  border: 1px solid var(--color-accent);
-}
-
-.notif-btn.ghost:hover {
-  background-color: #0ba3e6;
-  color: #ffffff;
-}
-
-.notif-skeleton {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.notif-skel-card {
-  height: 80px;
-  background-color: #f0f0f0;
-  border-radius: 8px;
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0% { opacity: 0.6; }
-  50% { opacity: 1; }
-  100% { opacity: 0.6; }
-}
-
-/* Assuming NotificationList component uses similar styling */
-.notification-item {
-  background-color: var(--bg-card);
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.notification-item strong {
-  color: var(--color-text);
-  font-size: 16px;
-}
-
-.notification-item span {
-  color: var(--color-secondary);
-  font-size: 12px;
-}
-
-.notification-item button {
-  padding: 5px 10px;
-  background-color: var(--color-accent);
-  color: #ffffff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  align-self: flex-start;
-  transition: all 0.3s ease;
-}
-
-.notification-item button:hover {
-  background-color: #45a049;
+/* Scrollable list wrapper */
+.notif-container > .notif-list,
+.notif-container > .notif-skeleton,
+.notif-container > .notif-empty {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 @media (max-width: 480px) {
-  .notif-container {
-    padding: 15px;
-    margin: 0; /* Remove margin on mobile */
-    width: 100vw !important; /* Full viewport width on mobile */
-    max-width: 100vw !important; /* Override any constraints */
-    margin-left: 0; /* Reset margin */
-    margin-right: 0; /* Reset margin */
-  }
-
-  .notif-toolbar {
-    flex-direction: column;
-    gap: 10px;
-    padding: 10px;
-  }
-
-  .notif-tabs {
-    width: 100%;
-    justify-content: space-around;
-  }
-
-  .notif-tab {
-    flex: 1;
-    text-align: center;
-  }
+  .notif-container { padding: 14px 14px 12px; }
+  .notif-toolbar { flex-direction: column; align-items: flex-start; }
+  .notif-tabs { width: 100%; }
+  .notif-tab { flex: 1; text-align: center; }
 }
-.notif-container {
-  height: 100%;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-/* ===============================
-   Notifications – height tuning
-   =============================== */
 
-/* 768px height */
+/* Height-based tuning */
 @media (max-height: 768px) {
-  .notif-header h2 {
-    font-size: 18px;
-    margin-bottom: 4px;
-  }
-
-  .notif-subtitle {
-    font-size: 13px;
-    margin-bottom: 8px;
-  }
+  .notif-container { padding: 14px 18px 12px; }
+  .notif-header h2 { font-size: 18px; }
+  .notif-subtitle { font-size: 12px; }
+  .notif-toolbar { margin-bottom: 10px; }
+  .notif-tab { font-size: 12px; padding: 6px 14px; }
 }
-
-/* 552px height */
 @media (max-height: 552px) {
-  .notif-header h2 {
-    font-size: 16px;
-    margin-bottom: 2px;
-  }
-
-  .notif-subtitle {
-    font-size: 12px;
-    margin-bottom: 6px;
-  }
-}
-@media (max-height: 768px) {
-  .notif-toolbar {
-    padding: 6px 8px;
-    margin-bottom: 6px;
-  }
-
-  .notif-tab {
-    font-size: 13px;
-    padding: 6px 10px;
-  }
-
-  .notif-btn {
-    font-size: 13px;
-    padding: 6px 10px;
-  }
-}
-
-@media (max-height: 552px) {
-  .notif-toolbar {
-    padding: 4px 6px;
-    margin-bottom: 4px;
-  }
-
-  .notif-tab {
-    font-size: 12px;
-    padding: 5px 8px;
-  }
-
-  .notif-btn {
-    font-size: 12px;
-    padding: 5px 8px;
-  }
-}
-.notification-list {
-  flex: 1;
-  overflow-y: auto;
-}
-.notif-container > :last-child {
-  flex: 1;
-  overflow-y: auto;
-}
-@media (max-height: 768px) {
-  .notification-card {
-    padding: 10px;
-    margin-bottom: 8px;
-  }
-
-  .notification-title {
-    font-size: 14px;
-  }
-
-  .notification-meta {
-    font-size: 12px;
-  }
-}
-
-@media (max-height: 552px) {
-  .notification-card {
-    padding: 8px;
-    margin-bottom: 6px;
-  }
-
-  .notification-title {
-    font-size: 13px;
-  }
-
-  .notification-meta {
-    font-size: 11px;
-  }
+  .notif-container { padding: 10px 14px 8px; }
+  .notif-header h2 { font-size: 16px; }
+  .notif-toolbar { margin-bottom: 8px; }
+  .notif-tab { font-size: 11px; padding: 5px 10px; }
 }
 /* ===============================
    LOGIN ACTIVITY – BASE

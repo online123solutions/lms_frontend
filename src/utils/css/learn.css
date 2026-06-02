@@ -67,35 +67,37 @@ body {
 }
 
 .left-menu {
-  width: 20%;
-  /* background: #354fb7; */
+  width: 160px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 12px 10px;
   box-sizing: border-box;
-  align-items: start;
+  align-items: stretch;
+  gap: 4px;
 }
 
 .menu-button {
   width: 100%;
-  padding: 10px;
-  margin: 5px 0;
+  padding: 8px 10px;
+  margin: 0;
   background-color: #393939;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 10px;
-  color:white
+  gap: 8px;
+  color: white;
 }
 
 .menu-icon {
-  font-size: 20px;
+  font-size: 15px;
+  flex-shrink: 0;
 }
 
 .menu-text {
-  font-size: 18px;
+  font-size: 13px;
   display: inline;
 }
 
@@ -115,11 +117,10 @@ body {
 }
 
 .content-display {
-  width: 80%;
-  padding: 20px;
+  flex: 1;
+  min-width: 0;
+  padding: 12px;
   box-sizing: border-box;
-  
-  /* background: linear-gradient(to left, #9aa7db, #354fb7); */
 }
 
 .section-content {
@@ -535,6 +536,7 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 .section-content iframe {
   flex: 1;
@@ -869,24 +871,89 @@ body {
   }
 }
 
-/* PDF iframe styling for full height */
+/* ===== PDF VIEWER ===== */
+.pdf-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+}
+
+.pdf-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 8px 16px;
+  background: #f0f2f5;
+  border-bottom: 1px solid #ddd;
+  flex-shrink: 0;
+  border-radius: 8px 8px 0 0;
+}
+
+.pdf-nav-btn {
+  padding: 6px 18px;
+  background: #1a73e8;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.pdf-nav-btn:hover:not(:disabled) {
+  background: #1558c0;
+}
+
+.pdf-nav-btn:disabled {
+  background: #c5c5c5;
+  cursor: not-allowed;
+}
+
+.pdf-counter {
+  font-size: 14px;
+  font-weight: 600;
+  color: #444;
+  min-width: 100px;
+  text-align: center;
+}
+
+.pdf-viewer-wrapper {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
 .pdf-iframe {
-  height: calc(100vh - 200px) !important;
-  min-height: 800px !important;
-  border: 1px solid #ccc !important;
-  margin-bottom: 10px !important;
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
 }
 
-@media (max-height: 768px) {
-  .pdf-iframe {
-    height: calc(100vh - 180px) !important;
-    min-height: 600px !important;
-  }
+/* Blocks Google Drive's built-in open-in-new-tab icon */
+.pdf-icon-blocker {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60px;
+  height: 50px;
+  background: #000;
+  z-index: 10;
+  pointer-events: all;
 }
 
-@media (max-height: 552px) {
-  .pdf-iframe {
-    height: calc(100vh - 160px) !important;
-    min-height: 400px !important;
-  }
+.pdf-fallback {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 24px;
+  color: #555;
+  font-size: 15px;
+  text-align: center;
 }
+
