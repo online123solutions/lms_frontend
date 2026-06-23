@@ -1,3 +1,3 @@
 export const API_BASE = (
-  import.meta.env.VITE_API_BASE_URL || "https://lms.steel.study"
+  import.meta.env.VITE_API_BASE_URL || "https://lms.staging.steel.study"
 ).replace(/\/+$/, "");
