@@ -235,9 +235,9 @@ export default function TrainerTaskReviews() {
             ? `Task assigned successfully to ${succeeded.length} users.`
             : "Task assigned successfully."
         });
+        loadAssignments();
         setTimeout(() => {
           closeAssign();
-          // optional: you might refresh an assignments list here if/when you add it
         }, 1000);
       } else if (succeeded.length === 0) {
         setAssignMsg({
@@ -250,6 +250,7 @@ export default function TrainerTaskReviews() {
           text: `Assigned to ${succeeded.map((r) => r.username).join(", ")}. Failed for ` +
             failed.map((r) => `${r.username} (${extractErrorMsg(r.error)})`).join(", ")
         });
+        loadAssignments();
       }
     } finally {
       setAssigning(false);

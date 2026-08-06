@@ -287,10 +287,17 @@ export const changePassword = async (data) => {
     
     return { success: true, data: response.data };
   } catch (error) {
-    const errorMessage = error.response?.data?.detail || 
-                        error.response?.data?.error || 
-                        error.response?.data?.message ||
-                        error.message || 
+    const responseData = error.response?.data;
+    const fieldError =
+      responseData?.old_password?.[0] ||
+      responseData?.new_password?.[0] ||
+      responseData?.confirm_password?.[0] ||
+      responseData?.non_field_errors?.[0];
+    const errorMessage = fieldError ||
+                        responseData?.detail ||
+                        responseData?.error ||
+                        responseData?.message ||
+                        error.message ||
                         "Failed to change password.";
     return { success: false, error: errorMessage };
   }

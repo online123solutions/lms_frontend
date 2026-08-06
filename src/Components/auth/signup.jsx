@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { login, register } from "../../api/apiservice";
 import "./signup.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 import ParticleBackground from "../ParticleBackground"; // Assuming this is a custom or library component
 import { AuthContext } from "../../App";
 
@@ -13,6 +14,7 @@ const Signup = () => {
   const { setIsAuthenticated, setRole, setIsSuperUser } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [isLoginView, setIsLoginView] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     user: {
       role: "",
@@ -223,15 +225,37 @@ const Signup = () => {
                   className="input-field"
                 />
 
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  value={formData.user.password}
-                  onChange={handleChange}
-                  required
-                  className="input-field"
-                />
+                <div style={{ position: "relative" }}>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    placeholder="Password"
+                    value={formData.user.password}
+                    onChange={handleChange}
+                    required
+                    className="input-field"
+                    style={{ paddingRight: "40px" }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    tabIndex={-1}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    style={{
+                      position: "absolute",
+                      right: "12px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      color: "#666",
+                      padding: 0,
+                    }}
+                  >
+                    <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`} />
+                  </button>
+                </div>
 
                 <button type="submit" className="submit-button">
                   {loading ? "Processing..." : isLoginView ? "Sign In" : "Register"}

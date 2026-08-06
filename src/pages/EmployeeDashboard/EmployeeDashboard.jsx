@@ -22,7 +22,7 @@ import AssessmentReport from "./AssessmentReport";
 import MacroPlanner from "./MacroPlanner";
 import MicroPlanner from "./MicroPlanner";
 import EmployeeNotificationsPage from "./EmployeeNotification";
-import { Dropdown, Form, Button, Modal } from "react-bootstrap";
+import { Dropdown, Form, Button, Modal, InputGroup } from "react-bootstrap";
 import EmployeeProgress from "./EmployeeProgress";
 import logoS1 from "../../assets/sol_logo.png";
 
@@ -74,6 +74,9 @@ const EmployeeDashboard = () => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [changePasswordMessage, setChangePasswordMessage] = useState("");
 
   const username = localStorage.getItem("username") || "";
@@ -608,6 +611,9 @@ const EmployeeDashboard = () => {
           setNewPassword("");
           setConfirmPassword("");
           setChangePasswordMessage("");
+          setShowOldPassword(false);
+          setShowNewPassword(false);
+          setShowConfirmPassword(false);
         }}
         centered
         size="md"
@@ -621,35 +627,62 @@ const EmployeeDashboard = () => {
           <Form onSubmit={handleChangePassword}>
             <Form.Group controlId="oldPassword">
               <Form.Label>Current Password</Form.Label>
-              <Form.Control
-                type="password"
-                value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)}
-                placeholder="Enter your current password"
-                required
-              />
+              <InputGroup>
+                <Form.Control
+                  type={showOldPassword ? "text" : "password"}
+                  value={oldPassword}
+                  onChange={(e) => setOldPassword(e.target.value)}
+                  placeholder="Enter your current password"
+                  required
+                />
+                <Button
+                  variant="outline-secondary"
+                  onClick={() => setShowOldPassword((v) => !v)}
+                  tabIndex={-1}
+                >
+                  <i className={`bi ${showOldPassword ? "bi-eye-slash" : "bi-eye"}`} />
+                </Button>
+              </InputGroup>
             </Form.Group>
             <Form.Group controlId="newPassword" className="mt-3">
               <Form.Label>New Password</Form.Label>
-              <Form.Control
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Enter new password"
-                required
-                minLength={8}
-              />
+              <InputGroup>
+                <Form.Control
+                  type={showNewPassword ? "text" : "password"}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter new password"
+                  required
+                  minLength={8}
+                />
+                <Button
+                  variant="outline-secondary"
+                  onClick={() => setShowNewPassword((v) => !v)}
+                  tabIndex={-1}
+                >
+                  <i className={`bi ${showNewPassword ? "bi-eye-slash" : "bi-eye"}`} />
+                </Button>
+              </InputGroup>
             </Form.Group>
             <Form.Group controlId="confirmPassword" className="mt-3">
               <Form.Label>Confirm New Password</Form.Label>
-              <Form.Control
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm new password"
-                required
-                minLength={8}
-              />
+              <InputGroup>
+                <Form.Control
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm new password"
+                  required
+                  minLength={8}
+                />
+                <Button
+                  variant="outline-secondary"
+                  onClick={() => setShowConfirmPassword((v) => !v)}
+                  tabIndex={-1}
+                >
+                  <i className={`bi ${showConfirmPassword ? "bi-eye-slash" : "bi-eye"}`} />
+                </Button>
+              </InputGroup>
             </Form.Group>
             {changePasswordMessage && (
               <div className={`mt-3 ${changePasswordMessage.includes("Error") ? "text-danger" : "text-success"}`}>
@@ -668,6 +701,9 @@ const EmployeeDashboard = () => {
             setNewPassword("");
             setConfirmPassword("");
             setChangePasswordMessage("");
+            setShowOldPassword(false);
+            setShowNewPassword(false);
+            setShowConfirmPassword(false);
           }}>
             Close
           </Button>
