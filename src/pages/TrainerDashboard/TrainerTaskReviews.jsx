@@ -179,41 +179,77 @@ export default function TrainerTaskReviews() {
       setAssignMsg({ type: "danger", text: "Title is required." });
       return;
     }
-    if (!assignForm.assigned_to.trim()) {
+    // Support multiple usernames separated by commas and/or newlines
+    const usernames = [...new Set(
+      assignForm.assigned_to
+        .split(/[,\n]/)
+        .map((u) => u.trim())
+        .filter(Boolean)
+    )];
+
+    if (usernames.length === 0) {
       setAssignMsg({ type: "danger", text: "Assigned To (username) is required." });
       return;
     }
 
-    // Build multipart form data
-    const fd = new FormData();
-    fd.append("title", assignForm.title.trim());
-    fd.append("assigned_to", assignForm.assigned_to.trim()); // API helper resolves username->id
-    if (assignForm.instructions.trim()) fd.append("instructions", assignForm.instructions.trim());
-    if (assignForm.department.trim()) fd.append("department", assignForm.department.trim());
-    if (assignForm.priority) fd.append("priority", assignForm.priority);
-    if (assignForm.due_at) {
-      // send as local string; backend can parse ISO or naive
-      fd.append("due_at", assignForm.due_at);
-    }
-    if (assignForm.attachment) fd.append("attachment", assignForm.attachment);
-    if (assignForm.max_marks !== "" && assignForm.max_marks !== null) fd.append("max_marks", String(assignForm.max_marks));
-    fd.append("requires_submission", assignForm.requires_submission ? "true" : "false");
+    const buildFormData = (username) => {
+      const fd = new FormData();
+      fd.append("title", assignForm.title.trim());
+      fd.append("assigned_to", username); // API helper resolves username->id
+      if (assignForm.instructions.trim()) fd.append("instructions", assignForm.instructions.trim());
+      if (assignForm.department.trim()) fd.append("department", assignForm.department.trim());
+      if (assignForm.priority) fd.append("priority", assignForm.priority);
+      if (assignForm.due_at) {
+        // send as local string; backend can parse ISO or naive
+        fd.append("due_at", assignForm.due_at);
+      }
+      if (assignForm.attachment) fd.append("attachment", assignForm.attachment);
+      if (assignForm.max_marks !== "" && assignForm.max_marks !== null) fd.append("max_marks", String(assignForm.max_marks));
+      fd.append("requires_submission", assignForm.requires_submission ? "true" : "false");
+      return fd;
+    };
+
+    const extractErrorMsg = (error) =>
+      typeof error === "string" ? error :
+      error?.non_field_errors?.join(", ") ||
+      Object.entries(error || {}).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(", ") : v}`).join(" • ") ||
+      "Failed to assign task.";
 
     setAssigning(true);
     try {
-      const { success, data, error } = await createTaskAssignment(fd);
-      if (success) {
-        setAssignMsg({ type: "success", text: "Task assigned successfully." });
+      // Assign sequentially so a failure for one user doesn't affect the others,
+      // and so we can report exactly who succeeded/failed.
+      const results = [];
+      for (const username of usernames) {
+        const { success, error } = await createTaskAssignment(buildFormData(username));
+        results.push({ username, success, error });
+      }
+
+      const failed = results.filter((r) => !r.success);
+      const succeeded = results.filter((r) => r.success);
+
+      if (failed.length === 0) {
+        setAssignMsg({
+          type: "success",
+          text: usernames.length > 1
+            ? `Task assigned successfully to ${succeeded.length} users.`
+            : "Task assigned successfully."
+        });
         setTimeout(() => {
           closeAssign();
           // optional: you might refresh an assignments list here if/when you add it
         }, 1000);
+      } else if (succeeded.length === 0) {
+        setAssignMsg({
+          type: "danger",
+          text: failed.map((r) => `${r.username}: ${extractErrorMsg(r.error)}`).join(" • ")
+        });
       } else {
-        const msg = typeof error === "string" ? error :
-          error?.non_field_errors?.join(", ") ||
-          Object.entries(error || {}).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(", ") : v}`).join(" • ") ||
-          "Failed to assign task.";
-        setAssignMsg({ type: "danger", text: msg });
+        setAssignMsg({
+          type: "warning",
+          text: `Assigned to ${succeeded.map((r) => r.username).join(", ")}. Failed for ` +
+            failed.map((r) => `${r.username} (${extractErrorMsg(r.error)})`).join(", ")
+        });
       }
     } finally {
       setAssigning(false);
@@ -435,14 +471,15 @@ export default function TrainerTaskReviews() {
               <div className="col-md-6 mb-3">
                 <Form.Label>Assign To (username) *</Form.Label>
                 <Form.Control
-                  type="text"
+                  as="textarea"
+                  rows={2}
                   name="assigned_to"
                   value={assignForm.assigned_to}
                   onChange={onAssignChange}
-                  placeholder="e.g., john_doe"
+                  placeholder="e.g., john_doe, jane_doe"
                   required
                 />
-                <Form.Text muted>Type trainee/employee username; trainer’s dept filter applies server-side.</Form.Text>
+                <Form.Text muted>Type one or more trainee/employee usernames, separated by commas; trainer’s dept filter applies server-side.</Form.Text>
               </div>
               <div className="col-md-3 mb-3">
                 <Form.Label>Priority</Form.Label>
