@@ -264,6 +264,13 @@ const AssessmentReport = () => {
                   }}
                 >
                   <p><strong>Q{index + 1}:</strong> {q.question}</p>
+                  {q.question_image && (
+                    <img
+                      src={q.question_image}
+                      alt={`Question ${index + 1}`}
+                      style={{ maxWidth: "100%", maxHeight: "200px", objectFit: "contain", marginBottom: "8px" }}
+                    />
+                  )}
                   <p>
                     <strong>Your Answer:</strong>{" "}
                     <span
@@ -272,12 +279,26 @@ const AssessmentReport = () => {
                         fontWeight: "bold",
                       }}
                     >
-                      {q.trainee_answer || "Not Answered"}
+                      {q.employee_answer || (q.employee_answer_image ? "" : "Not Answered")}
                     </span>
                   </p>
+                  {q.employee_answer_image && (
+                    <img
+                      src={q.employee_answer_image}
+                      alt="Your answer"
+                      style={{ maxWidth: "100%", maxHeight: "120px", objectFit: "contain", marginBottom: "8px" }}
+                    />
+                  )}
                   <p>
                     <strong>Correct Answer:</strong> {q.correct_answer}
                   </p>
+                  {q.correct_answer_image && (
+                    <img
+                      src={q.correct_answer_image}
+                      alt="Correct answer"
+                      style={{ maxWidth: "100%", maxHeight: "120px", objectFit: "contain", marginBottom: "8px" }}
+                    />
+                  )}
                   <p>
                     <strong>Status:</strong>{" "}
                     <span style={{ color: q.is_correct ? "green" : "red" }}>

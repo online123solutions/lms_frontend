@@ -122,14 +122,15 @@ const QuizComponent = ({ setActiveContent }) => {
   const handleSubmitQuiz = async () => {
     setShowResults(true);
   
-    const answersToSubmit = {};
-    selectedQuiz.questions.forEach((question) => {
-      const selectedAnswerId = selectedAnswers[question.id];
-      const selectedAnswerObj = question.answers.find((a) => a.id === selectedAnswerId);
-      if (selectedAnswerObj) {
-        answersToSubmit[question.question] = selectedAnswerObj.answer;
-      }
-    });
+    // Submit by id so image-only questions (no text) are graded correctly
+    const answersToSubmit = {
+      answers: selectedQuiz.questions
+        .filter((question) => selectedAnswers[question.id])
+        .map((question) => ({
+          question_id: question.id,
+          answer_id: selectedAnswers[question.id],
+        })),
+    };
   
     const result = await saveQuizResult(selectedQuiz.id, answersToSubmit);
   
@@ -231,7 +232,9 @@ const QuizComponent = ({ setActiveContent }) => {
           {/* Question Card */}
           <QuestionCard
             question={selectedQuiz.questions[currentQuestionIndex].question}
+            questionImage={selectedQuiz.questions[currentQuestionIndex].question_image}
             options={selectedQuiz.questions[currentQuestionIndex].answers.map((a) => a.answer)}
+            optionImages={selectedQuiz.questions[currentQuestionIndex].answers.map((a) => a.answer_image)}
             questionNumber={currentQuestionIndex + 1}
             timeLeft={timeLeft}
             selectedOption={selectedOption} // Pass selected option
