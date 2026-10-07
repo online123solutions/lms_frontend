@@ -12,7 +12,12 @@ const QuestionCard = ({
   timeLeft,
   onOptionSelect,
   selectedOption,
+  allowCustomAnswer = false,
+  customAnswer = "",
+  onCustomAnswerChange,
 }) => {
+  const customSelected = selectedOption === "custom";
+
   return (
     <div
       style={{
@@ -116,6 +121,68 @@ const QuestionCard = ({
           </div>
         </div>
       ))}
+
+      {/* Write-your-own answer */}
+      {allowCustomAnswer && (
+        <div
+          onClick={() => !customSelected && onOptionSelect("custom")}
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            gap: "12px",
+            padding: "16px",
+            borderRadius: "8px",
+            border: "1px dashed #c4b5fd",
+            cursor: "pointer",
+            marginBottom: "12px",
+            transition: "background-color 0.3s",
+            backgroundColor: customSelected ? "#e9d5ff" : "white",
+          }}
+        >
+          <div
+            style={{
+              width: "34px",
+              height: "34px",
+              minWidth: "34px",
+              borderRadius: "50%",
+              backgroundColor: customSelected ? "#393939" : "#e9d5ff",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              fontSize: "16px",
+              color: customSelected ? "white" : "#393939",
+            }}
+          >
+            ✎
+          </div>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
+            <span style={{ fontSize: "15px", color: "#333" }}>
+              None of these? Write your own answer
+            </span>
+            {customSelected && (
+              <textarea
+                autoFocus
+                rows={2}
+                maxLength={500}
+                value={customAnswer}
+                onChange={(e) => onCustomAnswerChange?.(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
+                placeholder="Type your answer here"
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  borderRadius: "6px",
+                  border: "1px solid #c4b5fd",
+                  fontSize: "15px",
+                  fontFamily: "inherit",
+                  resize: "vertical",
+                  boxSizing: "border-box",
+                }}
+              />
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

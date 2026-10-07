@@ -16,7 +16,8 @@ const QuizComponent = ({ setActiveContent }) => {
 
   const [countdown, setCountdown] = useState(3);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState({});
+  const [selectedAnswers, setSelectedAnswers] = useState({}); // questionId -> answerId or "custom"
+  const [customAnswers, setCustomAnswers] = useState({}); // questionId -> typed answer
   const [selectedOption, setSelectedOption] = useState(null);
   const [timeLeft, setTimeLeft] = useState(0);
   const [showResults, setShowResults] = useState(false);
@@ -67,26 +68,40 @@ const QuizComponent = ({ setActiveContent }) => {
     setSelectedOption(optionIndex);
   };
 
+  const handleCustomAnswerChange = (questionId, text) => {
+    setCustomAnswers((prev) => ({ ...prev, [questionId]: text }));
+  };
+
+  const isAnswered = (question) => {
+    const selected = selectedAnswers[question?.id];
+    if (selected === "custom") return Boolean(customAnswers[question.id]?.trim());
+    return Boolean(selected);
+  };
+
+  // Option to highlight for a question: its index, "custom", or null
+  const selectedOptionFor = (question) => {
+    const selected = selectedAnswers[question?.id];
+    if (!selected) return null;
+    if (selected === "custom") return "custom";
+    return question.answers.findIndex((a) => a.id === selected);
+  };
+
+  const goToQuestion = (index) => {
+    setCurrentQuestionIndex(index);
+    setSelectedOption(selectedOptionFor(selectedQuiz.questions[index]));
+  };
+
   const handleNextQuestion = () => {
     if (!selectedQuiz) return;
     if (currentQuestionIndex < selectedQuiz.questions.length - 1) {
-      setCurrentQuestionIndex((i) => i + 1);
-      setSelectedOption(null);
+      goToQuestion(currentQuestionIndex + 1);
     }
   };
 
   const handlePreviousQuestion = () => {
     if (!selectedQuiz) return;
     if (currentQuestionIndex > 0) {
-      const prevIndex = currentQuestionIndex - 1;
-      setCurrentQuestionIndex(prevIndex);
-      const prevQ = selectedQuiz.questions[prevIndex];
-      const prevSelectedId = selectedAnswers[prevQ?.id];
-      setSelectedOption(
-        prevSelectedId
-          ? prevQ.answers.findIndex((a) => a.id === prevSelectedId)
-          : null
-      );
+      goToQuestion(currentQuestionIndex - 1);
     }
   };
 
@@ -124,11 +139,12 @@ const QuizComponent = ({ setActiveContent }) => {
     // Submit by id so image-only questions (no text) are graded correctly
     const answersToSubmit = {
       answers: selectedQuiz.questions
-        .filter((question) => selectedAnswers[question.id])
-        .map((question) => ({
-          question_id: question.id,
-          answer_id: selectedAnswers[question.id],
-        })),
+        .filter((question) => isAnswered(question))
+        .map((question) =>
+          selectedAnswers[question.id] === "custom"
+            ? { question_id: question.id, custom_answer: customAnswers[question.id].trim() }
+            : { question_id: question.id, answer_id: selectedAnswers[question.id] }
+        ),
     };
   
     const result = await saveQuizResult(selectedQuiz.id, answersToSubmit);
@@ -145,8 +161,15 @@ const QuizComponent = ({ setActiveContent }) => {
   const calculateResults = () => {
     let correct = 0;
     selectedQuiz.questions.forEach((question) => {
-      const correctAnswer = question.answers.find((answer) => answer.correct)?.id;
-      if (selectedAnswers[question.id] === correctAnswer) {
+      const correctAnswer = question.answers.find((answer) => answer.correct);
+      if (selectedAnswers[question.id] === "custom") {
+        // Same rule as the backend: typed text must match the correct option's text
+        const normalize = (t) => (t || "").replace(/\s+/g, " ").trim().toLowerCase();
+        const typed = normalize(customAnswers[question.id]);
+        if (typed && correctAnswer?.answer && typed === normalize(correctAnswer.answer)) {
+          correct += 1;
+        }
+      } else if (correctAnswer && selectedAnswers[question.id] === correctAnswer.id) {
         correct += 1;
       }
     });
@@ -158,6 +181,8 @@ const QuizComponent = ({ setActiveContent }) => {
     setSelectedQuiz(null);
     setCurrentQuestionIndex(0);
     setSelectedAnswers({});
+    setCustomAnswers({});
+    setSelectedOption(null);
     setShowResults(false);
     setCountdown(3); // Reset countdown
   };
@@ -196,9 +221,9 @@ const QuizComponent = ({ setActiveContent }) => {
           {/* Question Navigation */}
           <div className="question-navigation">
             {selectedQuiz.questions.map((_, index) => {
-              const isAnswered = selectedAnswers[selectedQuiz.questions[index]?.id];
+              const answered = isAnswered(selectedQuiz.questions[index]);
               const isCurrent = index === currentQuestionIndex;
-              const circleColor = isAnswered
+              const circleColor = answered
                 ? "green"
                 : isCurrent
                 ? "yellow"
@@ -211,16 +236,7 @@ const QuizComponent = ({ setActiveContent }) => {
                   key={index}
                   className="question-circle"
                   style={{ backgroundColor: circleColor }}
-                  onClick={() => {
-                    setCurrentQuestionIndex(index);
-                    setSelectedOption(
-                      selectedAnswers[selectedQuiz.questions[index]?.id]
-                        ? selectedQuiz.questions[index].answers.findIndex(
-                            (a) => a.id === selectedAnswers[selectedQuiz.questions[index]?.id]
-                          )
-                        : null
-                    ); // Restore selected option for the clicked question
-                  }}
+                  onClick={() => goToQuestion(index)} // Restores the selected option too
                 >
                   {index + 1}
                 </div>
@@ -240,9 +256,14 @@ const QuizComponent = ({ setActiveContent }) => {
             onOptionSelect={(index) =>
               handleAnswerSelect(
                 selectedQuiz.questions[currentQuestionIndex].id,
-                selectedQuiz.questions[currentQuestionIndex].answers[index].id,
+                index === "custom" ? "custom" : selectedQuiz.questions[currentQuestionIndex].answers[index].id,
                 index
               )
+            }
+            allowCustomAnswer={selectedQuiz.questions[currentQuestionIndex].allow_custom_answer}
+            customAnswer={customAnswers[selectedQuiz.questions[currentQuestionIndex].id] || ""}
+            onCustomAnswerChange={(text) =>
+              handleCustomAnswerChange(selectedQuiz.questions[currentQuestionIndex].id, text)
             }
           />
 
