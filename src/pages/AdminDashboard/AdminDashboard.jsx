@@ -13,6 +13,7 @@ import MacroPlanner from './MacroPlanner';
 import MicroPlanner from './MicroPlanner';
 import TrainingReport from './TrainingReport';
 import AdminAssessmentReports from './AssessmentReport';
+import QuizManager from './QuizManager/QuizManager';
 import { Dropdown,Button, Modal, Form, InputGroup  } from "react-bootstrap";
 import AdminNotification from './AdminNotification';
 import AdminFeedbackPage from './AdminFeedbackPage';
@@ -28,6 +29,7 @@ const MENU = [
   { label: 'Road Map', key: 'macroPlanner', icon: 'bi-calendar' },
   { label: 'Planner', key: 'microPlanner', icon: 'bi-calendar-check' },
   { label: 'Training Report', key: 'report', icon: 'bi-file-earmark-bar-graph' },
+  { label: 'Quizzes', key: 'quizzes', icon: 'bi-ui-checks' },
   { label: 'Assessment Report', key: 'assessmentReport', icon: 'bi-graph-up' },
   { label: 'Notifications', key: 'notifications', icon: 'bi-bell' },
   { label: 'SOP', key: 'sops', icon: 'bi-file-earmark-text' },
@@ -329,6 +331,8 @@ const AdminDashboard = () => {
         return <MicroPlanner />;
       case 'report': 
         return <TrainingReport />;
+      case 'quizzes':
+        return <QuizManager />;
       case 'assessmentReport':
         return <AdminAssessmentReports />;
       case 'notifications':

@@ -228,6 +228,26 @@ export const saveQuizResult = async (id, payload) => {
   }
 };
 
+// One user's answers for a quiz (admin/trainer review)
+export const getQuizAttempt = async (quizId, username) => {
+  try {
+    const res = await apiClient.get(`/quiz/${quizId}/attempts/${encodeURIComponent(username)}/`);
+    return { success: true, data: res.data };
+  } catch (e) {
+    return { success: false, error: pickError(e, "Failed to load answers.") };
+  }
+};
+
+// Mark a submitted answer correct/incorrect; returns the recalculated score
+export const markResultAnswer = async (resultAnswerId, isCorrect) => {
+  try {
+    const res = await apiClient.patch(`/quiz/result-answers/${resultAnswerId}/`, { is_correct: isCorrect });
+    return { success: true, data: res.data };
+  } catch (e) {
+    return { success: false, error: pickError(e, "Failed to update answer.") };
+  }
+};
+
 export const requestPasswordReset = async (data) => {
   try {
     if (!getCsrfToken()) await initCsrf();

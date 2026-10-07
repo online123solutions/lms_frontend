@@ -1,7 +1,8 @@
 // src/pages/TrainerDashboard/TrainerAssessmentReports.jsx
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import "../../utils/css/Trainer CSS/TrainerAssessmentReports.css";
 import { getQuizzes, getAssessmentReports, getPeopleBrief } from "../../api/apiservice";
+import AttemptAnswers from "../../UIcomponents/common/AttemptAnswers";
 import "../../index.css";
 
 const AUDIENCES = [
@@ -66,6 +67,18 @@ export default function TrainerAssessmentReports() {
 
   const [showResults, setShowResults] = useState({}); // { [reportId]: bool }
   const [peopleMap, setPeopleMap] = useState({}); // { usernameLower: {full_name, department, designation, avatar_url?} }
+  const [review, setReview] = useState(null); // { reportId, username } whose answers are open
+  const closeReview = useCallback(() => setReview(null), []);
+
+  // Keep the table's score in sync after marking answers
+  const updateRowScore = (reportId, username, score) =>
+    setReports((rs) =>
+      rs.map((rep) =>
+        rep.id !== reportId
+          ? rep
+          : { ...rep, results: rep.results.map((row) => (row.username === username ? { ...row, score } : row)) }
+      )
+    );
 
   const normalizeQuizzes = (data) => {
     if (!data) return [];
@@ -151,6 +164,7 @@ export default function TrainerAssessmentReports() {
 
   // Auto-load when quiz or audience changes (nice UX)
   useEffect(() => {
+    setReview(null);
     if (quizId) loadReports({ doRefresh: true, doAutocreate: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quizId, audience]);
@@ -293,20 +307,19 @@ export default function TrainerAssessmentReports() {
                                 <th>Designation</th>
                                 <th>Score</th>
                                 <th>Attempted</th>
+                                <th></th>
                               </tr>
                             </thead>
                                 <tbody>
                                 {r.results.map((row) => (
                                     <tr key={row.id || `${row.username}-${row.quiz}`}>
                                     <td>
-                                        <td>
-                                          <div className="user-cell no-avatar">
-                                            <div className="user-meta">
-                                              <div className="name">{row.display_name || row.username || "-"}</div>
-                                              <div className="muted">@{row.username}</div>
-                                            </div>
-                                          </div>
-                                        </td>
+                                      <div className="user-cell no-avatar">
+                                        <div className="user-meta">
+                                          <div className="name">{row.display_name || row.username || "-"}</div>
+                                          <div className="muted">@{row.username}</div>
+                                        </div>
+                                      </div>
                                     </td>
                                     <td>{row.department || "-"}</td>
                                     <td>{row.designation || "-"}</td>
@@ -315,6 +328,16 @@ export default function TrainerAssessmentReports() {
                                         {row.date_attempted
                                         ? new Date(row.date_attempted).toLocaleString()
                                         : "-"}
+                                    </td>
+                                    <td>
+                                        <button
+                                        className="btn-primary"
+                                        style={{ whiteSpace: "nowrap", padding: "6px 14px", fontSize: "14px" }}
+                                        disabled={!row.username}
+                                        onClick={() => setReview({ reportId: r.id, username: row.username })}
+                                        >
+                                        Review answers
+                                        </button>
                                     </td>
                                     </tr>
                                 ))}
@@ -327,6 +350,15 @@ export default function TrainerAssessmentReports() {
                 </div>
               ))}
         </div>
+      )}
+
+      {review && (
+        <AttemptAnswers
+          quizId={quizId}
+          username={review.username}
+          onClose={closeReview}
+          onScoreChange={(score) => updateRowScore(review.reportId, review.username, score)}
+        />
       )}
     </div>
   );
