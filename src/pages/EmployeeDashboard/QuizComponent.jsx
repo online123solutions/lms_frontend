@@ -70,6 +70,9 @@ const QuizComponent = ({ setActiveContent }) => {
 
   const handleCustomAnswerChange = (questionId, text) => {
     setCustomAnswers((prev) => ({ ...prev, [questionId]: text }));
+    // Typing always selects the written answer (needed for questions with no options)
+    setSelectedAnswers((prev) => ({ ...prev, [questionId]: "custom" }));
+    setSelectedOption("custom");
   };
 
   const isAnswered = (question) => {
@@ -163,10 +166,11 @@ const QuizComponent = ({ setActiveContent }) => {
     selectedQuiz.questions.forEach((question) => {
       const correctAnswer = question.answers.find((answer) => answer.correct);
       if (selectedAnswers[question.id] === "custom") {
-        // Same rule as the backend: typed text must match the correct option's text
+        // Same rule as the backend: typed text must match the expected answer or the correct option's text
         const normalize = (t) => (t || "").replace(/\s+/g, " ").trim().toLowerCase();
         const typed = normalize(customAnswers[question.id]);
-        if (typed && correctAnswer?.answer && typed === normalize(correctAnswer.answer)) {
+        const accepted = [question.expected_answer, correctAnswer?.answer].filter(Boolean).map(normalize);
+        if (typed && accepted.includes(typed)) {
           correct += 1;
         }
       } else if (correctAnswer && selectedAnswers[question.id] === correctAnswer.id) {

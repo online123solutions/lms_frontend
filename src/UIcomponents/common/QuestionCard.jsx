@@ -16,7 +16,8 @@ const QuestionCard = ({
   customAnswer = "",
   onCustomAnswerChange,
 }) => {
-  const customSelected = selectedOption === "custom";
+  const writtenOnly = options.length === 0; // no options: just a text box
+  const customSelected = selectedOption === "custom" || writtenOnly;
 
   return (
     <div
@@ -123,7 +124,7 @@ const QuestionCard = ({
       ))}
 
       {/* Write-your-own answer */}
-      {allowCustomAnswer && (
+      {(allowCustomAnswer || writtenOnly) && (
         <div
           onClick={() => !customSelected && onOptionSelect("custom")}
           style={{
@@ -157,7 +158,7 @@ const QuestionCard = ({
           </div>
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
             <span style={{ fontSize: "15px", color: "#333" }}>
-              None of these? Write your own answer
+              {writtenOnly ? "Write your answer" : "None of these? Write your own answer"}
             </span>
             {customSelected && (
               <textarea
