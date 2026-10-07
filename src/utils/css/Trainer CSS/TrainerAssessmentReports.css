@@ -93,7 +93,7 @@ grid-template-columns: 1fr !important; }
 .ar-divider { height: 1px; background: #f1f5f9; margin: 12px 0; }
 
 /* Table */
-.table-wrap { max-height: 320px; border-radius: 15px; border: 1px solid #eef0f4;overflow-y: auto;     /* keep vertical scroll for many rows */
+.table-wrap { max-height: max(320px, calc(100vh - 380px)); /* fill the screen; space above = toolbar + report header */ border-radius: 15px; border: 1px solid #eef0f4;overflow-y: auto;     /* keep vertical scroll for many rows */
   overflow-x: hidden; }
 .results-table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: auto; }
 .results-table thead th {
@@ -446,4 +446,9 @@ grid-template-columns: 1fr !important; }
     min-width: 32px;
     font-size: 13px;
   }
+}
+
+/* Short screens have a more compact header above the attempts table */
+@media (max-height: 768px) and (min-width: 768px) {
+  .table-wrap { max-height: max(240px, calc(100vh - 320px)); }
 }
